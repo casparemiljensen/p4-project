@@ -14,14 +14,13 @@ boolOperator: BOOLEANOP;
 ctrlStrc: (iterCtrlStrc | selCtrlStrc);
 selCtrlStrc: ifStrc;
 ifStrc: ifCond 'then' lines elseIfStrc* elseStrc? 'endIf';
-ifCond: 'if' '(' booleanExpr ')';
+ifCond: 'if' '(' stmt ')';
 elseIfStrc: 'else' ifCond lines;
 elseStrc: 'else' 'then' lines;
 iterCtrlStrc: repeatStrc;
-repeatStrc: 'repeat' 'while' '(' booleanExpr ')' lines 'endRepeat';
-booleanExpr: stmt;
-value: (ID | INUM | STRING | call) method*;
-call: (FUNCTIONS | ID) '(' actualParams? ')';
+repeatStrc: 'repeat' 'while' '(' stmt ')' lines 'endRepeat';
+value: (INUM | STRING | call) method*;
+call: (FUNCTIONS | ID) ('(' actualParams? ')')?;
 actualParams: value (','value)*;
 method: METHODS ('(' actualParams? ')')?;
 
