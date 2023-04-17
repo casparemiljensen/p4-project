@@ -6,7 +6,7 @@ proc: 'procedure' ID '(' formalParams? ')' lines 'endProcedure';
 formalParams: ID (',' ID)*;
 lines: (dcl | stmt | ctrlStrc)*;
 dcl: 'let' ID expr*;
-stmt: value expr*;
+stmt: ('return'? value expr*) | 'return';
 expr: operator value;
 operator: (binaryOperator | boolOperator);
 binaryOperator: ('+'| '-' | '=');
@@ -23,7 +23,7 @@ call: (FUNCNAME | ID) '(' actualParams? ')';
 actualParams: value (','value)*;
 method: METHNAME ('(' actualParams? ')')?;
 
-
+KEYWORD: 'return';
 FUNCNAME: 'SUM' | 'AVERAGE';
 METHNAME: '.'('format' | 'count');
 BOOLEANOP: [<>]'='?|'=='|'!=';
