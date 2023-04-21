@@ -1,4 +1,4 @@
-grammar OurVeryThirdGrammar;
+grammar eel;
 
 prog: procs EOF;
 procs: proc+;
