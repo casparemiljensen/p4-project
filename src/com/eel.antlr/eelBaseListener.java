@@ -1,5 +1,5 @@
 // Generated from /Users/jacob/IdeaProjects/eel/resources/eel.g4 by ANTLR 4.12.0
-package com.eel;
+package com.eel.antlr;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;

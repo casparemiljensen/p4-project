@@ -1,22 +1,30 @@
 package com.eel;
 
-import com.eel.eelLexer;
-import com.eel.eelParser;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
+import com.eel.antlr.eelLexer;
+import com.eel.antlr.eelParser;
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.tree.*;
+import java.nio.file.*;
 
-class eelApp {
-    public static void main(String[] args)
+class Eel {
+    public static void main(String[] args) throws Exception
     {
-        eelLexer lexer = new eelLexer(CharStreams.fromString(
-                "begin main()" +
-                        "let test = 5" +
-                        "let test2 = 10" +
-                        "test3 = test + test" +
-                        "endProcedure"
-        ));
-        eelParser parser = new eelParser(new CommonTokenStream(lexer));
+        var inputStream = CharStreams.fromString(readFileAsString("out/production/eel/program.txt"));
+        eelLexer lexer = new eelLexer(inputStream);
 
-        System.out.println("Hello World");
+        var tokens = new CommonTokenStream(lexer);
+        eelParser parser = new eelParser(tokens);
+
+        eelListener listener = new eelListener();
+
+        ParseTree tree = parser.prog();
+        ParseTreeWalker walker = new ParseTreeWalker();
+
+        walker.walk(listener, tree);
+    }
+
+    public static String readFileAsString(String fileName) throws Exception
+    {
+        return new String(Files.readAllBytes(Paths.get(fileName)));
     }
 }
