@@ -1,4 +1,4 @@
-// Generated from eel.g4 by ANTLR 4.12.0
+// Generated from C:/Users/caspa/Qsync/Dokumenter/Skole & Uddannelse/AAU/Software Bachelor/4. Semester/Project/p4-project/grammar\eel.g4 by ANTLR 4.12.0
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -123,6 +123,11 @@ public class eelParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof eelListener ) ((eelListener)listener).exitProg(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof eelVisitor ) return ((eelVisitor<? extends T>)visitor).visitProg(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final ProgContext prog() throws RecognitionException {
@@ -167,6 +172,11 @@ public class eelParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof eelListener ) ((eelListener)listener).exitProcs(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof eelVisitor ) return ((eelVisitor<? extends T>)visitor).visitProcs(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -224,6 +234,11 @@ public class eelParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof eelListener ) ((eelListener)listener).exitProc(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof eelVisitor ) return ((eelVisitor<? extends T>)visitor).visitProc(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -286,6 +301,11 @@ public class eelParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof eelListener ) ((eelListener)listener).exitFormalParams(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof eelVisitor ) return ((eelVisitor<? extends T>)visitor).visitFormalParams(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -358,6 +378,11 @@ public class eelParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof eelListener ) ((eelListener)listener).exitLines(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof eelVisitor ) return ((eelVisitor<? extends T>)visitor).visitLines(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -438,6 +463,11 @@ public class eelParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof eelListener ) ((eelListener)listener).exitDcl(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof eelVisitor ) return ((eelVisitor<? extends T>)visitor).visitDcl(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final DclContext dcl() throws RecognitionException {
@@ -491,6 +521,11 @@ public class eelParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof eelListener ) ((eelListener)listener).exitAssignment(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof eelVisitor ) return ((eelVisitor<? extends T>)visitor).visitAssignment(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final AssignmentContext assignment() throws RecognitionException {
@@ -532,6 +567,11 @@ public class eelParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof eelListener ) ((eelListener)listener).exitStmt(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof eelVisitor ) return ((eelVisitor<? extends T>)visitor).visitStmt(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -601,6 +641,11 @@ public class eelParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof eelListener ) ((eelListener)listener).exitExpr(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof eelVisitor ) return ((eelVisitor<? extends T>)visitor).visitExpr(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -728,6 +773,11 @@ public class eelParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof eelListener ) ((eelListener)listener).exitOperator(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof eelVisitor ) return ((eelVisitor<? extends T>)visitor).visitOperator(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final OperatorContext operator() throws RecognitionException {
@@ -784,6 +834,11 @@ public class eelParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof eelListener ) ((eelListener)listener).exitBinaryOperator(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof eelVisitor ) return ((eelVisitor<? extends T>)visitor).visitBinaryOperator(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final BinaryOperatorContext binaryOperator() throws RecognitionException {
@@ -831,6 +886,11 @@ public class eelParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof eelListener ) ((eelListener)listener).exitBoolOperator(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof eelVisitor ) return ((eelVisitor<? extends T>)visitor).visitBoolOperator(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final BoolOperatorContext boolOperator() throws RecognitionException {
@@ -873,6 +933,11 @@ public class eelParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof eelListener ) ((eelListener)listener).exitCtrlStrc(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof eelVisitor ) return ((eelVisitor<? extends T>)visitor).visitCtrlStrc(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -930,6 +995,11 @@ public class eelParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof eelListener ) ((eelListener)listener).exitSelCtrlStrc(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof eelVisitor ) return ((eelVisitor<? extends T>)visitor).visitSelCtrlStrc(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final SelCtrlStrcContext selCtrlStrc() throws RecognitionException {
@@ -981,6 +1051,11 @@ public class eelParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof eelListener ) ((eelListener)listener).exitIfStrc(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof eelVisitor ) return ((eelVisitor<? extends T>)visitor).visitIfStrc(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1056,6 +1131,11 @@ public class eelParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof eelListener ) ((eelListener)listener).exitIfCond(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof eelVisitor ) return ((eelVisitor<? extends T>)visitor).visitIfCond(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final IfCondContext ifCond() throws RecognitionException {
@@ -1105,6 +1185,11 @@ public class eelParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof eelListener ) ((eelListener)listener).exitElseIfStrc(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof eelVisitor ) return ((eelVisitor<? extends T>)visitor).visitElseIfStrc(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final ElseIfStrcContext elseIfStrc() throws RecognitionException {
@@ -1148,6 +1233,11 @@ public class eelParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof eelListener ) ((eelListener)listener).exitElseStrc(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof eelVisitor ) return ((eelVisitor<? extends T>)visitor).visitElseStrc(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1193,6 +1283,11 @@ public class eelParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof eelListener ) ((eelListener)listener).exitIterCtrlStrc(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof eelVisitor ) return ((eelVisitor<? extends T>)visitor).visitIterCtrlStrc(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final IterCtrlStrcContext iterCtrlStrc() throws RecognitionException {
@@ -1235,6 +1330,11 @@ public class eelParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof eelListener ) ((eelListener)listener).exitRepeatStrc(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof eelVisitor ) return ((eelVisitor<? extends T>)visitor).visitRepeatStrc(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1290,6 +1390,11 @@ public class eelParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof eelListener ) ((eelListener)listener).exitValue(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof eelVisitor ) return ((eelVisitor<? extends T>)visitor).visitValue(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1356,6 +1461,11 @@ public class eelParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof eelListener ) ((eelListener)listener).exitStaticValue(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof eelVisitor ) return ((eelVisitor<? extends T>)visitor).visitStaticValue(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1435,6 +1545,11 @@ public class eelParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof eelListener ) ((eelListener)listener).exitFunction(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof eelVisitor ) return ((eelVisitor<? extends T>)visitor).visitFunction(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final FunctionContext function() throws RecognitionException {
@@ -1481,6 +1596,11 @@ public class eelParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof eelListener ) ((eelListener)listener).exitUserValue(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof eelVisitor ) return ((eelVisitor<? extends T>)visitor).visitUserValue(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1548,6 +1668,11 @@ public class eelParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof eelListener ) ((eelListener)listener).exitActualParams(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof eelVisitor ) return ((eelVisitor<? extends T>)visitor).visitActualParams(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final ActualParamsContext actualParams() throws RecognitionException {
@@ -1605,6 +1730,11 @@ public class eelParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof eelListener ) ((eelListener)listener).exitMethod(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof eelVisitor ) return ((eelVisitor<? extends T>)visitor).visitMethod(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
