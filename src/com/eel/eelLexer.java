@@ -1,4 +1,5 @@
-// Generated from eel.g4 by ANTLR 4.12.0
+// Generated from /Users/jacob/IdeaProjects/eel/resources/eel.g4 by ANTLR 4.12.0
+package com.eel;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;

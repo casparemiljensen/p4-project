@@ -1,0 +1,36 @@
+grammar eel;
+
+prog: procs EOF;
+procs: proc+;
+proc: 'procedure' ID '(' formalParams? ')' lines 'endProcedure';
+formalParams: ID (',' ID)*;
+lines: (dcl | stmt | ctrlStrc)*;
+dcl: 'let' ID assignment?;
+assignment: '=' expr;
+stmt: 'return'? expr;
+expr: userValue (assignment | (operator value)*) | staticValue (operator value)* ;
+operator: (binaryOperator | boolOperator);
+binaryOperator: ('+'| '-' |'*'| '/');
+boolOperator: BOOLEANOP;
+ctrlStrc: (iterCtrlStrc | selCtrlStrc);
+selCtrlStrc: ifStrc;
+ifStrc: ifCond 'then' lines elseIfStrc* elseStrc? 'endIf';
+ifCond: 'if' '(' expr ')';
+elseIfStrc: 'else' ifCond lines;
+elseStrc: 'else' 'then' lines;
+iterCtrlStrc: repeatStrc;
+repeatStrc: 'repeat' 'while' '(' expr ')' lines 'endRepeat';
+value: (staticValue | userValue);
+staticValue: (INUM | STRING | function) method*;
+function: FUNCTIONS '(' actualParams ')';
+userValue: ID ('(' actualParams? ')')?;
+actualParams: value (','value)*;
+method: METHODS ('(' actualParams? ')')?;
+
+FUNCTIONS: 'SUM' | 'AVERAGE' | 'print';
+METHODS: '.'('format' | 'count');
+BOOLEANOP: [<>]'='?|'=='|'!=';
+INUM: [0-9]+;
+STRING: '"' ~[\r\n"]* '"';
+WS: [ \t\r\n]+ -> skip;
+ID: [a-zA-Z][a-zA-Z0-9]*;
