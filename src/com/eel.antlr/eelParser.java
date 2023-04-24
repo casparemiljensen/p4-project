@@ -87,7 +87,7 @@ public class eelParser extends Parser {
 	}
 
 	@Override
-	public String getGrammarFileName() { return "eel.g4"; }
+	public String getGrammarFileName() { return "exclude/eel.g4"; }
 
 	@Override
 	public String[] getRuleNames() { return ruleNames; }
