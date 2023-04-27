@@ -39,6 +39,7 @@ public class eelBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements ee
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+
 	@Override public T visitFormalParams(eelParser.FormalParamsContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
