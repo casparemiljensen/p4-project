@@ -34,14 +34,15 @@ public class IfStmtVisitor extends eelBaseVisitor<selCtrlStrcNode> implements ee
         ifStrcNode.setThenToken("then");
 //        ifStrcNode.setLines
 
-        List<elseIfStrcNode> list = new ArrayList<>();
+//        System.out.print(ctx.elseIfStrc().size());
+//        List<eelParser.ElseIfStrcContext> list = visitElseIfStrc(ctx.elseIfStrc());
+        List<elseIfStrcNode> nodesList = new ArrayList<>();
         for(eelParser.ElseIfStrcContext var : ctx.elseIfStrc()) {
             elseIfStrcNode elseIfStrcNode = visitElseIfStrc(var);
-            list.add(elseIfStrcNode);
+            nodesList.add(elseIfStrcNode);
         }
-        ifStrcNode.setElseIfStrcNodeList(list);
+        ifStrcNode.setElseIfStrcNodeList(nodesList);
 
-        elseStrcNode elseStrcNode = new elseStrcNode();
         ifStrcNode.setElseStrcNode(visitElseStrc(ctx.elseStrc()));
         System.out.print("]");
         return ifStrcNode;

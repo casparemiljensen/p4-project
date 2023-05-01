@@ -25,7 +25,7 @@ class Eel {
 
 
         IfStmtVisitor ifStmtVisitor = new IfStmtVisitor(parser);
-        var name = ifStmtVisitor.visitSelCtrlStrc(parser.selCtrlStrc());
+        var name = ifStmtVisitor.visit(parser.selCtrlStrc());
         System.out.print(name);
 
 
