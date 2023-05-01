@@ -1,4 +1,12 @@
 procedure main()
     let y = 5+5
     print(y)
+
+    if(2<3) then
+    let x = 1
+    else if(3<1)
+    let x = 2
+    else then
+    let x = 3
+    endIf
 endProcedure

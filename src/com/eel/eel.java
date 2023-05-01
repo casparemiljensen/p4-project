@@ -1,11 +1,9 @@
 package com.eel;
 
 import com.eel.antlr.*;
-import org.antlr.v4.gui.TreeViewer;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
-import java.io.StringWriter;
 import java.nio.file.*;
 import java.util.Arrays;
 import java.util.List;
@@ -14,6 +12,7 @@ class Eel {
     public static void main(String[] args) throws Exception
     {
         var inputStream = CharStreams.fromString(readFileAsString("out/production/eel/program.txt"));
+
         eelLexer lexer = new eelLexer(inputStream);
 
         var tokens = new CommonTokenStream(lexer);
@@ -21,11 +20,20 @@ class Eel {
 
         ParseTree tree = parser.prog();
 
-        List<AST> astList = new EelBuildASTVisitor(parser).visit(tree).getChildren();
+//        AbstractNode root = (AbstractNode) parser.prog();
+//        root.walkTree(new PrintTree(System.out));
 
-        for (AST ast : astList) {
-            System.out.println(ast.toStringTree());
-        }
+
+        IfStmtVisitor ifStmtVisitor = new IfStmtVisitor(parser);
+        var name = ifStmtVisitor.visitSelCtrlStrc(parser.selCtrlStrc());
+        System.out.print(name);
+
+
+//        List<AST> astList = new EelBuildASTVisitor(parser).visit(tree).getChildren();
+//
+//        for (AST ast : astList) {
+//            System.out.println(ast.toStringTree());
+//        }
     }
 
     public static String printSyntaxTree(Parser parser, ParseTree root) {
