@@ -11,5 +11,8 @@ public class ProcsNode extends AbstractNode {
     public void setProcList(List<ProcNode> procList) {
         this.procList = procList;
     }
-    public ProcsNode() {}
+    public ProcsNode(String name, List<ProcNode> procedures) {
+        setName(name);
+        this.procList = procedures;
+    }
 }

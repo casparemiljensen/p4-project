@@ -18,13 +18,16 @@ class Eel {
         var tokens = new CommonTokenStream(lexer);
         eelParser parser = new eelParser(tokens);
 
-        ParseTree tree = parser.prog();
 
-        // Should be Abstract Type
-        ifStrcNode ifCtrlStrcNode = (ifStrcNode) new BuildIfStmtVisitor().visit(parser.selCtrlStrc());
-//        var value = new EvaluateIfStmtVisitor().Visit(ast);
+        // The error was that we called visit(parser.prog()) but instead we should call tree....
+        // Apparently is does not work even though we follow robocode's method...
+        ParseTree cst = parser.prog();
+
+        var ast = (ProgNode) new BuildIfStmtVisitor().visit(cst);
+
+//      var value = new EvaluateIfStmtVisitor().Visit(ast);
         PrintAst printAst = new PrintAst();
-        printAst.Visit(ifCtrlStrcNode);
+        printAst.Visit(ast);
     }
 
 //    public static String printSyntaxTree(Parser parser, ParseTree root) {
