@@ -2,7 +2,7 @@ package com.eel.antlr;
 
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-public class ifCondNode extends ifStrcNode {
+public class ifCondNode extends AbstractNode {
     public String ifToken;
     public String leftParToken;
 

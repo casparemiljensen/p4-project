@@ -1,4 +1,15 @@
 package com.eel.antlr;
 
-public class ProgNode extends AbstractNode{
+import java.util.List;
+
+public class ProgNode extends AbstractNode {
+
+    public ProcsNode procs;
+    public ProcsNode getProcs() {
+        return procs;
+    }
+    public void setProcs(ProcsNode procs) {
+        this.procs = procs;
+    }
+    public ProgNode() {}
 }

@@ -1,21 +1,29 @@
 package com.eel.antlr;
 
-import org.antlr.v4.runtime.ParserRuleContext;
+import java.util.List;
 
 public abstract class AstVisitor <T> {
         public abstract T Visit(ProgNode node);
         public abstract T Visit(ProcsNode node);
         public abstract T Visit(ProcNode node);
         public abstract T Visit(FormalParamsNode node);
-        public abstract T Visit(eelParser.LinesContext node);
-        public abstract T Visit(eelParser.DclContext node);
-        public abstract T Visit(eelParser.AssignmentContext node);
-        public abstract T Visit(eelParser.StmtContext node);
-        public abstract T Visit(eelParser.ExprContext node);
+        public abstract T Visit(LinesNode node);
+        public abstract T Visit(DclNode node);
+        public abstract T Visit(AssignNode node);
+        public abstract T Visit(StmtNode node);
+        public abstract T Visit(ExprNode node);
+        public abstract T Visit(OpNode node);
+        public abstract T Visit(BinOpNode node);
+        public abstract T Visit(BoolOpNode node);
+        public abstract T Visit(CtrlStrcNode node);
+        public abstract T Visit(IterCtrlStrcNode node);
+        public abstract T Visit(SelCtrlStrcNode node);
+        public abstract T Visit(ifStrcNode node);
+        public abstract T Visit(ifCondNode node);
+        public abstract T Visit(elseIfStrcNode node);
+        public abstract T Visit(elseStrcNode node);
 
-
-
-        public T Visit(T node)
+    public T Visit(T node)
         {
             if (node instanceof eelParser.ProgContext) {
                 return Visit((ProgNode) node);
@@ -30,20 +38,51 @@ public abstract class AstVisitor <T> {
                 return Visit((FormalParamsNode) node);
             }
             else if(node instanceof eelParser.LinesContext) {
-                return Visit((eelParser.LinesContext) node);
+                return Visit((LinesNode) node);
             }
             else if(node instanceof eelParser.DclContext) {
-                return Visit((eelParser.DclContext) node);
+                return Visit((DclNode) node);
             }
             else if(node instanceof eelParser.AssignmentContext) {
-                return Visit((eelParser.AssignmentContext) node);
+                return Visit((AssignNode) node);
             }
             else if(node instanceof eelParser.StmtContext) {
-                return Visit((eelParser.StmtContext) node);
+                return Visit((StmtNode) node);
             }
             else if(node instanceof eelParser.ExprContext) {
-                return Visit((eelParser.ExprContext) node);
+                return Visit((ExprNode) node);
             }
+            else if(node instanceof eelParser.OperatorContext) {
+                return Visit((OpNode) node);
+            }
+            else if(node instanceof eelParser.BinaryOperatorContext) {
+                return Visit((BinOpNode) node);
+            }
+            else if(node instanceof eelParser.BoolOperatorContext) {
+                return Visit((BoolOpNode) node);
+            }
+            else if(node instanceof eelParser.CtrlStrcContext) {
+                return Visit((CtrlStrcNode) node);
+            }
+            else if(node instanceof eelParser.IterCtrlStrcContext) {
+                return Visit((IterCtrlStrcNode) node);
+            }
+            else if(node instanceof eelParser.SelCtrlStrcContext) {
+                return Visit((SelCtrlStrcNode) node);
+            }
+            else if(node instanceof eelParser.IfStrcContext) {
+                return Visit((ifStrcNode) node);
+            }
+            else if(node instanceof eelParser.IfCondContext) {
+                return Visit((ifCondNode) node);
+            }
+            else if(node instanceof eelParser.ElseIfStrcContext) {
+                return Visit((elseIfStrcNode) node);
+            }
+            else if(node instanceof eelParser.ElseStrcContext) {
+                return Visit((elseStrcNode) node);
+            }
+//            Capitalize last four methods
             else {
                 return null;
             }

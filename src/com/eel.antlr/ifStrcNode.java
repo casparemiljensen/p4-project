@@ -1,19 +1,20 @@
 package com.eel.antlr;
 
-import org.antlr.v4.runtime.tree.TerminalNode;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class ifStrcNode extends selCtrlStrcNode {
+public class ifStrcNode extends AbstractNode {
 
     public ifCondNode ifCondNode;
     public String thenToken;
-
-    //    public Lines lines;
+    public LinesNode lines;
     @Nullable
     public List<elseIfStrcNode> elseIfStrcNodeList;
 
+    @Nullable
+    public elseIfStrcNode elseIfStrcNode;
     @Nullable
     public elseStrcNode elseStrcNode;
 
@@ -34,24 +35,38 @@ public class ifStrcNode extends selCtrlStrcNode {
     public void setThenToken(String thenToken) {
         this.thenToken = thenToken;
     }
-
-
+    public LinesNode getLines() {
+        return lines;
+    }
+    public void setLines(LinesNode lines) {
+        this.lines = lines;
+    }
     @Nullable
     public List<elseIfStrcNode> getElseIfStrcNodeList() {
         return elseIfStrcNodeList;
     }
 
-    public void setElseIfStrcNodeList(@Nullable List<elseIfStrcNode> elseIfStrcNodeList) {
+    public void setElseIfStrcNodeList(List<elseIfStrcNode> elseIfStrcNodeList) {
         this.elseIfStrcNodeList = elseIfStrcNodeList;
     }
+
     @Nullable
-    public com.eel.antlr.elseStrcNode getElseStrcNode() {
+    public elseIfStrcNode getElseIfStrcNode() {
+        return elseIfStrcNode;
+    }
+
+    public void setElseIfStrcNode(com.eel.antlr.elseIfStrcNode elseIfStrcNode) {
+        this.elseIfStrcNode = elseIfStrcNode;
+    }
+    @Nullable
+    public elseStrcNode getElseStrcNode() {
         return elseStrcNode;
     }
 
     public void setElseStrcNode(@Nullable com.eel.antlr.elseStrcNode elseStrcNode) {
         this.elseStrcNode = elseStrcNode;
     }
+
 
     public String getEndIfToken() {
         return endIfToken;
@@ -65,5 +80,7 @@ public class ifStrcNode extends selCtrlStrcNode {
         this.ifCondNode = ifCondNode;
     }
 
-    public ifStrcNode() {}
+    public ifStrcNode() {
+        elseIfStrcNodeList = new ArrayList<elseIfStrcNode>();
+    }
 }

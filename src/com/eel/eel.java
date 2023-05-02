@@ -20,42 +20,33 @@ class Eel {
 
         ParseTree tree = parser.prog();
 
-//        AbstractNode root = (AbstractNode) parser.prog();
-//        root.walkTree(new PrintTree(System.out));
+        // Should be Abstract Type
+        ifStrcNode ifCtrlStrcNode = (ifStrcNode) new BuildIfStmtVisitor().visit(parser.selCtrlStrc());
+//        var value = new EvaluateIfStmtVisitor().Visit(ast);
+        PrintAst printAst = new PrintAst();
+        printAst.Visit(ifCtrlStrcNode);
+    }
 
-
-        IfStmtVisitor ifStmtVisitor = new IfStmtVisitor(parser);
-        var name = ifStmtVisitor.visit(parser.selCtrlStrc());
-        System.out.print(name);
-
-
-//        List<AST> astList = new EelBuildASTVisitor(parser).visit(tree).getChildren();
+//    public static String printSyntaxTree(Parser parser, ParseTree root) {
+//        StringBuilder buf = new StringBuilder();
+//        recursive(root, buf, 0, Arrays.asList(parser.getRuleNames()));
+//        return buf.toString();
+//    }
 //
-//        for (AST ast : astList) {
-//            System.out.println(ast.toStringTree());
+//    private static void recursive(ParseTree aRoot, StringBuilder buf, int offset, List<String> ruleNames) {
+//        for (int i = 0; i < offset; i++) {
+//            buf.append("  ");
 //        }
-    }
-
-    public static String printSyntaxTree(Parser parser, ParseTree root) {
-        StringBuilder buf = new StringBuilder();
-        recursive(root, buf, 0, Arrays.asList(parser.getRuleNames()));
-        return buf.toString();
-    }
-
-    private static void recursive(ParseTree aRoot, StringBuilder buf, int offset, List<String> ruleNames) {
-        for (int i = 0; i < offset; i++) {
-            buf.append("  ");
-        }
-        buf.append(Trees.getNodeText(aRoot, ruleNames)).append("\n");
-        if (aRoot instanceof ParserRuleContext) {
-            ParserRuleContext prc = (ParserRuleContext) aRoot;
-            if (prc.children != null) {
-                for (ParseTree child : prc.children) {
-                    recursive(child, buf, offset + 1, ruleNames);
-                }
-            }
-        }
-    }
+//        buf.append(Trees.getNodeText(aRoot, ruleNames)).append("\n");
+//        if (aRoot instanceof ParserRuleContext) {
+//            ParserRuleContext prc = (ParserRuleContext) aRoot;
+//            if (prc.children != null) {
+//                for (ParseTree child : prc.children) {
+//                    recursive(child, buf, offset + 1, ruleNames);
+//                }
+//            }
+//        }
+//    }
 
     public static String readFileAsString(String fileName) throws Exception
     {

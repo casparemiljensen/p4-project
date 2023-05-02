@@ -2,11 +2,11 @@ package com.eel.antlr;
 
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-public class elseStrcNode extends ifStrcNode{
+public class elseStrcNode extends AbstractNode{
 
     public String elseToken;
     public String thenToken;
-//    public LinesNode Lines;
+    public LinesNode Lines;
 
     public String getElseToken() {
         return elseToken;
@@ -24,6 +24,15 @@ public class elseStrcNode extends ifStrcNode{
     public void setThenToken(String thenToken) {
         this.thenToken = thenToken;
     }
+
+    public LinesNode getLines() {
+        return Lines;
+    }
+
+    public void setLines(LinesNode lines) {
+        Lines = lines;
+    }
+
 
     public elseStrcNode() {}
 }

@@ -1,6 +1,6 @@
 package com.eel.antlr;
 
-public class selCtrlStrcNode {
+public class SelCtrlStrcNode extends AbstractNode {
 
     public ifStrcNode ifStrcNode;
 
@@ -12,8 +12,8 @@ public class selCtrlStrcNode {
         this.ifStrcNode = ifStrcNode;
     }
 
-    public selCtrlStrcNode(){};
-    public selCtrlStrcNode(ifStrcNode ifStrcNode) {
+    public SelCtrlStrcNode(){};
+    public SelCtrlStrcNode(ifStrcNode ifStrcNode) {
         this.ifStrcNode = ifStrcNode;
     }
 
