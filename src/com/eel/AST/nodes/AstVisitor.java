@@ -1,6 +1,6 @@
-package com.eel.antlr;
+package com.eel.AST.nodes;
 
-import java.util.List;
+import com.eel.antlr.eelParser;
 
 public abstract class AstVisitor <T> {
         public abstract T Visit(ProgNode node);

@@ -1,4 +1,4 @@
-package com.eel.antlr;
+package com.eel.AST.nodes;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -21,11 +21,11 @@ public class ifStrcNode extends AbstractNode {
     public String endIfToken;
 
 
-    public com.eel.antlr.ifCondNode getIfCondNode() {
+    public com.eel.AST.nodes.ifCondNode getIfCondNode() {
         return ifCondNode;
     }
 
-    public void setIfCondNode(com.eel.antlr.ifCondNode ifCondNode) {
+    public void setIfCondNode(com.eel.AST.nodes.ifCondNode ifCondNode) {
         this.ifCondNode = ifCondNode;
     }
     public String getThenToken() {
@@ -55,7 +55,7 @@ public class ifStrcNode extends AbstractNode {
         return elseIfStrcNode;
     }
 
-    public void setElseIfStrcNode(com.eel.antlr.elseIfStrcNode elseIfStrcNode) {
+    public void setElseIfStrcNode(com.eel.AST.nodes.elseIfStrcNode elseIfStrcNode) {
         this.elseIfStrcNode = elseIfStrcNode;
     }
     @Nullable
@@ -63,7 +63,7 @@ public class ifStrcNode extends AbstractNode {
         return elseStrcNode;
     }
 
-    public void setElseStrcNode(@Nullable com.eel.antlr.elseStrcNode elseStrcNode) {
+    public void setElseStrcNode(@Nullable com.eel.AST.nodes.elseStrcNode elseStrcNode) {
         this.elseStrcNode = elseStrcNode;
     }
 
@@ -76,7 +76,7 @@ public class ifStrcNode extends AbstractNode {
         this.endIfToken = endIfToken;
     }
 
-    public ifStrcNode(com.eel.antlr.ifCondNode ifCondNode) {
+    public ifStrcNode(com.eel.AST.nodes.ifCondNode ifCondNode) {
         this.ifCondNode = ifCondNode;
     }
 

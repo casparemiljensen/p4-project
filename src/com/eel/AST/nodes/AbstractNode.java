@@ -1,6 +1,6 @@
-package com.eel.antlr;
+package com.eel.AST.nodes;
 
-import java.util.*;
+import com.eel.AST.ReflectiveVisitor;
 
 public abstract class AbstractNode {
     private String Name;

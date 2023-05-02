@@ -1,12 +1,6 @@
-package com.eel.antlr;
+package com.eel.AST;
 
-import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.TerminalNode;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import com.eel.AST.nodes.*;
 
 public class PrintAst extends AstVisitor<AbstractNode> {
 

@@ -1,4 +1,6 @@
-package com.eel.antlr;
+package com.eel.AST;
+
+import com.eel.AST.nodes.AbstractNode;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

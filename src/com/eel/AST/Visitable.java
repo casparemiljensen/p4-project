@@ -1,4 +1,6 @@
-package com.eel.antlr;
+package com.eel.AST;
+
+import com.eel.AST.nodes.AbstractNode;
 
 public interface Visitable {
     public void pre(int i,  AbstractNode a);

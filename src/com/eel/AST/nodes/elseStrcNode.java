@@ -1,6 +1,4 @@
-package com.eel.antlr;
-
-import org.antlr.v4.runtime.tree.TerminalNode;
+package com.eel.AST.nodes;
 
 public class elseStrcNode extends AbstractNode{
 

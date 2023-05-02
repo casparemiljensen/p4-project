@@ -1,10 +1,10 @@
-package com.eel.antlr;
+package com.eel.AST.nodes;
 
 public class SelCtrlStrcNode extends AbstractNode {
 
     public ifStrcNode ifStrcNode;
 
-    public com.eel.antlr.ifStrcNode getIfStrcNode() {
+    public com.eel.AST.nodes.ifStrcNode getIfStrcNode() {
         return ifStrcNode;
     }
 

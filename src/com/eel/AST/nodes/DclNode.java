@@ -1,4 +1,4 @@
-package com.eel.antlr;
+package com.eel.AST.nodes;
 
 public class DclNode extends AbstractNode {
 }

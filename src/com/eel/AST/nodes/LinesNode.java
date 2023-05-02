@@ -1,4 +1,4 @@
-package com.eel.antlr;
+package com.eel.AST.nodes;
 
 import org.jetbrains.annotations.Nullable;
 

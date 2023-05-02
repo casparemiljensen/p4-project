@@ -1,6 +1,4 @@
-package com.eel.antlr;
-
-import java.util.List;
+package com.eel.AST.nodes;
 
 public class ProgNode extends AbstractNode {
     public ProcsNode procs;

@@ -1,6 +1,8 @@
-package com.eel.antlr;
+package com.eel.AST;
 
-public class EvaluateIfStmtVisitor extends AstVisitor<AbstractNode> {
+import com.eel.AST.nodes.*;
+
+public class EvaluateASTVisitor extends AstVisitor<AbstractNode> {
 
     @Override
     public SelCtrlStrcNode Visit(ProgNode node) {

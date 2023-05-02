@@ -1,4 +1,4 @@
-package com.eel.antlr;
+package com.eel.AST.nodes;
 
 public class CtrlStrcNode extends AbstractNode {
     public IterCtrlStrcNode iterStrcNode;

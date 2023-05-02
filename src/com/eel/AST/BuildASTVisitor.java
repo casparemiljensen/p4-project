@@ -1,6 +1,9 @@
-package com.eel.antlr;
+package com.eel.AST;
 
-import jdk.jshell.spi.ExecutionControl;
+import com.eel.AST.nodes.*;
+import com.eel.antlr.eelBaseVisitor;
+import com.eel.antlr.eelParser;
+import com.eel.antlr.eelVisitor;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.ArrayList;
@@ -8,7 +11,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class BuildIfStmtVisitor extends eelBaseVisitor<AbstractNode> implements eelVisitor<AbstractNode>{
+public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eelVisitor<AbstractNode> {
 
 //    All return types should be converted to AbstractNode
 

@@ -1,6 +1,4 @@
-package com.eel.antlr;
-
-import org.antlr.v4.runtime.tree.TerminalNode;
+package com.eel.AST.nodes;
 
 public class elseIfStrcNode extends AbstractNode {
 
@@ -14,7 +12,7 @@ public class elseIfStrcNode extends AbstractNode {
         this.elseToken = elseToken;
     }
     public ifCondNode getIfCondNode() { return ifCondNode; }
-    public void setIfCondNode(com.eel.antlr.ifCondNode ifCondNode) {
+    public void setIfCondNode(com.eel.AST.nodes.ifCondNode ifCondNode) {
         this.ifCondNode = ifCondNode;
     }
     public LinesNode getLinesNode() {
