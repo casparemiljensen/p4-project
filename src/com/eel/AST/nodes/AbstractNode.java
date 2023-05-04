@@ -3,23 +3,21 @@ package com.eel.AST.nodes;
 import com.eel.AST.ReflectiveVisitor;
 
 public abstract class AbstractNode {
-    private String Name;
-
-    public String getName() {
-        return Name;
+    protected int lineNumber, colNumber;
+    public int getLineNumber() {
+        return lineNumber;
     }
 
-    public void setName(String name) {
-        Name = name;
-    }
-    public String toString() {
-        return("" + getName());
+    public int getColumnNumber() {
+        return colNumber;
     }
 
     public AbstractNode() {}
+    public AbstractNode(int lineNumber, int colNumber) {
+        this.lineNumber = lineNumber;
+        this.colNumber = colNumber;
+    }
 
     public final void accept(ReflectiveVisitor v) { v.dispatch(this); }
-
-
 
 }

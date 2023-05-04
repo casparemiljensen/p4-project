@@ -1,5 +1,15 @@
 procedure main()
-endProcedure
+    if(2<3) then
+    print(2)
 
-procedure secondary()
+    else if(2<3)
+    print(2)
+
+    else if(3<1)
+    print(2)
+
+    else then
+    print(2)
+    endIf
+
 endProcedure

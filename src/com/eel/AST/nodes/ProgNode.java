@@ -10,8 +10,12 @@ public class ProgNode extends AbstractNode {
         this.procs = procs;
     }
 
-    public ProgNode(String name, ProcsNode procs) {
-        setName(name);
+    public ProgNode(ProcsNode procs) {
+        this.procs = procs;
+    }
+
+    public ProgNode(int lineNumber, int colNumber, ProcsNode procs) {
+        super(lineNumber, colNumber);
         this.procs = procs;
     }
 }

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eelVisitor<AbstractNode> {
 
@@ -19,89 +20,53 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
     @Override
     public AbstractNode visitProg(eelParser.ProgContext ctx) {
         ProcsNode procsNode = (ProcsNode) visit(ctx.procs());
-        return new ProgNode("prog", procsNode);
+        return new ProgNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), procsNode);
     }
 
     @Override
     public AbstractNode visitProcs(eelParser.ProcsContext ctx) {
         List<ParseTree> input = ctx.children;
         List<ProcNode> procedures = CreateList(input, ProcNode.class);
-
-        return new ProcsNode("procs", procedures);
+        return new ProcsNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), procedures);
     }
 
     @Override
     public AbstractNode visitProc(eelParser.ProcContext ctx) {
-        return new ProcNode("proc");
+        return new ProcNode(ctx.start.getLine(), ctx.start.getCharPositionInLine());
     }
 
     @Override
-    public ifStrcNode visitIfStrc(eelParser.IfStrcContext ctx) {
-
-        ifStrcNode ifStrcNode = new ifStrcNode();
-        ifStrcNode.setName("IfStrc");
-        ifStrcNode.setIfCondNode(visitIfCond(ctx.ifCond()));
-        ifStrcNode.setThenToken("then");
-        ifStrcNode.setLines(visitLines(ctx.lines()));
-
-//        List<elseIfStrcNode> nodesList = new ArrayList<>();
-//        for(eelParser.ElseIfStrcContext innerCtx : ctx.elseIfStrc()) {
-//            nodesList.add(visitElseIfStrc(innerCtx));
-//        }
-//        ifStrcNode.setElseIfStrcNodeList(nodesList);
-
-        List<ParseTree> input = ctx.children;
-        List<elseIfStrcNode> elseIfNodes = CreateList(input, elseIfStrcNode.class);
-
-        ifStrcNode.setElseIfStrcNodeList(elseIfNodes);
-        ifStrcNode.setElseStrcNode(visitElseStrc(ctx.elseStrc()));
-
-        return ifStrcNode;
+    public AbstractNode visitIfStrc(eelParser.IfStrcContext ctx) {
+        List<ParseTree> input = ctx.children.stream().filter(e -> e instanceof eelParser.ElseIfStrcContext).collect(Collectors.toList());
+        List<elseIfStrcNode> elseIfStrcNodes = CreateList(input, elseIfStrcNode.class);
+        return new ifStrcNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitIfCond(ctx.ifCond()), "then", visitLines(ctx.lines()), elseIfStrcNodes, visitElseStrc(ctx.elseStrc()));
     }
 
     @Override
     public ifCondNode visitIfCond(eelParser.IfCondContext ctx) {
-        ifCondNode ifCondNode = new ifCondNode();
-        ifCondNode.setName("IfCond");
-        ifCondNode.setIfToken("if");
-        ifCondNode.setLeftParToken("(");
-        ifCondNode.setExprNode(visitExpr(ctx.expr()));
-        ifCondNode.setRightParToken(")");
-        return ifCondNode;
+        return new ifCondNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "if", visitExpr(ctx.expr()));
     }
 
     @Override
     public elseIfStrcNode visitElseIfStrc(eelParser.ElseIfStrcContext ctx) {
-        elseIfStrcNode elseIfStrcNode = new elseIfStrcNode();
-        elseIfStrcNode.setName("ElseIfStrc");
-        elseIfStrcNode.setElseToken("else");
-        elseIfStrcNode.setIfCondNode(visitIfCond(ctx.ifCond()));
-        elseIfStrcNode.setLinesNode(visitLines(ctx.lines()));
-        return elseIfStrcNode;
+        return new elseIfStrcNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitIfCond(ctx.ifCond()), visitLines(ctx.lines()));
     }
     @Override
     public elseStrcNode visitElseStrc(eelParser.ElseStrcContext ctx) {
-        elseStrcNode elseStrcNode = new elseStrcNode();
-        elseStrcNode.setName("ElseStrc");
-        elseStrcNode.setElseToken("else");
-        elseStrcNode.setThenToken("then");
-
-//        elseStrcNode.setLines(visitLines(ctx.lines()));
-
-        return elseStrcNode;
+        return new elseStrcNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitLines(ctx.lines()));
     }
 
     @Override
     public LinesNode visitLines(eelParser.LinesContext ctx) {
         LinesNode linesNode = new LinesNode();
-        linesNode.setName("Lines");
+        linesNode.setName("Lines, not implemented");
         return linesNode;
     }
 
     @Override
     public ExprNode visitExpr(eelParser.ExprContext ctx) {
         ExprNode exprNode = new ExprNode();
-        exprNode.setName("Expr");
+        exprNode.setName("Expr, not implemented");
         return exprNode;
     }
 
@@ -109,6 +74,7 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
     public IterCtrlStrcNode visitIterCtrlStrc(eelParser.IterCtrlStrcContext ctx) {
         throw null;
     }
+
 
     private static <T> Collection<T> nullSafe(Collection<T> c) {
         return (c == null) ? Collections.<T>emptyList() : c;

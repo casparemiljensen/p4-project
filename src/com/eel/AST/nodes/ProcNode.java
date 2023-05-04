@@ -1,8 +1,8 @@
 package com.eel.AST.nodes;
 
 public class ProcNode extends AbstractNode {
-    public ProcNode(String name) {
-        setName(name);
+    public ProcNode(){}
+    public ProcNode(int lineNumber, int colNumber) {
+        super(lineNumber, colNumber);
     }
-
 }

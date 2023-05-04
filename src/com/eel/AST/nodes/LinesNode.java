@@ -13,32 +13,14 @@ public class LinesNode extends AbstractNode {
     @Nullable
     public List<CtrlStrcNode> ctrlStrcNodes;
 
+    public String Name;
 
-    @Nullable
-    public List<DclNode> getDclNodes() {
-        return dclNodes;
+    public String getName() {
+        return Name;
     }
 
-    public void setDclNodes(@Nullable List<DclNode> dclNodes) {
-        this.dclNodes = dclNodes;
-    }
-
-    @Nullable
-    public List<StmtNode> getStmtNodes() {
-        return stmtNodes;
-    }
-
-    public void setStmtNodes(@Nullable List<StmtNode> stmtNodes) {
-        this.stmtNodes = stmtNodes;
-    }
-
-    @Nullable
-    public List<CtrlStrcNode> getCtrlStrcNodes() {
-        return ctrlStrcNodes;
-    }
-
-    public void setCtrlStrcNodes(@Nullable List<CtrlStrcNode> ctrlStrcNodes) {
-        this.ctrlStrcNodes = ctrlStrcNodes;
+    public void setName(String name) {
+        Name = name;
     }
 
     public LinesNode() {};
