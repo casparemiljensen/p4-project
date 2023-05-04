@@ -77,8 +77,6 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
         return new ReturnNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "return", visitExpression(ctx.expression()));
     }
 
-
-
     @Override
     public AbstractNode visitIfStruct(eelParser.IfStructContext ctx) {
         List<ParseTree> input2 = ctx.children;
@@ -116,12 +114,17 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
     }
 
 
-
     @Override
     public IterativeStructNode visitIterativeStruct(eelParser.IterativeStructContext ctx) {
-        throw null;
+        return new IterativeStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitRepeatStruct(ctx.repeatStruct()));
     }
 
+    @Override
+    public RepeatStructNode visitRepeatStruct(eelParser.RepeatStructContext ctx) {
+        List<ParseTree> input = ctx.children;
+        List<StatementNode> statements = CreateList(input, StatementNode.class);
+        return new RepeatStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.expression()), statements);
+    }
 
     private static <T> Collection<T> nullSafe(Collection<T> c) {
         return (c == null) ? Collections.<T>emptyList() : c;
