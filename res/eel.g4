@@ -3,10 +3,10 @@ grammar eel;
 program: procedure+ EOF;
 procedure: 'procedure' ID '(' formalParams? ')' statement* 'endProcedure';
 formalParams: ID (',' ID)*;
-statement: declaration #varDeclaration
-           | expression #expressionStatement
-           | controlStruct #controlStructure
-           | return # returnStatement;
+statement: declaration
+           | expression
+           | controlStruct
+           | return;
 
 declaration: 'let' ID assignment?;
 assignment: ASSIGNMENT expression;

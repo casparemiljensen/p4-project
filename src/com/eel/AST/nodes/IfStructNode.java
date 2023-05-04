@@ -8,7 +8,7 @@ public class IfStructNode extends AbstractNode {
 
     public IfConditionNode IfConditionNode;
     public String thenToken;
-    public LinesNode lines;
+    public List<StatementNode> statementNodes;
     @Nullable
     public List<ElseIfStructNode> ElseIfStructNodes;
     @Nullable

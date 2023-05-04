@@ -14,13 +14,11 @@ import java.util.stream.Collectors;
 
 public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eelVisitor<AbstractNode> {
 
-//    All return types should be converted to AbstractNode
-
-
     @Override
-    public AbstractNode visitProg(eelParser.ProgContext ctx) {
-        ProcsNode procsNode = (ProcsNode) visit(ctx.procs());
-        return new ProgNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), procsNode);
+    public AbstractNode visitProgram(eelParser.ProgramContext ctx) {
+        List<ParseTree> input = ctx.children;
+        List<ProcedureNode> procedures = CreateList(input, ProcedureNode.class);
+        return new ProgramNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), procedures);
     }
 
     @Override
@@ -88,6 +86,7 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
         List<StatementNode> statements = CreateList(input, StatementNode.class);
         return new ElseIfStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitIfCondition(ctx.ifCondition()), statements);
     }
+
     @Override
     public ElseStructNode visitElseStruct(eelParser.ElseStructContext ctx) {
         List<ParseTree> input = ctx.children;

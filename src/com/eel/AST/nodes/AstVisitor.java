@@ -61,19 +61,18 @@ public abstract class AstVisitor <T> {
             else if(node instanceof eelParser.SelectiveStructContext) {
                 return Visit((SelectiveStructNode) node);
             }
-            else if(node instanceof eelParser.IfStrcContext) {
-                return Visit((ifStrcNode) node);
+            else if(node instanceof eelParser.IfStructContext) {
+                return Visit((IfStructNode) node);
             }
-            else if(node instanceof eelParser.IfCondContext) {
-                return Visit((ifCondNode) node);
+            else if(node instanceof eelParser.IfConditionContext) {
+                return Visit((IfConditionNode) node);
             }
-            else if(node instanceof eelParser.ElseIfStrcContext) {
-                return Visit((elseIfStrcNode) node);
+            else if(node instanceof eelParser.ElseIfStructContext) {
+                return Visit((ElseIfStructNode) node);
             }
-            else if(node instanceof eelParser.ElseStrcContext) {
-                return Visit((elseStrcNode) node);
+            else if(node instanceof eelParser.ElseStructContext) {
+                return Visit((ElseStructNode) node);
             }
-//            Capitalize last four methods
             else {
                 return null;
             }
