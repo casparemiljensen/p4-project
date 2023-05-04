@@ -12,6 +12,7 @@ public class ExpressionNode extends AbstractNode {
     public ExpressionNode expressionNode;
     public String minusToken;
 
+    // expr op expr
     public ExpressionNode(int lineNumber, int colNumber, ExpressionNode left, ExpressionNode right, OperatorNode operatorNode){
         super(lineNumber, colNumber);
         this.left = left;
@@ -19,11 +20,13 @@ public class ExpressionNode extends AbstractNode {
         this.operatorNode = operatorNode;
     }
 
+    // value
     public ExpressionNode(int lineNumber, int colNumber, ValueNode valueNode){
         super(lineNumber, colNumber);
         this.valueNode = valueNode;
     }
 
+    // '-' expression
     public ExpressionNode(int lineNumber, int colNumber, String minusToken, ExpressionNode expressionNode){
         super(lineNumber, colNumber);
         this.expressionNode = expressionNode;
