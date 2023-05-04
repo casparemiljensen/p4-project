@@ -30,6 +30,7 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
 
     @Override
     public FormalParametersNode visitFormalParams(eelParser.FormalParamsContext ctx) {
+        if (ctx == null) return null;
         return new FormalParametersNode(ctx.start.getLine(), ctx.start.getCharPositionInLine());
     }
 
@@ -57,28 +58,81 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
 
     @Override
     public ExpressionNode visitExpression(eelParser.ExpressionContext ctx) {
-        if (ctx.left != null) return new ExpressionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), visitExpression(ctx.right), visitOperator(ctx.operator()));
-
-        return new ExpressionNode(0, 0, visitValueNode(ctx.value()));
+        if (ctx == null) return null;
+        // expr op expr
+        else if (ctx.left != null)
+            return new ExpressionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), visitExpression(ctx.right), visitOperator(ctx.operator()));
+        // '-' expr
+        else if (ctx.value().isEmpty())
+            return new ExpressionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "-", visitExpression(ctx.expression(0)));
+        // value
+        else
+            return new ExpressionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitValueNode(ctx.value()));
     }
 
     @Override
     public ValueNode visitValueNode (eelParser.ValueContext ctx) {
-        throw new RuntimeException();
+        // staticValue
+        if (ctx.userValue().isEmpty())
+            return new ValueNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitStaticValue(ctx.staticValue()));
+        // userValue
+        else
+            return new ValueNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitUserValue(ctx.userValue()));
+    }
+
+    @Override
+    public UserValueNode visitUserValue (eelParser.UserValueContext ctx) {
+        return new UserValueNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.ID(), visitActualParams(ctx.actualParams()));
+    }
+
+
+    @Override
+    public StaticValueNode visitStaticValue (eelParser.StaticValueContext ctx) {
+        // INUM or STRING
+        if (ctx.function().isEmpty())
+          return new StaticValueNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.INUM(), ctx.STRING());
+        // function
+        else
+            return new StaticValueNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitFunction(ctx.function()));
+    }
+
+    @Override
+    public FunctionNode visitFunction (eelParser.FunctionContext ctx) {
+        return new FunctionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.FUNCTIONS(), visitActualParams(ctx.actualParams()));
+    }
+
+    @Override
+    public ActualParamsNode visitActualParams (eelParser.ActualParamsContext ctx) {
+        if (ctx == null) return null;
+        List<ParseTree> input = ctx.children;
+        List<ValueNode> values = CreateList(input, ValueNode.class);
+        return new ActualParamsNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), values);
     }
 
     @Override
     public ControlStructNode visitControlStruct(eelParser.ControlStructContext ctx) {
-        return new ControlStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine());
+        if (ctx == null) return null;
+        // selectiveStruct
+        else if (ctx.iterativeStruct().isEmpty())
+            return new ControlStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitSelectiveStruct(ctx.selectiveStruct()));
+        // iterativeStruct
+        else
+            return new ControlStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitIterativeStruct(ctx.iterativeStruct()));
+    }
+
+    @Override
+    public SelectiveStructNode visitSelectiveStruct (eelParser.SelectiveStructContext ctx) {
+        return new SelectiveStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitIfStruct(ctx.ifStruct()));
     }
 
     @Override
     public ReturnNode visitReturn(eelParser.ReturnContext ctx) {
+        if (ctx == null) return null;
         return new ReturnNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "return", visitExpression(ctx.expression()));
     }
 
     @Override
-    public AbstractNode visitIfStruct(eelParser.IfStructContext ctx) {
+    public IfStructNode visitIfStruct(eelParser.IfStructContext ctx) {
         List<ParseTree> input2 = ctx.children;
         List<StatementNode> statements = CreateList(input2, StatementNode.class);
         List<ParseTree> input1 = ctx.children.stream().filter(e -> e instanceof eelParser.ElseIfStructContext).collect(Collectors.toList());
