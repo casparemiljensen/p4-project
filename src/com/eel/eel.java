@@ -22,9 +22,8 @@ class Eel {
         // The error was that we called visit(parser.prog()) but instead we should call tree....
         // Apparently is does not work even though we follow robocode's method...
 
-        ParseTree cst = parser.ifStruct();
-        var ast = (IfStructNode) new BuildASTVisitor().visit(cst);
-//      var value = new EvaluateIfStmtVisitor().Visit(ast);
+        ParseTree cst = parser.program();
+        var ast = (ProgramNode) new BuildASTVisitor().visit(cst);
         PrintASTVisitor printASTVisitor = new PrintASTVisitor();
         printASTVisitor.Visit(ast);
     }

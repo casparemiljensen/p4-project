@@ -1,5 +1,6 @@
 // Generated from /Users/jacob/IdeaProjects/p4-project/res/eel.g4 by ANTLR 4.12.0
 package com.eel.antlr;
+import com.eel.AST.nodes.ValueNode;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
 /**
@@ -11,7 +12,7 @@ import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
  * operations with no return type.
  */
 @SuppressWarnings("CheckReturnValue")
-public class eelBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements eelVisitor<T> {
+public abstract class eelBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements eelVisitor<T> {
 	/**
 	 * {@inheritDoc}
 	 *
@@ -89,7 +90,10 @@ public class eelBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements ee
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitBooleanOperator(eelParser.BooleanOperatorContext ctx) { return visitChildren(ctx); }
-	/**
+
+    public abstract ValueNode visitValueNode(eelParser.ValueContext ctx);
+
+    /**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
