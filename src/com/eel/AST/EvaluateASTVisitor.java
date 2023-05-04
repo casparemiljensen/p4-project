@@ -5,99 +5,85 @@ import com.eel.AST.nodes.*;
 public class EvaluateASTVisitor extends AstVisitor<AbstractNode> {
 
     @Override
-    public SelCtrlStrcNode Visit(ProgNode node) {
+    public SelectiveStructNode Visit(ProgramNode node) {
         System.out.print("Got here");
         return null;
     }
 
     @Override
-    public SelCtrlStrcNode Visit(ProcsNode node) {
+    public SelectiveStructNode Visit(ProcedureNode node) {
         return null;
     }
 
     @Override
-    public SelCtrlStrcNode Visit(ProcNode node) {
+    public SelectiveStructNode Visit(FormalParametersNode node) {
         return null;
     }
 
     @Override
-    public SelCtrlStrcNode Visit(FormalParamsNode node) {
+    public SelectiveStructNode Visit(DeclarationNode node) {
+        return null;
+}
+
+
+    @Override
+    public SelectiveStructNode Visit(StatementNode node) {
         return null;
     }
 
     @Override
-    public SelCtrlStrcNode Visit(LinesNode node) {
+    public SelectiveStructNode Visit(ExpressionNode node) {
         return null;
     }
 
     @Override
-    public SelCtrlStrcNode Visit(DclNode node) {
+    public SelectiveStructNode Visit(OperatorNode node) {
         return null;
     }
 
     @Override
-    public SelCtrlStrcNode Visit(AssignNode node) {
+    public SelectiveStructNode Visit(BinaryOperatorNode node) {
         return null;
     }
 
     @Override
-    public SelCtrlStrcNode Visit(StmtNode node) {
+    public SelectiveStructNode Visit(BooleanOperatorNode node) {
         return null;
     }
 
     @Override
-    public SelCtrlStrcNode Visit(ExprNode node) {
+    public SelectiveStructNode Visit(ControlStructNode node) {
         return null;
     }
 
     @Override
-    public SelCtrlStrcNode Visit(OpNode node) {
+    public SelectiveStructNode Visit(IterativeStructNode node) {
         return null;
     }
 
     @Override
-    public SelCtrlStrcNode Visit(BinOpNode node) {
-        return null;
-    }
-
-    @Override
-    public SelCtrlStrcNode Visit(BoolOpNode node) {
-        return null;
-    }
-
-    @Override
-    public SelCtrlStrcNode Visit(CtrlStrcNode node) {
-        return null;
-    }
-
-    @Override
-    public SelCtrlStrcNode Visit(IterCtrlStrcNode node) {
-        return null;
-    }
-
-    @Override
-    public AbstractNode Visit(SelCtrlStrcNode node) {
+    public AbstractNode Visit(SelectiveStructNode node) {
         System.out.print("Got here");
         return null;
     }
 
     @Override
-    public SelCtrlStrcNode Visit(ifStrcNode node) {
+    public SelectiveStructNode Visit(IfStructNode node) {
         return null;
     }
 
     @Override
-    public SelCtrlStrcNode Visit(ifCondNode node) {
+    public SelectiveStructNode Visit(IfConditionNode node) {
         return null;
     }
 
     @Override
-    public SelCtrlStrcNode Visit(elseIfStrcNode node) {
+    public SelectiveStructNode Visit(ElseIfStructNode node) {
         return null;
     }
 
     @Override
-    public SelCtrlStrcNode Visit(elseStrcNode node) {
+    public SelectiveStructNode Visit(ElseStructNode node) {
         return null;
     }
 }

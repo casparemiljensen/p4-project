@@ -24,54 +24,81 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
     }
 
     @Override
-    public AbstractNode visitProcs(eelParser.ProcsContext ctx) {
+    public AbstractNode visitProcedure(eelParser.ProcedureContext ctx) {
+        return new ProcedureNode(ctx.start.getLine(), ctx.start.getCharPositionInLine());
+    }
+
+    @Override
+    public AbstractNode visitStatement(eelParser.StatementContext ctx) {
+        return new StatementNode(
+                ctx.start.getLine(),
+                ctx.start.getCharPositionInLine(),
+                visitDeclaration(ctx.declaration()),
+                visitExpression(ctx.expression()),
+                visitControlStruct(ctx.controlStruct()),
+                visitReturn(ctx.return_())
+            );
+    }
+
+    @Override
+    public DeclarationNode visitDeclaration(eelParser.DeclarationContext ctx) {
+        return new DeclarationNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "let", ctx.ID(), visitAssignment(ctx.assignment()));
+    }
+
+    @Override
+    public AssignmentNode visitAssignment(eelParser.AssignmentContext ctx) {
+        return new AssignmentNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "assign", visitExpression(ctx.expression()));
+    }
+
+    @Override
+    public ExpressionNode visitExpression(eelParser.ExpressionContext ctx) {
+        return new ExpressionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine());
+    }
+
+
+    @Override
+    public ControlStructNode visitControlStruct(eelParser.ControlStructContext ctx) {
+        return new ControlStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine());
+    }
+
+    @Override
+    public ReturnNode visitReturn(eelParser.ReturnContext ctx) {
+        return new ReturnNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "return", visitExpression(ctx.expression()));
+    }
+
+
+
+    @Override
+    public AbstractNode visitIfStruct(eelParser.IfStructContext ctx) {
+        List<ParseTree> input1 = ctx.children.stream().filter(e -> e instanceof eelParser.ElseIfStructContext).collect(Collectors.toList());
+        List<ElseIfStructNode> ElseIfStructNodes = CreateList(input1, ElseIfStructNode.class);
+        List<ParseTree> input2 = ctx.children;
+        List<StatementNode> statements = CreateList(input2, StatementNode.class);
+        return new IfStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitIfCondition(ctx.ifCondition()), "then", statements, ElseIfStructNodes, visitElseStruct(ctx.elseStruct()));
+    }
+
+    @Override
+    public IfConditionNode visitIfCondition(eelParser.IfConditionContext ctx) {
+        return new IfConditionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "if", visitExpression(ctx.expression()));
+    }
+
+    @Override
+    public ElseIfStructNode visitElseIfStruct(eelParser.ElseIfStructContext ctx) {
         List<ParseTree> input = ctx.children;
-        List<ProcNode> procedures = CreateList(input, ProcNode.class);
-        return new ProcsNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), procedures);
+        List<StatementNode> statements = CreateList(input, StatementNode.class);
+        return new ElseIfStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitIfCondition(ctx.ifCondition()), statements);
+    }
+    @Override
+    public ElseStructNode visitElseStruct(eelParser.ElseStructContext ctx) {
+        List<ParseTree> input = ctx.children;
+        List<StatementNode> statements = CreateList(input, StatementNode.class);
+        return new ElseStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), statements);
     }
 
-    @Override
-    public AbstractNode visitProc(eelParser.ProcContext ctx) {
-        return new ProcNode(ctx.start.getLine(), ctx.start.getCharPositionInLine());
-    }
+
 
     @Override
-    public AbstractNode visitIfStrc(eelParser.IfStrcContext ctx) {
-        List<ParseTree> input = ctx.children.stream().filter(e -> e instanceof eelParser.ElseIfStrcContext).collect(Collectors.toList());
-        List<elseIfStrcNode> elseIfStrcNodes = CreateList(input, elseIfStrcNode.class);
-        return new ifStrcNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitIfCond(ctx.ifCond()), "then", visitLines(ctx.lines()), elseIfStrcNodes, visitElseStrc(ctx.elseStrc()));
-    }
-
-    @Override
-    public ifCondNode visitIfCond(eelParser.IfCondContext ctx) {
-        return new ifCondNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "if", visitExpr(ctx.expr()));
-    }
-
-    @Override
-    public elseIfStrcNode visitElseIfStrc(eelParser.ElseIfStrcContext ctx) {
-        return new elseIfStrcNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitIfCond(ctx.ifCond()), visitLines(ctx.lines()));
-    }
-    @Override
-    public elseStrcNode visitElseStrc(eelParser.ElseStrcContext ctx) {
-        return new elseStrcNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitLines(ctx.lines()));
-    }
-
-    @Override
-    public LinesNode visitLines(eelParser.LinesContext ctx) {
-        LinesNode linesNode = new LinesNode();
-        linesNode.setName("Lines, not implemented");
-        return linesNode;
-    }
-
-    @Override
-    public ExprNode visitExpr(eelParser.ExprContext ctx) {
-        ExprNode exprNode = new ExprNode();
-        exprNode.setName("Expr, not implemented");
-        return exprNode;
-    }
-
-    @Override
-    public IterCtrlStrcNode visitIterCtrlStrc(eelParser.IterCtrlStrcContext ctx) {
+    public IterativeStructNode visitIterativeStruct(eelParser.IterativeStructContext ctx) {
         throw null;
     }
 

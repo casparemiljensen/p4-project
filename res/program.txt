@@ -1,15 +1,14 @@
 procedure main()
-    if(2<3) then
-    print(2)
+let Caspar = sexy
 
-    else if(2<3)
-    print(2)
+if(2<3) then
 
-    else if(3<1)
-    print(2)
+else if(2<3) then
+let y = 3
 
-    else then
-    print(2)
-    endIf
+else then
+let y = 3
+
+endIf
 
 endProcedure
