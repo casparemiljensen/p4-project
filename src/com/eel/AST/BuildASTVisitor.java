@@ -24,7 +24,6 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
     @Override
     public ProcedureNode visitProcedure(eelParser.ProcedureContext ctx) {
         List<StatementNode> statementNodes = CreateList(ctx.children, StatementNode.class);
-
         return new ProcedureNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.ID(), statementNodes, visitFormalParams(ctx.formalParams()));
     }
 
@@ -36,13 +35,23 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
 
     @Override
     public AbstractNode visitStatement(eelParser.StatementContext ctx) {
+        AbstractNode node = null;
+        if(ctx.declaration() != null) {
+            node = visit(ctx.declaration());
+        }
+        else if(ctx.expression() != null) {
+            node = visit(ctx.expression());
+        }
+        else if(ctx.controlStruct() != null) {
+            node = visit(ctx.controlStruct());
+        }
+        else if(ctx.return_() != null) {
+            node = visit(ctx.declaration());
+        }
+
         return new StatementNode(
                 ctx.start.getLine(),
-                ctx.start.getCharPositionInLine(),
-                visitDeclaration(ctx.declaration()),
-                visitExpression(ctx.expression()),
-                visitControlStruct(ctx.controlStruct()),
-                visitReturn(ctx.return_())
+                ctx.start.getCharPositionInLine(), node
             );
     }
 
@@ -61,9 +70,9 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
         if (ctx == null) return null;
         // expr op expr
         else if (ctx.left != null)
-            return new ExpressionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), visitExpression(ctx.right), visitOperator(ctx.operator()));
+            return new ExpressionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), visitOperator(ctx.operator()), visitExpression(ctx.right));
         // '-' expr
-        else if (ctx.value().isEmpty())
+        else if (ctx.value() == null)
             return new ExpressionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "-", visitExpression(ctx.expression(0)));
         // value
         else
@@ -73,7 +82,7 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
     @Override
     public ValueNode visitValueNode (eelParser.ValueContext ctx) {
         // staticValue
-        if (ctx.userValue().isEmpty())
+        if (ctx.userValue() == null)
             return new ValueNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitStaticValue(ctx.staticValue()));
         // userValue
         else
@@ -89,7 +98,7 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
     @Override
     public StaticValueNode visitStaticValue (eelParser.StaticValueContext ctx) {
         // INUM or STRING
-        if (ctx.function().isEmpty())
+        if (ctx.function() == null)
           return new StaticValueNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.INUM(), ctx.STRING());
         // function
         else
@@ -104,16 +113,19 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
     @Override
     public ActualParamsNode visitActualParams (eelParser.ActualParamsContext ctx) {
         if (ctx == null) return null;
-        List<ParseTree> input = ctx.children;
-        List<ValueNode> values = CreateList(input, ValueNode.class);
-        return new ActualParamsNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), values);
+
+        List<ValueNode> valueNodes = new ArrayList<>();
+        for(eelParser.ValueContext child : ctx.value()) {
+            valueNodes.add(visitValueNode(child));
+        }
+        return new ActualParamsNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), valueNodes);
     }
 
     @Override
     public ControlStructNode visitControlStruct(eelParser.ControlStructContext ctx) {
         if (ctx == null) return null;
         // selectiveStruct
-        else if (ctx.iterativeStruct().isEmpty())
+        else if (ctx.iterativeStruct() == null)
             return new ControlStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitSelectiveStruct(ctx.selectiveStruct()));
         // iterativeStruct
         else
@@ -132,8 +144,22 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
     }
 
     @Override
+    public OperatorNode visitOperator(eelParser.OperatorContext ctx) {
+        if(ctx.binaryOperator() != null) {
+            visitBinaryOperator(ctx.binaryOperator());
+        }
+        else if(ctx.booleanOperator() !=null) {
+            visitBooleanOperator(ctx.booleanOperator());
+        }
+        else {
+            return null;
+        }
+        return new OperatorNode(0,0);
+    }
+
+    @Override
     public IfStructNode visitIfStruct(eelParser.IfStructContext ctx) {
-        List<ParseTree> input2 = ctx.children;
+        List<ParseTree> input2 = ctx.children.stream().filter(e -> e instanceof eelParser.StatementContext).collect(Collectors.toList());
         List<StatementNode> statements = CreateList(input2, StatementNode.class);
         List<ParseTree> input1 = ctx.children.stream().filter(e -> e instanceof eelParser.ElseIfStructContext).collect(Collectors.toList());
         List<ElseIfStructNode> ElseIfStructNodes = CreateList(input1, ElseIfStructNode.class);
@@ -145,17 +171,9 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
         return new IfConditionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "if", visitExpression(ctx.expression()));
     }
 
-
-    @Override
-    public OperatorNode visitOperator(eelParser.OperatorContext ctx) {
-        return new OperatorNode(0,0);
-    }
-
-
-
     @Override
     public ElseIfStructNode visitElseIfStruct(eelParser.ElseIfStructContext ctx) {
-        List<ParseTree> input = ctx.children;
+        List<eelParser.StatementContext> input = ctx.statement();
         List<StatementNode> statements = CreateList(input, StatementNode.class);
         return new ElseIfStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitIfCondition(ctx.ifCondition()), statements);
     }

@@ -3,7 +3,6 @@ package com.eel.AST.nodes;
 import java.util.List;
 
 public class ElseIfStructNode extends AbstractNode {
-    public String elseToken;
     public IfConditionNode ifConditionNode;
     public List<StatementNode> statementNodes;
 

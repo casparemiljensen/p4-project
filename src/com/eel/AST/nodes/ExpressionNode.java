@@ -6,18 +6,19 @@ import java.util.List;
 
 public class ExpressionNode extends AbstractNode {
     public ExpressionNode left;
-    public ExpressionNode right;
     public OperatorNode operatorNode;
+    public ExpressionNode right;
+
     public ValueNode valueNode;
     public ExpressionNode expressionNode;
     public String minusToken;
 
     // expr op expr
-    public ExpressionNode(int lineNumber, int colNumber, ExpressionNode left, ExpressionNode right, OperatorNode operatorNode){
+    public ExpressionNode(int lineNumber, int colNumber, ExpressionNode left, OperatorNode operatorNode, ExpressionNode right){
         super(lineNumber, colNumber);
         this.left = left;
-        this.right = right;
         this.operatorNode = operatorNode;
+        this.right = right;
     }
 
     // value
