@@ -6,112 +6,102 @@ public class PrintASTVisitor extends AstVisitor<AbstractNode> {
 
 
     @Override
-    public AbstractNode Visit(ProgNode node) {
+    public AbstractNode Visit(ProgramNode node) {
         System.out.print("[");
-        System.out.print("Prog");
+        System.out.print("Program");
         printPosition(node);
-        Visit(node.getProcs());
+        node.procedureNodes.forEach(e -> Visit(e));
+        System.out.print("]");
+        return null;
+    }
+
+//    @Override
+//    public AbstractNode Visit(ProcsNode node) {
+//        System.out.print("[");
+//        System.out.print("Procs");
+//        printPosition(node);
+//        for (int i = 0; i < node.getProcList().size(); ++i) {
+//            Visit(node.getProcList().get(i));
+//        }
+//        System.out.print("]");
+//        return null;
+//    }
+
+    @Override
+    public AbstractNode Visit(ProcedureNode node) {
+        System.out.print("[");
+        System.out.print("Procedure");
+        printPosition(node);
         System.out.print("]");
         return null;
     }
 
     @Override
-    public AbstractNode Visit(ProcsNode node) {
-        System.out.print("[");
-        System.out.print("Procs");
-        printPosition(node);
-        for (int i = 0; i < node.getProcList().size(); ++i) {
-            Visit(node.getProcList().get(i));
-        }
-        System.out.print("]");
+    public AbstractNode Visit(FormalParametersNode node) {
         return null;
     }
 
     @Override
-    public AbstractNode Visit(ProcNode node) {
-        System.out.print("[");
-        System.out.print("Proc");
-        printPosition(node);
-        System.out.print("]");
+    public AbstractNode Visit(DeclarationNode node) {
         return null;
     }
 
     @Override
-    public AbstractNode Visit(FormalParamsNode node) {
+    public AbstractNode Visit(StatementNode node) {
         return null;
     }
 
     @Override
-    public AbstractNode Visit(LinesNode node) {
+    public AbstractNode Visit(ExpressionNode node) {
         return null;
     }
 
     @Override
-    public AbstractNode Visit(DclNode node) {
+    public AbstractNode Visit(OperatorNode node) {
         return null;
     }
 
     @Override
-    public AbstractNode Visit(AssignNode node) {
+    public AbstractNode Visit(BinaryOperatorNode node) {
         return null;
     }
 
     @Override
-    public AbstractNode Visit(StmtNode node) {
+    public AbstractNode Visit(BooleanOperatorNode node) {
         return null;
     }
 
     @Override
-    public AbstractNode Visit(ExprNode node) {
+    public AbstractNode Visit(ControlStructNode node) {
         return null;
     }
 
     @Override
-    public AbstractNode Visit(OpNode node) {
+    public AbstractNode Visit(IterativeStructNode node) {
         return null;
     }
 
     @Override
-    public AbstractNode Visit(BinOpNode node) {
+    public AbstractNode Visit(SelectiveStructNode node) {
         return null;
     }
 
     @Override
-    public AbstractNode Visit(BoolOpNode node) {
-        return null;
-    }
-
-    @Override
-    public AbstractNode Visit(CtrlStrcNode node) {
-        return null;
-    }
-
-    @Override
-    public AbstractNode Visit(IterCtrlStrcNode node) {
-        return null;
-    }
-
-    @Override
-    public AbstractNode Visit(SelCtrlStrcNode node) {
-        return null;
-    }
-
-    @Override
-    public AbstractNode Visit(ifStrcNode node) {
+    public AbstractNode Visit(IfStructNode node) {
         System.out.print("[");
         System.out.print("IfStrc");
         printPosition(node);
-        Visit(node.ifCondNode);
-        Visit(node.lines);
-        node.elseIfStrcNodes.forEach(e -> Visit(e));
-        Visit(node.elseStrcNode);
+        Visit(node.IfConditionNode);
+        node.statementNodes.forEach(e -> Visit(e));
+        node.ElseIfStructNodes.forEach(e -> Visit(e));
+        Visit(node.ElseStructNode);
         System.out.print("]");
 
         return null;
     }
 
     @Override
-    public AbstractNode Visit(ifCondNode node) {
+    public AbstractNode Visit(IfConditionNode node) {
         System.out.print("[");
         System.out.print("IfCond");
         printPosition(node);
@@ -121,7 +111,7 @@ public class PrintASTVisitor extends AstVisitor<AbstractNode> {
     }
 
     @Override
-    public AbstractNode Visit(elseIfStrcNode node) {
+    public AbstractNode Visit(ElseIfStructNode node) {
         System.out.print("[");
         System.out.print("ElseIfStrc");
         printPosition(node);
@@ -130,7 +120,7 @@ public class PrintASTVisitor extends AstVisitor<AbstractNode> {
     }
 
     @Override
-    public AbstractNode Visit(elseStrcNode node) {
+    public AbstractNode Visit(ElseStructNode node) {
         System.out.print("[");
         System.out.print("ElseStrc");
         printPosition(node);
@@ -139,6 +129,7 @@ public class PrintASTVisitor extends AstVisitor<AbstractNode> {
     }
 
     private void printPosition(AbstractNode node) {
+        if (node == null) return;
         System.out.print("(line:" + node.getLineNumber() + ",col:" + node.getColumnNumber() + ")");
     }
 }
