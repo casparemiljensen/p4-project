@@ -1,8 +1,12 @@
 package com.eel.AST.nodes;
 
-public class BinaryOperatorNode extends AbstractNode {
+import org.antlr.v4.runtime.tree.TerminalNode;
 
-    public BinaryOperatorNode(int lineNumber, int colNumber) {
+public class BinaryOperatorNode extends AbstractNode {
+    public TerminalNode binaryOperator;
+
+    public BinaryOperatorNode(int lineNumber, int colNumber, TerminalNode binaryOperator) {
         super(lineNumber, colNumber);
+        this.binaryOperator = binaryOperator;
     }
 }

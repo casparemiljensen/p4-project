@@ -11,7 +11,7 @@ public class ProcedureNode extends AbstractNode {
     public FormalParametersNode FormalParametersNode;
 
 
-    public ProcedureNode(int lineNumber, int colNumber, TerminalNode IdToken, List<StatementNode> StatementNodes, @Nullable FormalParametersNode FormalParametersNode) {
+    public ProcedureNode(int lineNumber, int colNumber, TerminalNode IdToken, @Nullable FormalParametersNode FormalParametersNode, List<StatementNode> StatementNodes) {
         super(lineNumber, colNumber);
         this.StatementNodes = StatementNodes;
         this.IdToken = IdToken;
