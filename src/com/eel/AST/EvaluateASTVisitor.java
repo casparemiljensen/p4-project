@@ -86,4 +86,9 @@ public class EvaluateASTVisitor extends AstVisitor<AbstractNode> {
     public SelectiveStructNode Visit(ElseStructNode node) {
         return null;
     }
+
+    @Override
+    public AbstractNode Visit(MethodNode node) {
+        return null;
+    }
 }

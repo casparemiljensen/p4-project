@@ -19,6 +19,7 @@ public abstract class AstVisitor <T> {
         public abstract T Visit(IfConditionNode node);
         public abstract T Visit(ElseIfStructNode node);
         public abstract T Visit(ElseStructNode node);
+        public abstract T Visit(MethodNode node);
 
     public T Visit(T node)
         {
@@ -72,6 +73,9 @@ public abstract class AstVisitor <T> {
             }
             else if(node instanceof eelParser.ElseStructContext) {
                 return Visit((ElseStructNode) node);
+            }
+            else if(node instanceof  eelParser.MethodContext) {
+                return Visit((MethodNode) node);
             }
             else {
                 return null;
