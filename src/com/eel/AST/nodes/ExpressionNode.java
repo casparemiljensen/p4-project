@@ -34,4 +34,8 @@ public class ExpressionNode extends AbstractNode {
         this.minusToken = minusToken;
     }
 
+    public ExpressionNode(int lineNumber, int colNumber) {
+        super(lineNumber, colNumber);
+    }
+
 }

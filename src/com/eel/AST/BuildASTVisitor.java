@@ -4,6 +4,7 @@ import com.eel.AST.nodes.*;
 import com.eel.antlr.eelBaseVisitor;
 import com.eel.antlr.eelParser;
 import com.eel.antlr.eelVisitor;
+import kotlin.NotImplementedError;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.ArrayList;
@@ -67,16 +68,57 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
 
     @Override
     public ExpressionNode visitExpression(eelParser.ExpressionContext ctx) {
+        ExpressionNode node = null;
         if (ctx == null) return null;
-        // expr op expr
-        else if (ctx.left != null)
-            return new ExpressionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), visitOperator(ctx.operator()), visitExpression(ctx.right));
-        // '-' expr
+            // expr op expr
+        else if (ctx.left != null) {
+            if (ctx.operator().binaryOperator() != null) {
+                System.out.println(ctx.operator().binaryOperator().BINARYOP().getText());
+
+                switch (ctx.operator().binaryOperator().BINARYOP().getText()) {
+                    case "+":
+                    case "-": {
+                        node = new AddSubNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), visitExpression(ctx.right));
+                        break;
+                    }
+                    case "*":
+
+                        break;
+                    case "/":
+                        // Add multiplication and division
+                        break;
+                    default:
+                        throw new NotImplementedError();
+
+                }
+            } else if (ctx.operator().booleanOperator() != null) {
+                switch (ctx.operator().booleanOperator().BOOLEANOP().getText()) {
+                    case "<=":
+                        node = new LessThanOrEqualNode(ctx.start.getLine(), ctx.start.getCharPositionInLine());
+                        break;
+                    case ">=":
+
+                        break;
+                    case "==":
+
+                        break;
+                    case "!=":
+                        break;
+                    default:
+                        throw new NotImplementedError();
+                }
+
+                return node;
+//            return new ExpressionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), visitOperator(ctx.operator()), visitExpression(ctx.right));
+                // '-' expr
+            }
+        }
         else if (ctx.value() == null)
             return new ExpressionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "-", visitExpression(ctx.expression(0)));
-        // value
+            // value
         else
             return new ExpressionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitValueNode(ctx.value()));
+        return node;
     }
 
     @Override
