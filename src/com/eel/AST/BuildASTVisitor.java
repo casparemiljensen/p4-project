@@ -115,7 +115,7 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
             return new ExpressionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "-", visitExpression(ctx.expression(0)));
             // value
         else
-            return new ExpressionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitValueNode(ctx.value()));
+            return new ExpressionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitValue(ctx.value()));
         return node;
     }
 
