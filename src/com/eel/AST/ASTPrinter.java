@@ -35,7 +35,9 @@ public class ASTPrinter {
                             print((AbstractNode) element);
                             System.out.print("]");
                         } else {
+                            System.out.print("[");
                             System.out.print(element);
+                            System.out.print("]");
                         }
                     }
                 }
