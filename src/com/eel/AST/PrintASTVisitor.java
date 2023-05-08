@@ -128,6 +128,11 @@ public class PrintASTVisitor extends AstVisitor<AbstractNode> {
         return null;
     }
 
+    @Override
+    public AbstractNode Visit(MethodNode node) {
+        return null;
+    }
+
     private void printPosition(AbstractNode node) {
         if (node == null) return;
         System.out.print("(line:" + node.getLineNumber() + ",col:" + node.getColumnNumber() + ")");

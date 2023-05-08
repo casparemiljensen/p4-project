@@ -1,6 +1,8 @@
 package com.eel.AST.nodes;
 
+import kotlin.NotImplementedError;
 import org.jetbrains.annotations.Nullable;
+
 
 public class StatementNode extends AbstractNode {
     @Nullable
@@ -12,11 +14,22 @@ public class StatementNode extends AbstractNode {
     @Nullable
     public ReturnNode returnNode;
 
-    public StatementNode(int lineNumber, int colNumber, @Nullable DeclarationNode declarationNode, @Nullable ExpressionNode expressionNode, @Nullable ControlStructNode controlStructNode, @Nullable ReturnNode returnNode) {
+    public StatementNode(int lineNumber, int colNumber, AbstractNode node) {
         super(lineNumber, colNumber);
-        this.declarationNode = declarationNode;
-        this.expressionNode = expressionNode;
-        this.controlStructNode = controlStructNode;
-        this.returnNode = returnNode;
+        if(node instanceof DeclarationNode) {
+            this.declarationNode = (DeclarationNode) node;
+        }
+         else if(node instanceof  ExpressionNode) {
+            this.expressionNode = (ExpressionNode) node;
+        }
+         else if(node instanceof  ControlStructNode) {
+            this.controlStructNode = (ControlStructNode) node;
+        }
+         else if(node instanceof ReturnNode) {
+            this.returnNode = (ReturnNode) node;
+         }
+         else {
+            throw new NotImplementedError();
+         }
     }
 }

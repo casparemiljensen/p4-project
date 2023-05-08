@@ -35,6 +35,16 @@
           <option name="generateListener" value="false" />
           <option name="generateVisitor" value="true" />
         </PerGrammarGenerationSettings>
+        <PerGrammarGenerationSettings>
+          <option name="fileName" value="$PROJECT_DIR$/out/production/eel/eel.g4" />
+          <option name="autoGen" value="true" />
+          <option name="outputDir" value="C:\Users\runeb\Desktop\hubben\p4-project\src" />
+          <option name="libDir" value="" />
+          <option name="encoding" value="" />
+          <option name="pkg" value="com.eel.antlr" />
+          <option name="language" value="" />
+          <option name="generateVisitor" value="true" />
+        </PerGrammarGenerationSettings>
       </list>
     </option>
   </component>

@@ -1,5 +1,6 @@
 package com.eel;
 
+import com.eel.AST.ASTPrinter;
 import com.eel.AST.BuildASTVisitor;
 import com.eel.AST.PrintASTVisitor;
 import com.eel.AST.nodes.ProgramNode;
@@ -19,13 +20,10 @@ class Eel {
         var tokens = new CommonTokenStream(lexer);
         eelParser parser = new eelParser(tokens);
 
-        // The error was that we called visit(parser.prog()) but instead we should call tree....
-        // Apparently is does not work even though we follow robocode's method...
-
         ParseTree cst = parser.program();
         var ast = (ProgramNode) new BuildASTVisitor().visit(cst);
-        PrintASTVisitor printASTVisitor = new PrintASTVisitor();
-        printASTVisitor.Visit(ast);
+        ASTPrinter astPrinter = new ASTPrinter();
+        astPrinter.print(ast);
     }
 
     public static String readFileAsString(String fileName) throws Exception
