@@ -70,37 +70,48 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
         if (ctx == null) return null;
             // expr op expr
         else if (ctx.left != null) {
+
+            // Infix
             if (ctx.operator().binaryOperator() != null) {
                 System.out.println(ctx.operator().binaryOperator().BINARYOP().getText());
 
                 switch (ctx.operator().binaryOperator().BINARYOP().getText()) {
                     case "+":
                     case "-": {
-                        node = new AddSubNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), visitExpression(ctx.right));
+                        node = new AddSubNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().binaryOperator().BINARYOP(),visitExpression(ctx.right));
                         break;
                     }
                     case "*":
-
+                    case "/": {
+                        node = new MultDivNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().binaryOperator().BINARYOP() ,visitExpression(ctx.right));
                         break;
-                    case "/":
-                        // Add multiplication and division
-                        break;
+                    }
                     default:
                         throw new NotImplementedError();
-
                 }
+
+
             } else if (ctx.operator().booleanOperator() != null) {
+
+                // Unary
                 switch (ctx.operator().booleanOperator().BOOLEANOP().getText()) {
+                    case "<":
+                        node = new LessThanNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().booleanOperator().BOOLEANOP(), visitExpression(ctx.right));
+                        break;
+                    case ">":
+                        node = new GreaterThanNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().booleanOperator().BOOLEANOP(), visitExpression(ctx.right));
+                        break;
                     case "<=":
-                        node = new LessThanOrEqualNode(ctx.start.getLine(), ctx.start.getCharPositionInLine());
+                        node = new LessThanOrEqualNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().booleanOperator().BOOLEANOP(), visitExpression(ctx.right));
                         break;
                     case ">=":
-
+                        node = new GreaterThanOrEqualNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().booleanOperator().BOOLEANOP(), visitExpression(ctx.right));
                         break;
                     case "==":
-
+                        node = new EqualsNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().booleanOperator().BOOLEANOP(), visitExpression(ctx.right));
                         break;
                     case "!=":
+                        node = new NotEqualNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().booleanOperator().BOOLEANOP(), visitExpression(ctx.right));
                         break;
                     default:
                         throw new NotImplementedError();
