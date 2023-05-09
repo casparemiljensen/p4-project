@@ -15,7 +15,7 @@ return: 'return' expression?;
 
 expression: left=expression operator right=expression
             | value
-            | '-' expression;
+            | MINUS;
 
 operator: binaryOperator
           | booleanOperator
@@ -43,6 +43,7 @@ FUNCTIONS: 'SUM' | 'AVERAGE' | 'print';
 METHODS: '.'('format' | 'count');
 BOOLEANOP: [<>]'='?|'=='|'!=';
 BINARYOP: '+'| '-' |'*'| '/';
+MINUS: '-'+[0-9]+;
 INUM: [0-9]+;
 STRING: '"' ~[\r\n"]* '"';
 WS: [ \t\r\n]+ -> skip;
