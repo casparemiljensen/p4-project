@@ -27,9 +27,7 @@ public class Compiler extends AstVisitor<String> {
             System.out.println("function " + node.idToken + "(workbook: ExcelScript.Workbook)\n{");
 
 		for (StatementNode statementNode : node.statementNodes) {
-			if (node != null) {
-				Visit(statementNode, instructionCode);
-			}
+			Visit(statementNode, instructionCode);
 		}
 
         if(instructionCode == 1)
@@ -55,65 +53,57 @@ public class Compiler extends AstVisitor<String> {
 		if (node == null)
 			return null;
 
-        if(node.declarationNode != null) {
-            if (node.declarationNode.assignmentNode.expressionNode.valueNode != null) {
-                if (node.declarationNode.assignmentNode.expressionNode.valueNode.staticValueNode != null) {
-                    if (node.declarationNode.assignmentNode.expressionNode.valueNode.staticValueNode.INUM != null) {
-                        System.out.println("    let " + node.declarationNode.IdToken + " = " + node.declarationNode.assignmentNode.expressionNode.valueNode.staticValueNode.INUM);
-                    }
-                    if (node.declarationNode.assignmentNode.expressionNode.valueNode.staticValueNode.STRING != null) {
-                        System.out.println("    let " + node.declarationNode.IdToken + " = " + node.declarationNode.assignmentNode.expressionNode.valueNode.staticValueNode.STRING);
-                    }
-                }
-            }
-        }
+        if(node.declarationNode != null && node.declarationNode.assignmentNode != null && node.declarationNode.assignmentNode.expressionNode.valueNode != null && node.declarationNode.assignmentNode.expressionNode.valueNode.staticValueNode != null) {
+			if (node.declarationNode.assignmentNode.expressionNode.valueNode.staticValueNode.INUM != null) {
+				System.out.println("    let " + node.declarationNode.IdToken + " = " + node.declarationNode.assignmentNode.expressionNode.valueNode.staticValueNode.INUM);
+			}
+			if (node.declarationNode.assignmentNode.expressionNode.valueNode.staticValueNode.STRING != null) {
+				System.out.println("    let " + node.declarationNode.IdToken + " = " + node.declarationNode.assignmentNode.expressionNode.valueNode.staticValueNode.STRING);
+			}
+		}
 
-        if(node.controlStructNode != null) {
-            if(node.controlStructNode.selectiveStructNode.ifStructNode != null) {
-                var left = node.controlStructNode.selectiveStructNode.ifStructNode.ifConditionNode.expressionNode.left.valueNode.staticValueNode.INUM;
-                var operator = "+";
-                var right = node.controlStructNode.selectiveStructNode.ifStructNode.ifConditionNode.expressionNode.right.valueNode.staticValueNode.INUM;
+        if(node.controlStructNode != null && node.controlStructNode.selectiveStructNode.ifStructNode != null) {
+			var left = node.controlStructNode.selectiveStructNode.ifStructNode.ifConditionNode.expressionNode.left.valueNode.staticValueNode.INUM;
+			var operator = "+";
+			var right = node.controlStructNode.selectiveStructNode.ifStructNode.ifConditionNode.expressionNode.right.valueNode.staticValueNode.INUM;
 
-                System.out.println("    if(" + left + operator + right + ") {");
+			System.out.println("    if(" + left + operator + right + ") {");
 
-                for (StatementNode statementNode : node.controlStructNode.selectiveStructNode.ifStructNode.statementNodes) {
-                    Visit(statementNode, instructionCode);
-                }
+			for (StatementNode statementNode : node.controlStructNode.selectiveStructNode.ifStructNode.statementNodes) {
+				Visit(statementNode, instructionCode);
+			}
 
-                for (ElseIfStructNode elseIfStructNode : node.controlStructNode.selectiveStructNode.ifStructNode.elseIfStructNodes) {
-                    if (elseIfStructNode != null) {
-                        var elseLeft = elseIfStructNode.ifConditionNode.expressionNode.left.valueNode.staticValueNode.INUM;
-                        var elseOperator = "+"; //elseIfStructNode.ifConditionNode.expressionNode.operatorNode.toString();
-                        var elseRight = elseIfStructNode.ifConditionNode.expressionNode.right.valueNode.staticValueNode.INUM;
-                        System.out.println("    } elseif(" + elseLeft + elseOperator + elseRight + ") { ");
+			for (ElseIfStructNode elseIfStructNode : node.controlStructNode.selectiveStructNode.ifStructNode.elseIfStructNodes) {
+				if (elseIfStructNode != null) {
+					var elseLeft = elseIfStructNode.ifConditionNode.expressionNode.left.valueNode.staticValueNode.INUM;
+					var elseOperator = "+"; //elseIfStructNode.ifConditionNode.expressionNode.operatorNode.toString();
+					var elseRight = elseIfStructNode.ifConditionNode.expressionNode.right.valueNode.staticValueNode.INUM;
+					System.out.println("    } elseif(" + elseLeft + elseOperator + elseRight + ") { ");
 
-						for (StatementNode statementNode : elseIfStructNode.statementNodes) {
-							Visit(statementNode, instructionCode);
-						}
-                    }
-                }
-
-				if(node.controlStructNode.selectiveStructNode.ifStructNode.elseStructNode != null) {
-					System.out.println("	} else {");
-					for (StatementNode statementNode : node.controlStructNode.selectiveStructNode.ifStructNode.elseStructNode.statementNode) {
+					for (StatementNode statementNode : elseIfStructNode.statementNodes) {
 						Visit(statementNode, instructionCode);
 					}
 				}
+			}
 
-                System.out.println("    }");
-            }
-        }
+			if(node.controlStructNode.selectiveStructNode.ifStructNode.elseStructNode != null) {
+				System.out.println("	} else {");
+				for (StatementNode statementNode : node.controlStructNode.selectiveStructNode.ifStructNode.elseStructNode.statementNode) {
+					Visit(statementNode, instructionCode);
+				}
+			}
 
-        if(node.expressionNode != null) {
-            if(node.expressionNode.valueNode.staticValueNode.functionNode.FUNCTION != null) {
-                if(Objects.equals(node.expressionNode.valueNode.staticValueNode.functionNode.FUNCTION.toString(), "print")) {
-					// INUM
-					System.out.println("	console.log(\"" + node.expressionNode.valueNode.staticValueNode.functionNode.actualParamsNode.valuesNodes + "\")");
-					// STRING
-					System.out.println("	console.log(\"" + node.expressionNode.valueNode.staticValueNode.functionNode.actualParamsNode.valuesNodes + "\")");
-                }
-            }
-        }
+			System.out.println("    }");
+		}
+
+        if(node.expressionNode != null && node.expressionNode.valueNode.staticValueNode.functionNode.FUNCTION != null) {
+			if(Objects.equals(node.expressionNode.valueNode.staticValueNode.functionNode.FUNCTION.toString(), "print")) {
+				// INUM
+				System.out.println("	console.log(\"" + node.expressionNode.valueNode.staticValueNode.functionNode.actualParamsNode.valuesNodes + "\")");
+				// STRING
+				System.out.println("	console.log(\"" + node.expressionNode.valueNode.staticValueNode.functionNode.actualParamsNode.valuesNodes + "\")");
+			}
+		}
 
 		return null;
 	}
