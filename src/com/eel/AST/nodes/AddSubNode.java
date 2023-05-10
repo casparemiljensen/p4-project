@@ -2,7 +2,7 @@ package com.eel.AST.nodes;
 
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-public class AddSubNode extends ExpressionNode {
+public class AddSubNode extends AbstractNode {
     public ExpressionNode leftChild;
     public TerminalNode operatorNode;
     public ExpressionNode rightChild;

@@ -1,6 +1,8 @@
 package com.eel.AST.nodes;
 
+import kotlin.Function;
 import kotlin.NotImplementedError;
+import org.antlr.v4.runtime.tree.TerminalNode;
 import org.jetbrains.annotations.Nullable;
 
 
@@ -15,8 +17,10 @@ public class StatementNode extends AbstractNode {
     public FunctionNode functionNode;
     @Nullable
     public ReturnNode returnNode;
+    @Nullable
+    public TerminalNode terminal;
 
-    public StatementNode(int lineNumber, int colNumber, AbstractNode node) {
+    public StatementNode(int lineNumber, int colNumber, @Nullable AbstractNode node, @Nullable TerminalNode terminal) {
         super(lineNumber, colNumber);
         if (terminal instanceof TerminalNode) {
             this.terminal = terminal;

@@ -1,41 +1,22 @@
 package com.eel.AST.nodes;
 
-import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import kotlin.NotImplementedError;
 
 public class ExpressionNode extends AbstractNode {
-    public ExpressionNode left;
-    public OperatorNode operatorNode;
-    public ExpressionNode right;
+    public ParenExprNode parenExprNode;
+    public UnaryExprNode unaryExprNode;
+    public InfixExprNode infixExprNode;
+    public ValueExprNode valueExprNode;
 
-    public ValueNode valueNode;
-    public ExpressionNode expressionNode;
-    public String minusToken;
-
-    // expr op expr
-    public ExpressionNode(int lineNumber, int colNumber, ExpressionNode left, OperatorNode operatorNode, ExpressionNode right){
+    public ExpressionNode(int lineNumber, int colNumber, AbstractNode node){
         super(lineNumber, colNumber);
-        this.left = left;
-        this.operatorNode = operatorNode;
-        this.right = right;
+        if (node instanceof ParenExprNode) this.parenExprNode = (ParenExprNode) node;
+        else if (node instanceof UnaryExprNode) this.unaryExprNode = (UnaryExprNode) node;
+        else if (node instanceof InfixExprNode) this.infixExprNode = (InfixExprNode) node;
+        else if (node instanceof ValueExprNode) this.valueExprNode = (ValueExprNode) node;
+        else throw new NotImplementedError();
     }
 
-    // value
-    public ExpressionNode(int lineNumber, int colNumber, ValueNode valueNode){
-        super(lineNumber, colNumber);
-        this.valueNode = valueNode;
-    }
-
-    // '-' expression
-    public ExpressionNode(int lineNumber, int colNumber, String minusToken, ExpressionNode expressionNode){
-        super(lineNumber, colNumber);
-        this.expressionNode = expressionNode;
-        this.minusToken = minusToken;
-    }
-
-    public ExpressionNode(int lineNumber, int colNumber) {
-        super(lineNumber, colNumber);
-    }
 
 }

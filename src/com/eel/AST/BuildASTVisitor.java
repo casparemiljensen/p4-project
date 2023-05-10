@@ -25,7 +25,7 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
     @Override
     public ProcedureNode visitProcedure(eelParser.ProcedureContext ctx) {
         List<StatementNode> statementNodes = CreateList(ctx.statement(), StatementNode.class);
-        return new ProcedureNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.ID(), ((ctx.formalParams() != null) ? visitFormalParams(ctx.formalParams()) : null), statementNodes);
+        return new ProcedureNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.IDCALL(), statementNodes);
     }
 
     @Override
@@ -36,6 +36,7 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
     @Override
     public AbstractNode visitStatement(eelParser.StatementContext ctx) {
         AbstractNode node = null;
+        TerminalNode terminal = null;
         if (ctx.declaration() != null) {
             node = visit(ctx.declaration());
         } else if (ctx.controlStruct() != null) {
@@ -213,7 +214,7 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
 
     @Override
     public UserValueNode visitUserValue(eelParser.UserValueContext ctx) {
-        return new UserValueNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.ID(), (ctx.actualParams() != null) ? visitActualParams(ctx.actualParams()) : null);
+        return new UserValueNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), (ctx.ID() != null) ?  ctx.ID() : ctx.IDCALL());
     }
 
 
@@ -287,7 +288,7 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
 
     @Override
     public BinaryOperatorNode visitBinaryOperator(eelParser.BinaryOperatorContext ctx) {
-        return new BinaryOperatorNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.BINARYOP());
+        return new BinaryOperatorNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), (ctx.PLUSORMINUS() != null) ? ctx.PLUSORMINUS() : ctx.MULTORDIV());
     }
 
 

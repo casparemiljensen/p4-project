@@ -7,15 +7,11 @@ import java.util.List;
 public class ProcedureNode extends AbstractNode {
     public List<StatementNode> StatementNodes;
     public TerminalNode IdToken;
-    @Nullable
-    public FormalParametersNode FormalParametersNode;
 
 
-    public ProcedureNode(int lineNumber, int colNumber, TerminalNode IdToken, @Nullable FormalParametersNode FormalParametersNode, List<StatementNode> StatementNodes) {
+    public ProcedureNode(int lineNumber, int colNumber, TerminalNode IdToken,  List<StatementNode> StatementNodes) {
         super(lineNumber, colNumber);
         this.StatementNodes = StatementNodes;
         this.IdToken = IdToken;
-        this.FormalParametersNode = FormalParametersNode;
-
     }
 }
