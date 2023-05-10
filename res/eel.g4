@@ -3,32 +3,34 @@ grammar eel;
 program: procedure+ EOF;
 procedure: 'procedure' ID '(' formalParams? ')' statement* 'endProcedure';
 formalParams: ID (',' ID)*;
-statement  : declaration
-           | controlStruct
-           | IDCALL
-           | ID assignment
-           | function
-           | return
-           ;
+statement           : declaration
+                    | controlStruct
+                    | IDCALL
+                    | ID assignment
+                    | function
+                    | return
+                    ;
 
 declaration: 'let' ID assignment?;
 assignment: '=' expression;
 
 return: 'return' expression?;
 
-expression  : '(' expression ')'                            #parenExpr
-            | PLUSORMINUS expression                        #unaryExpr
-            | left=expression operator right=expression     #infixExpr
-            | value                                         #valueExpr
-            ;
+expression          : '(' expression ')'                            #parenExpr
+                    | PLUSORMINUS expression                        #unaryExpr
+                    | left=expression operator right=expression     #infixExpr
+                    | value                                         #valueExpr
+                    ;
 
-operator: binaryOperator
-          | booleanOperator
-          | '=';
+operator            : binaryOperator
+                    | booleanOperator
+                    | '='
+                    ;
 binaryOperator: PLUSORMINUS | MULTORDIV;
 booleanOperator: BOOLEANOP;
-controlStruct: iterativeStruct
-               | selectiveStruct;
+controlStruct       : iterativeStruct
+                    | selectiveStruct
+                    ;
 selectiveStruct: ifStruct;
 ifStruct: ifCondition 'then' statement* elseIfStruct* elseStruct? 'endIf';
 ifCondition: 'if' '(' expression ')';
@@ -36,11 +38,14 @@ elseIfStruct: 'else' ifCondition 'then' statement*;
 elseStruct: 'else' 'then' statement*;
 iterativeStruct: repeatStruct;
 repeatStruct: 'repeat' 'while' '(' expression ')' statement* 'endRepeat';
-value: staticValue
-       | userValue;
-staticValue: (INUM | STRING | function ) method*;
+value              : staticValue
+                   | userValue
+                   ;
+staticValue: (INUM | STRING | function) method*;
 function: FUNCTIONS '(' actualParams ')';
-userValue: IDCALL;
+userValue          : ID
+                   | IDCALL
+                   ;
 actualParams: value (','value)*;
 method: METHODS ('(' actualParams? ')')?;
 
@@ -48,7 +53,7 @@ method: METHODS ('(' actualParams? ')')?;
 
 FUNCTIONS: 'SUM' | 'AVERAGE' | 'print';
 METHODS: '.'('format' | 'count');
-BOOLEANOP: [<>]'='?|'=='|'!=';
+BOOLEANOP: [<>]'='?|'=='|'!='|'<'|'>';
 PLUSORMINUS: '+'|'-';
 MULTORDIV: '*'|'/';
 INUM: [0-9]+;
