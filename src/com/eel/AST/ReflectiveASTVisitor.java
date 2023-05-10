@@ -5,7 +5,8 @@ import com.eel.AST.nodes.AbstractNode;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-abstract public class ReflectiveVisitor {
+public abstract class ReflectiveASTVisitor<T> {
+
 
     public static boolean debug = false;
     private static Class objectClass = (new Object()).getClass();
@@ -20,20 +21,18 @@ abstract public class ReflectiveVisitor {
     /** Method to kick things off. Override to do other stuff if
      * you wish
      */
-
-    public void  perform(AbstractNode n) {
+    public void perform(AbstractNode n) {
         n.accept(this);
     }
 
-    /** Better version of perform */
-    public final ReflectiveVisitor performVisit(AbstractNode n) {
+    public final ReflectiveASTVisitor<T> performVisit(AbstractNode n) {
         perform(n);
         return this;
     }
 
-    /** Method to accomplish the double-dispatch. */
-    public final void dispatch(Object o) {
-        Method m = getBestMethodFor(o);
+    /** double-dispatch. */
+    public final void Visit(Object o) {
+        Method m = findBestMethod(o);
         try {
             m.invoke(this, new Object[] { o });
         } catch (IllegalAccessException e) {
@@ -56,7 +55,7 @@ abstract public class ReflectiveVisitor {
      * All interfaces and superinterfaces of all superclasses.
      */
 
-    protected Method getBestMethodFor(Object o) {
+    protected Method findBestMethod(Object o) {
         Class nodeClass = o.getClass();
         Method ans = null;
 
@@ -71,7 +70,7 @@ abstract public class ReflectiveVisitor {
                 // Unlike GoF, all methods are "visit" and are
                 // distinguished by their param type
 
-                ans = getClass().getMethod("visit", new Class[] {c});
+                ans = getClass().getMethod("Visit", new Class[] {c});
 
             } catch (NoSuchMethodException e) { }
         }
@@ -88,16 +87,15 @@ abstract public class ReflectiveVisitor {
             for (int i = 0; i < interfaces.length; i++) {
                 debugMsg("   trying interface " + interfaces[i]);
                 try {
-                    ans = getClass().getMethod("visit", new Class[] {interfaces[i]});
+                    ans = getClass().getMethod("Visit", new Class[] {interfaces[i]});
                 } catch (NoSuchMethodException e) { }
                 Class[] superInterfaces = interfaces[i].getInterfaces();
                 for (int j=0; j < superInterfaces.length && ans == null; ++j) {
                     debugMsg("   trying super interface " + superInterfaces[j]);
                     try {
-                        ans = getClass().getMethod("visit", new Class[] {superInterfaces[j]});
+                        ans = getClass().getMethod("Visit", new Class[] {superInterfaces[j]});
                     } catch (NoSuchMethodException e) { }
                 }
-
             }
             iClass = iClass.getSuperclass();
         }
@@ -117,5 +115,4 @@ abstract public class ReflectiveVisitor {
         debugMsg("Best method for " + o + " is " + ans);
         return ans;
     }
-
 }

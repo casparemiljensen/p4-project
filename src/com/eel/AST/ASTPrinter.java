@@ -21,7 +21,7 @@ public class ASTPrinter {
                 throw new RuntimeException("Error accessing field " + field.getName() + " in node " + nodeName, e);
             }
             // Omitting all that is string, tokens to avoid concatenation with class/field name.
-            if (value != null && value instanceof String == false && value instanceof TerminalNode == false) {
+            if (value != null && value instanceof String == false) {
                 if (value instanceof AbstractNode) {
                     System.out.print("[");
                     print((AbstractNode) value);
@@ -35,7 +35,9 @@ public class ASTPrinter {
                             print((AbstractNode) element);
                             System.out.print("]");
                         } else {
+                            System.out.print("[");
                             System.out.print(element);
+                            System.out.print("]");
                         }
                     }
                 }
