@@ -37,11 +37,7 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
         AbstractNode node = null;
         if(ctx.declaration() != null) {
             node = visit(ctx.declaration());
-        }
-        else if(ctx.expression() != null) {
-            node = visit(ctx.expression());
-        }
-        else if(ctx.controlStruct() != null) {
+        } else if (ctx.controlStruct() != null) {
             node = visit(ctx.controlStruct());
         }
         else if(ctx.return_() != null) {
@@ -64,71 +60,107 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
         return new AssignmentNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "assign", visitExpression(ctx.expression()));
     }
 
-    @Override
-    public ExpressionNode visitExpression(eelParser.ExpressionContext ctx) {
-        ExpressionNode node = null;
-        if (ctx == null) return null;
-            // expr op expr
-        else if (ctx.left != null) {
 
-            // Infix
-            if (ctx.operator().binaryOperator() != null) {
-                System.out.println(ctx.operator().binaryOperator().BINARYOP().getText());
-
-                switch (ctx.operator().binaryOperator().BINARYOP().getText()) {
-                    case "+":
-                    case "-": {
-                        node = new AddSubNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().binaryOperator().BINARYOP(),visitExpression(ctx.right));
-                        break;
-                    }
-                    case "*":
-                    case "/": {
-                        node = new MultDivNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().binaryOperator().BINARYOP() ,visitExpression(ctx.right));
-                        break;
-                    }
-                    default:
-                        throw new NotImplementedError();
-                }
-
-
-            } else if (ctx.operator().booleanOperator() != null) {
-
-                // Unary
-                switch (ctx.operator().booleanOperator().BOOLEANOP().getText()) {
-                    case "<":
-                        node = new LessThanNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().booleanOperator().BOOLEANOP(), visitExpression(ctx.right));
-                        break;
-                    case ">":
-                        node = new GreaterThanNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().booleanOperator().BOOLEANOP(), visitExpression(ctx.right));
-                        break;
-                    case "<=":
-                        node = new LessThanOrEqualNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().booleanOperator().BOOLEANOP(), visitExpression(ctx.right));
-                        break;
-                    case ">=":
-                        node = new GreaterThanOrEqualNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().booleanOperator().BOOLEANOP(), visitExpression(ctx.right));
-                        break;
-                    case "==":
-                        node = new EqualsNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().booleanOperator().BOOLEANOP(), visitExpression(ctx.right));
-                        break;
-                    case "!=":
-                        node = new NotEqualNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().booleanOperator().BOOLEANOP(), visitExpression(ctx.right));
-                        break;
-                    default:
-                        throw new NotImplementedError();
-                }
-
-                return node;
-//            return new ExpressionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), visitOperator(ctx.operator()), visitExpression(ctx.right));
-                // '-' expr
-            }
-        }
-        else if (ctx.value() == null)
-            return new ExpressionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "-", visitExpression(ctx.expression(0)));
-            // value
-        else
-            return new ExpressionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitValue(ctx.value()));
-        return node;
+    public AbstractNode visitExpressionNode(eelParser.ExpressionContext ctx) {
+        AbstractNode node = null;
+        if (ctx instanceof eelParser.ParenExprContext) {
+//             node = visit(eelParser.ParenExprContext);
+        } else if (ctx instanceof eelParser.UnaryExprContext) {
+//             node = visit(eelParser.UnaryExprContext);
+        } else if (ctx instanceof eelParser.InfixExprContext) {
+//                node = visit(ctx.return_());
+        } else if (ctx instanceof eelParser.ValueExprContext) {
+//            lol
+    } else {
+        throw new NotImplementedError();
     }
+            return new StatementNode(
+                    ctx.start.getLine(),
+                    ctx.start.getCharPositionInLine(), node
+            );
+}
+
+
+
+    @Override
+    public UnaryExpressionNode visitUnaryExpressionNode(eelParser.UnaryExprContext ctx) {
+//        return new UnaryExpressionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitOperator(ctx.expression().));
+    }
+
+
+    @Override
+    public InfixExpressionNode visitInfixExpressionNode (eelParser.InfixExprContext ctx) {
+
+    }
+
+
+
+
+//    public ExpressionNode visitExpression(eelParser.ExpressionContext ctx) {
+//        ExpressionNode node = null;
+//        if (ctx == null) return null;
+//            // expr op expr
+//        else if (ctx.left != null) {
+//
+//            // Infix
+//            if (ctx.operator().binaryOperator() != null) {
+//                System.out.println(ctx.operator().binaryOperator().BINARYOP().getText());
+//
+//                switch (ctx.operator().binaryOperator().BINARYOP().getText()) {
+//                    case "+":
+//                    case "-": {
+//                        node = new AddSubNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().binaryOperator().BINARYOP(),visitExpression(ctx.right));
+//                        break;
+//                    }
+//                    case "*":
+//                    case "/": {
+//                        node = new MultDivNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().binaryOperator().BINARYOP() ,visitExpression(ctx.right));
+//                        break;
+//                    }
+//                    default:
+//                        throw new NotImplementedError();
+//                }
+//
+//
+//            } else if (ctx.operator().booleanOperator() != null) {
+//
+//                // Unary
+//                switch (ctx.operator().booleanOperator().BOOLEANOP().getText()) {
+//                    case "<":
+//                        node = new LessThanNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().booleanOperator().BOOLEANOP(), visitExpression(ctx.right));
+//                        break;
+//                    case ">":
+//                        node = new GreaterThanNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().booleanOperator().BOOLEANOP(), visitExpression(ctx.right));
+//                        break;
+//                    case "<=":
+//                        node = new LessThanOrEqualNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().booleanOperator().BOOLEANOP(), visitExpression(ctx.right));
+//                        break;
+//                    case ">=":
+//                        node = new GreaterThanOrEqualNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().booleanOperator().BOOLEANOP(), visitExpression(ctx.right));
+//                        break;
+//                    case "==":
+//                        node = new EqualsNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().booleanOperator().BOOLEANOP(), visitExpression(ctx.right));
+//                        break;
+//                    case "!=":
+//                        node = new NotEqualNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().booleanOperator().BOOLEANOP(), visitExpression(ctx.right));
+//                        break;
+//                    default:
+//                        throw new NotImplementedError();
+//                }
+//
+//                return node;
+////            return new ExpressionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), visitOperator(ctx.operator()), visitExpression(ctx.right));
+//                // '-' expr
+//            }
+//        }
+//        else if (ctx.value() == null)
+//            return new ExpressionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "-", visitExpression(ctx.expression(0)));
+//            // value
+//        else
+//            return new ExpressionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitValue(ctx.value()));
+//        return node;
+//    }
+//    }
 
     @Override
     public ValueNode visitValue (eelParser.ValueContext ctx) {
