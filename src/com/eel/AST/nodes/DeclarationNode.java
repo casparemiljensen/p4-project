@@ -5,14 +5,14 @@ import org.jetbrains.annotations.Nullable;
 
 public class DeclarationNode extends AbstractNode {
     String letToken;
-    TerminalNode IdToken;
+    public TerminalNode IdToken;
     @Nullable
-    AssignmentNode AssignmentNode;
+    public AssignmentNode assignmentNode;
 
-    public DeclarationNode(int lineNumber, int colNumber, String letToken, TerminalNode IdToken, @Nullable AssignmentNode AssignmentNode) {
+    public DeclarationNode(int lineNumber, int colNumber, String letToken, TerminalNode IdToken, @Nullable AssignmentNode assignmentNode) {
         super(lineNumber, colNumber);
         this.letToken = letToken;
         this.IdToken = IdToken;
-        this.AssignmentNode = AssignmentNode;
+        this.assignmentNode = assignmentNode;
     }
 }

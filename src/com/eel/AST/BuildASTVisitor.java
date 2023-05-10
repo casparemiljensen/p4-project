@@ -16,11 +16,11 @@ import java.util.stream.Collectors;
 
 public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eelVisitor<AbstractNode> {
 
-    @Override
-    public ProgramNode visitProgram(eelParser.ProgramContext ctx) {
-        List<ProcedureNode> procedures = CreateList(ctx.procedure(), ProcedureNode.class);
-        return new ProgramNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), procedures);
-    }
+	@Override
+	public ProgramNode visitProgram(eelParser.ProgramContext ctx) {
+		List<ProcedureNode> procedures = CreateList(ctx.procedure(), ProcedureNode.class);
+		return new ProgramNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), procedures);
+	}
 
     @Override
     public ProcedureNode visitProcedure(eelParser.ProcedureContext ctx) {
@@ -28,10 +28,10 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
         return new ProcedureNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.PROCEDURE_CALL(), statementNodes);
     }
 
-    @Override
-    public FormalParametersNode visitFormalParams(eelParser.FormalParamsContext ctx) {
-        return new FormalParametersNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.ID());
-    }
+	@Override
+	public FormalParametersNode visitFormalParams(eelParser.FormalParamsContext ctx) {
+		return new FormalParametersNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.ID());
+	}
 
     @Override
     public AbstractNode visitStatement(eelParser.StatementContext ctx) {
@@ -61,7 +61,6 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
                 ctx.start.getCharPositionInLine(), node, terminal
         );
     }
-
 
 
     @Override
@@ -157,72 +156,6 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
         return new ValueExprNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitValue(ctx.value()));
     }
 
-//    public ExpressionNode visitExpression(eelParser.ExpressionContext ctx) {
-//        ExpressionNode node = null;
-//        if (ctx == null) return null;
-//            // expr op expr
-//        else if (ctx.left != null) {
-//
-//            // Infix
-//            if (ctx.operator().binaryOperator() != null) {
-//                System.out.println(ctx.operator().binaryOperator().BINARYOP().getText());
-//
-//                switch (ctx.operator().binaryOperator().BINARYOP().getText()) {
-//                    case "+":
-//                    case "-": {
-//                        node = new AddSubNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().binaryOperator().BINARYOP(),visitExpression(ctx.right));
-//                        break;
-//                    }
-//                    case "*":
-//                    case "/": {
-//                        node = new MultDivNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().binaryOperator().BINARYOP() ,visitExpression(ctx.right));
-//                        break;
-//                    }
-//                    default:
-//                        throw new NotImplementedError();
-//                }
-//
-//
-//            } else if (ctx.operator().booleanOperator() != null) {
-//
-//                // Unary
-//                switch (ctx.operator().booleanOperator().BOOLEANOP().getText()) {
-//                    case "<":
-//                        node = new LessThanNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().booleanOperator().BOOLEANOP(), visitExpression(ctx.right));
-//                        break;
-//                    case ">":
-//                        node = new GreaterThanNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().booleanOperator().BOOLEANOP(), visitExpression(ctx.right));
-//                        break;
-//                    case "<=":
-//                        node = new LessThanOrEqualNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().booleanOperator().BOOLEANOP(), visitExpression(ctx.right));
-//                        break;
-//                    case ">=":
-//                        node = new GreaterThanOrEqualNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().booleanOperator().BOOLEANOP(), visitExpression(ctx.right));
-//                        break;
-//                    case "==":
-//                        node = new EqualsNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().booleanOperator().BOOLEANOP(), visitExpression(ctx.right));
-//                        break;
-//                    case "!=":
-//                        node = new NotEqualNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().booleanOperator().BOOLEANOP(), visitExpression(ctx.right));
-//                        break;
-//                    default:
-//                        throw new NotImplementedError();
-//                }
-//
-//                return node;
-////            return new ExpressionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), visitOperator(ctx.operator()), visitExpression(ctx.right));
-//                // '-' expr
-//            }
-//        }
-//        else if (ctx.value() == null)
-//            return new ExpressionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "-", visitExpression(ctx.expression(0)));
-//            // value
-//        else
-//            return new ExpressionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitValue(ctx.value()));
-//        return node;
-//    }
-//    }
-
     @Override
     public OperatorNode visitOperator(eelParser.OperatorContext ctx) {
         AbstractNode node = null;
@@ -247,15 +180,17 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
     }
 
 
-    @Override
-    public ValueNode visitValue(eelParser.ValueContext ctx) {
-        // staticValue
-        if (ctx.userValue() == null)
-            return new ValueNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitStaticValue(ctx.staticValue()));
-            // userValue
-        else
-            return new ValueNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitUserValue(ctx.userValue()));
-    }
+	@Override
+	public ValueNode visitValue(eelParser.ValueContext ctx) {
+		// staticValue
+		if (ctx.userValue() == null)
+			return new ValueNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),
+					visitStaticValue(ctx.staticValue()));
+		// userValue
+		else
+			return new ValueNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),
+					visitUserValue(ctx.userValue()));
+	}
 
     @Override
     public UserValueNode visitUserValue(eelParser.UserValueContext ctx) {
@@ -268,30 +203,34 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
         return new StaticValueNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.INUM(), ctx.STRING(), ctx.FUNCTION_CALL(), ((ctx.method() != null) ? visitMethod(ctx.method()) : null));
     }
 
-    @Override
-    public MethodNode visitMethod(eelParser.MethodContext ctx) {
-        return new MethodNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.METHODS(), (ctx.actualParams() != null) ? visitActualParams(ctx.actualParams()) : null, ((ctx.method() != null) ? visitMethod(ctx.method()) : null));
-    }
-//
-//    @Override
-//    public FunctionNode visitFunction(eelParser.FunctionContext ctx) {
-//        return new FunctionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.FUNCTIONS(), (ctx.actualParams() != null) ? visitActualParams(ctx.actualParams()) : null);
-//    }
+	@Override
+	public MethodNode visitMethod(eelParser.MethodContext ctx) {
+		return new MethodNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.METHODS(),
+				(ctx.actualParams() != null) ? visitActualParams(ctx.actualParams()) : null,
+				((ctx.method() != null) ? visitMethod(ctx.method()) : null));
+	}
+
+//	@Override
+//	public FunctionNode visitFunction(eelParser.FunctionContext ctx) {
+//		return new FunctionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.FUNCTIONS(),
+//				(ctx.actualParams() != null) ? visitActualParams(ctx.actualParams()) : null);
+//	}
+
+	@Override
+	public ActualParamsNode visitActualParams(eelParser.ActualParamsContext ctx) {
+
+		List<ValueNode> valueNodes = new ArrayList<>();
+		for (eelParser.ValueContext child : ctx.value()) {
+			valueNodes.add(visitValue(child));
+		}
+		return new ActualParamsNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), valueNodes);
+	}
 
     @Override
-    public ActualParamsNode visitActualParams(eelParser.ActualParamsContext ctx) {
-
-        List<ValueNode> valueNodes = new ArrayList<>();
-        for (eelParser.ValueContext child : ctx.value()) {
-            valueNodes.add(visitValue(child));
-        }
-        return new ActualParamsNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), valueNodes);
-    }
-
-    @Override
-    public SelectiveStructNode visitSelectiveStruct(eelParser.SelectiveStructContext ctx) {
+    public SelectiveStructNode visitSelectiveStruct (eelParser.SelectiveStructContext ctx) {
         return new SelectiveStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitIfStruct(ctx.ifStruct()));
     }
+
 
     @Override
     public IfStructNode visitIfStruct(eelParser.IfStructContext ctx) {
@@ -302,46 +241,49 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
         return new IfStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitIfCondition(ctx.ifCondition()), "then", statements, ElseIfStructNodes, (ctx.elseStruct() != null) ? visitElseStruct(ctx.elseStruct()) : null);
     }
 
-    @Override
-    public IfConditionNode visitIfCondition(eelParser.IfConditionContext ctx) {
-        return new IfConditionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "if", visitExpression(ctx.expression()));
-    }
+	@Override
+	public IfConditionNode visitIfCondition(eelParser.IfConditionContext ctx) {
+		return new IfConditionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "if",
+				visitExpression(ctx.expression()));
+	}
 
-    @Override
-    public ElseIfStructNode visitElseIfStruct(eelParser.ElseIfStructContext ctx) {
-        List<eelParser.StatementContext> input = ctx.statement();
-        List<StatementNode> statements = CreateList(input, StatementNode.class);
-        return new ElseIfStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitIfCondition(ctx.ifCondition()), statements);
-    }
+	@Override
+	public ElseIfStructNode visitElseIfStruct(eelParser.ElseIfStructContext ctx) {
+		List<eelParser.StatementContext> input = ctx.statement();
+		List<StatementNode> statements = CreateList(input, StatementNode.class);
+		return new ElseIfStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),
+				visitIfCondition(ctx.ifCondition()), statements);
+	}
 
-    @Override
-    public ElseStructNode visitElseStruct(eelParser.ElseStructContext ctx) {
-        List<ParseTree> input = ctx.children;
-        List<StatementNode> statements = CreateList(input, StatementNode.class);
-        return new ElseStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), statements);
-    }
+	@Override
+	public ElseStructNode visitElseStruct(eelParser.ElseStructContext ctx) {
+		List<ParseTree> input = ctx.children;
+		List<StatementNode> statements = CreateList(input, StatementNode.class);
+		return new ElseStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), statements);
+	}
 
+	@Override
+	public IterativeStructNode visitIterativeStruct(eelParser.IterativeStructContext ctx) {
+		return new IterativeStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),
+				visitRepeatStruct(ctx.repeatStruct()));
+	}
 
-    @Override
-    public IterativeStructNode visitIterativeStruct(eelParser.IterativeStructContext ctx) {
-        return new IterativeStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitRepeatStruct(ctx.repeatStruct()));
-    }
+	@Override
+	public RepeatStructNode visitRepeatStruct(eelParser.RepeatStructContext ctx) {
+		List<StatementNode> statements = CreateList(ctx.statement(), StatementNode.class);
+		return new RepeatStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),
+				visitExpression(ctx.expression()), statements);
+	}
 
-    @Override
-    public RepeatStructNode visitRepeatStruct(eelParser.RepeatStructContext ctx) {
-        List<StatementNode> statements = CreateList(ctx.statement(), StatementNode.class);
-        return new RepeatStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.expression()), statements);
-    }
+	private static <T> Collection<T> nullSafe(Collection<T> c) {
+		return (c == null) ? Collections.<T>emptyList() : c;
+	}
 
-    private static <T> Collection<T> nullSafe(Collection<T> c) {
-        return (c == null) ? Collections.<T>emptyList() : c;
-    }
-
-    private <T1, T2> List<T2> CreateList(Collection<T1> list, Class<T2> type) {
-        List<T2> result = new ArrayList<T2>();
-        for (T1 child : nullSafe(list)) {
-            result.add(type.cast(visit((ParseTree) child)));
-        }
-        return result;
-    }
+	private <T1, T2> List<T2> CreateList(Collection<T1> list, Class<T2> type) {
+		List<T2> result = new ArrayList<T2>();
+		for (T1 child : nullSafe(list)) {
+			result.add(type.cast(visit((ParseTree) child)));
+		}
+		return result;
+	}
 }

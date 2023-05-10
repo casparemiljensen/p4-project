@@ -6,22 +6,21 @@ import java.util.List;
 
 public class IfStructNode extends AbstractNode {
 
-    public IfConditionNode IfConditionNode;
+    public IfConditionNode ifConditionNode;
     public String thenToken;
     public List<StatementNode> statementNodes;
     @Nullable
-    public List<ElseIfStructNode> ElseIfStructNodes;
+    public List<ElseIfStructNode> elseIfStructNodes;
     @Nullable
-    public ElseStructNode ElseStructNode;
+    public ElseStructNode elseStructNode;
     public String endIfToken;
-//    public ifStrcNode() {}
 
-    public IfStructNode(int lineNumber, int colNumber, IfConditionNode IfConditionNode, String thenToken, List<StatementNode> statementNodes, @Nullable List<ElseIfStructNode> ElseIfStructNodes, @Nullable ElseStructNode ElseStructNode) {
+    public IfStructNode(int lineNumber, int colNumber, IfConditionNode ifConditionNode, String thenToken, List<StatementNode> statementNodes, @Nullable List<ElseIfStructNode> elseIfStructNodes, @Nullable ElseStructNode elseStructNode) {
         super(lineNumber, colNumber);
-        this.IfConditionNode = IfConditionNode;
+        this.ifConditionNode = ifConditionNode;
         this.thenToken = thenToken;
         this.statementNodes = statementNodes;
-        this.ElseIfStructNodes = ElseIfStructNodes;
-        this.ElseStructNode = ElseStructNode;
+        this.elseIfStructNodes = elseIfStructNodes;
+        this.elseStructNode = elseStructNode;
     }
 }
