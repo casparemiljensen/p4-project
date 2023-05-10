@@ -5,11 +5,11 @@ procedure: 'procedure' ID '(' formalParams? ')' statement* 'endProcedure';
 formalParams: ID (',' ID)*;
 statement           : declaration
                     | controlStruct
-                    | IDCALL
+                    | call
                     | ID assignment
-                    | function
-                    | return
-                    ;
+                    | return;
+
+call: FUNCTION_CALL | PROCEDURE_CALL;
 
 declaration: 'let' ID assignment?;
 assignment: '=' expression;
@@ -50,7 +50,7 @@ actualParams: value (','value)*;
 method: METHODS ('(' actualParams? ')')?;
 
 
-
+FUNCTION_CALL: FUNCTIONS '(' (PARAM? (',' WS? PARAM)*)? ')';
 FUNCTIONS: 'SUM' | 'AVERAGE' | 'print';
 METHODS: '.'('format' | 'count');
 BOOLEANOP: [<>]'='?|'=='|'!='|'<'|'>';

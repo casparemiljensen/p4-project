@@ -1,4 +1,4 @@
-// Generated from C:/Users/runeb/Desktop/hubben/p4-project/res\eel.g4 by ANTLR 4.12.0
+// Generated from C:/Users/caspa/Qsync/Dokumenter/Skole & Uddannelse/AAU/Software Bachelor/4. Semester/Project/p4-project/res\eel.g4 by ANTLR 4.12.0
 package com.eel.antlr;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -34,6 +34,12 @@ public interface eelVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitStatement(eelParser.StatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link eelParser#call}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCall(eelParser.CallContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link eelParser#declaration}.
 	 * @param ctx the parse tree
@@ -158,12 +164,6 @@ public interface eelVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitStaticValue(eelParser.StaticValueContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link eelParser#function}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFunction(eelParser.FunctionContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link eelParser#userValue}.
 	 * @param ctx the parse tree
