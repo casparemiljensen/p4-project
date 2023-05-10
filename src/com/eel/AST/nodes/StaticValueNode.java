@@ -3,28 +3,23 @@ package com.eel.AST.nodes;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
 public class StaticValueNode extends AbstractNode{
     public TerminalNode INUMORSTRING;
 
     public TerminalNode INUM;
     public TerminalNode STRING;
-    public FunctionNode FunctionNode;
-    public MethodNode methodNode;
+    public FunctionNode functionNode;
 
     // INUM or STRING
-    public StaticValueNode(int lineNumber, int colNumber, @Nullable TerminalNode INUM, @Nullable TerminalNode STRING, MethodNode methodNode) {
+    public StaticValueNode(int lineNumber, int colNumber, @Nullable TerminalNode INUM, @Nullable TerminalNode STRING) {
         super(lineNumber, colNumber);
         this.INUM = INUM;
         this.STRING = STRING;
-        this.methodNode = methodNode;
     }
 
     // function
-    public StaticValueNode(int lineNumber, int colNumber, FunctionNode FunctionNode, @Nullable  MethodNode methodNode) {
+    public StaticValueNode(int lineNumber, int colNumber, FunctionNode functionNode) {
         super(lineNumber, colNumber);
-        this.FunctionNode = FunctionNode;
-        this.methodNode = methodNode;
+        this.functionNode = functionNode;
     }
 }

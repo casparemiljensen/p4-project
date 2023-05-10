@@ -3,12 +3,12 @@ package com.eel.AST.nodes;
 import java.beans.Expression;
 
 public class AssignmentNode extends AbstractNode {
-    String assignmentToken;
-    ExpressionNode ExpressionNode;
+    public String assignmentToken;
+    public ExpressionNode expressionNode;
 
-    public AssignmentNode(int lineNumber, int colNumber, String assignmentToken, ExpressionNode _ExpressionNode) {
+    public AssignmentNode(int lineNumber, int colNumber, String assignmentToken, ExpressionNode expressionNode) {
         super(lineNumber, colNumber);
         this.assignmentToken = assignmentToken;
-        this.ExpressionNode = _ExpressionNode;
+        this.expressionNode = expressionNode;
     }
 }

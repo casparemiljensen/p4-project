@@ -1,14 +1,21 @@
 procedure main()
+    let var1 = 4
+    let var2 = "hej"
 
-1+1
-2*2
-3/3
+    if(2<3) then
+    print(3)
 
-4<4
-5>5
-6<=6
-7>=7
-8==8
-9!=9
+    else if(3>2) then
+    let y = 3
 
+    else then
+    let x = 5
+
+    endIf
+endProcedure
+
+
+procedure secondary()
+    let x = 4
+    let y = -4 < 1
 endProcedure

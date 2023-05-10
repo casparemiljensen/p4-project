@@ -7,11 +7,11 @@ import java.util.List;
 public class ReturnNode extends AbstractNode {
     public String returnToken;
     @Nullable
-    public ExpressionNode ExpressionNode;
+    public ExpressionNode expressionNode;
 
-    public ReturnNode(int lineNumber, int colNumber, String returnToken, @Nullable ExpressionNode ExpressionNode) {
+    public ReturnNode(int lineNumber, int colNumber, String returnToken, @Nullable ExpressionNode expressionNode) {
         super(lineNumber, colNumber);
         this.returnToken = returnToken;
-        this.ExpressionNode = ExpressionNode;
+        this.expressionNode = expressionNode;
     }
 }

@@ -6,10 +6,10 @@ import java.util.List;
 
 public class FunctionNode extends AbstractNode {
     public TerminalNode FUNCTION;
-    public ActualParamsNode ActualParamsNode;
-    public FunctionNode(int lineNumber, int colNumber, TerminalNode FUNCTION, ActualParamsNode ActualParamsNode) {
+    public ActualParamsNode actualParamsNode;
+    public FunctionNode(int lineNumber, int colNumber, TerminalNode FUNCTION, ActualParamsNode actualParamsNode) {
         super(lineNumber, colNumber);
         this.FUNCTION = FUNCTION;
-        this.ActualParamsNode = ActualParamsNode;
+        this.actualParamsNode = actualParamsNode;
     }
 }
