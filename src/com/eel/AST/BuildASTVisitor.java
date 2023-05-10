@@ -35,19 +35,18 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
     @Override
     public AbstractNode visitStatement(eelParser.StatementContext ctx) {
         AbstractNode node = null;
-        if(ctx.declaration() != null) {
+        if (ctx.declaration() != null) {
             node = visit(ctx.declaration());
         } else if (ctx.controlStruct() != null) {
             node = visit(ctx.controlStruct());
-        }
-        else if(ctx.return_() != null) {
+        } else if (ctx.return_() != null) {
             node = visit(ctx.return_());
         }
 
         return new StatementNode(
                 ctx.start.getLine(),
                 ctx.start.getCharPositionInLine(), node
-            );
+        );
     }
 
     @Override
@@ -163,46 +162,46 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
 //    }
 
     @Override
-    public ValueNode visitValue (eelParser.ValueContext ctx) {
+    public ValueNode visitValue(eelParser.ValueContext ctx) {
         // staticValue
         if (ctx.userValue() == null)
             return new ValueNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitStaticValue(ctx.staticValue()));
-        // userValue
+            // userValue
         else
             return new ValueNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitUserValue(ctx.userValue()));
     }
 
     @Override
-    public UserValueNode visitUserValue (eelParser.UserValueContext ctx) {
+    public UserValueNode visitUserValue(eelParser.UserValueContext ctx) {
         return new UserValueNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.ID(), (ctx.actualParams() != null) ? visitActualParams(ctx.actualParams()) : null);
     }
 
 
     @Override
-    public StaticValueNode visitStaticValue (eelParser.StaticValueContext ctx) {
+    public StaticValueNode visitStaticValue(eelParser.StaticValueContext ctx) {
         // INUM or STRING
         if (ctx.function() == null)
-          return new StaticValueNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.INUM(), ctx.STRING(), ((ctx.method() != null) ? visitMethod(ctx.method()) : null));
-        // function
+            return new StaticValueNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.INUM(), ctx.STRING(), ((ctx.method() != null) ? visitMethod(ctx.method()) : null));
+            // function
         else
             return new StaticValueNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitFunction(ctx.function()), ((ctx.method() != null) ? visitMethod(ctx.method()) : null));
     }
 
     @Override
-    public MethodNode visitMethod (eelParser.MethodContext ctx) {
-        return new MethodNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.METHODS(), (ctx.actualParams() != null) ? visitActualParams(ctx.actualParams()) : null , ((ctx.method() != null) ? visitMethod(ctx.method()) : null));
+    public MethodNode visitMethod(eelParser.MethodContext ctx) {
+        return new MethodNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.METHODS(), (ctx.actualParams() != null) ? visitActualParams(ctx.actualParams()) : null, ((ctx.method() != null) ? visitMethod(ctx.method()) : null));
     }
 
     @Override
-    public FunctionNode visitFunction (eelParser.FunctionContext ctx) {
+    public FunctionNode visitFunction(eelParser.FunctionContext ctx) {
         return new FunctionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.FUNCTIONS(), (ctx.actualParams() != null) ? visitActualParams(ctx.actualParams()) : null);
     }
 
     @Override
-    public ActualParamsNode visitActualParams (eelParser.ActualParamsContext ctx) {
+    public ActualParamsNode visitActualParams(eelParser.ActualParamsContext ctx) {
 
         List<ValueNode> valueNodes = new ArrayList<>();
-        for(eelParser.ValueContext child : ctx.value()) {
+        for (eelParser.ValueContext child : ctx.value()) {
             valueNodes.add(visitValue(child));
         }
         return new ActualParamsNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), valueNodes);
@@ -213,13 +212,13 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
         // selectiveStruct
         if (ctx.iterativeStruct() == null)
             return new ControlStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitSelectiveStruct(ctx.selectiveStruct()));
-        // iterativeStruct
+            // iterativeStruct
         else
             return new ControlStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitIterativeStruct(ctx.iterativeStruct()));
     }
 
     @Override
-    public SelectiveStructNode visitSelectiveStruct (eelParser.SelectiveStructContext ctx) {
+    public SelectiveStructNode visitSelectiveStruct(eelParser.SelectiveStructContext ctx) {
         return new SelectiveStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitIfStruct(ctx.ifStruct()));
     }
 
@@ -231,13 +230,11 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
     @Override
     public OperatorNode visitOperator(eelParser.OperatorContext ctx) {
         AbstractNode node = null;
-        if(ctx.binaryOperator() != null) {
+        if (ctx.binaryOperator() != null) {
             node = visitBinaryOperator(ctx.binaryOperator());
-        }
-        else if(ctx.booleanOperator() !=null) {
+        } else if (ctx.booleanOperator() != null) {
             node = visitBooleanOperator(ctx.booleanOperator());
-        }
-        else if (ctx.ASSIGNMENT() != null){
+        } else if (ctx.ASSIGNMENT() != null) {
             return new OperatorNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.ASSIGNMENT());
         }
         return new OperatorNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), node);
@@ -297,7 +294,8 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
     private static <T> Collection<T> nullSafe(Collection<T> c) {
         return (c == null) ? Collections.<T>emptyList() : c;
     }
-    private <T1, T2> List<T2> CreateList(Collection<T1> list,Class<T2> type){
+
+    private <T1, T2> List<T2> CreateList(Collection<T1> list, Class<T2> type) {
         List<T2> result = new ArrayList<T2>();
         for (T1 child : nullSafe(list)) {
             result.add(type.cast(visit((ParseTree) child)));
