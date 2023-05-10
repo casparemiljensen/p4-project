@@ -19,5 +19,4 @@ public abstract class AbstractNode {
     }
 
     public final void accept(ReflectiveVisitor v) { v.dispatch(this); }
-
 }
