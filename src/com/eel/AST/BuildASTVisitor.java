@@ -154,7 +154,8 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
         else {
             return null;
         }
-        return new OperatorNode(0,0);
+        return null;
+        //return new OperatorNode(0,0, 0);
     }
 
     @Override

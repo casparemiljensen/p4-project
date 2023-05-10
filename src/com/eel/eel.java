@@ -2,9 +2,7 @@ package com.eel;
 
 import com.eel.AST.ASTPrinter;
 import com.eel.AST.BuildASTVisitor;
-import com.eel.AST.PrintASTVisitor;
 import com.eel.AST.nodes.ProgramNode;
-import com.eel.AST.nodes.IfStructNode;
 import com.eel.antlr.*;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
@@ -24,6 +22,15 @@ class Eel {
         var ast = (ProgramNode) new BuildASTVisitor().visit(cst);
         ASTPrinter astPrinter = new ASTPrinter();
         astPrinter.print(ast);
+
+        System.out.println();
+        System.out.println();
+        System.out.println("Look at this pretty OfficeScript code!");
+        System.out.println();
+
+        Compiler compiler = new Compiler();
+        //compiler.Visit(ast, 0); // typechecking
+        compiler.Visit(ast, 1); // code generation
     }
 
     public static String readFileAsString(String fileName) throws Exception

@@ -5,17 +5,17 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class ProcedureNode extends AbstractNode {
-    public List<StatementNode> StatementNodes;
-    public TerminalNode IdToken;
+    public List<StatementNode> statementNodes;
+    public TerminalNode idToken;
     @Nullable
-    public FormalParametersNode FormalParametersNode;
+    public FormalParametersNode formalParametersNode;
 
 
-    public ProcedureNode(int lineNumber, int colNumber, TerminalNode IdToken, List<StatementNode> StatementNodes, @Nullable FormalParametersNode FormalParametersNode) {
+    public ProcedureNode(int lineNumber, int colNumber, TerminalNode idToken, List<StatementNode> statementNodes, @Nullable FormalParametersNode formalParametersNode) {
         super(lineNumber, colNumber);
-        this.StatementNodes = StatementNodes;
-        this.IdToken = IdToken;
-        this.FormalParametersNode = FormalParametersNode;
+        this.statementNodes = statementNodes;
+        this.idToken = idToken;
+        this.formalParametersNode = formalParametersNode;
 
     }
 }

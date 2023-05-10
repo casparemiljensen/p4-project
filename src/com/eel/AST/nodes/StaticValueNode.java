@@ -8,7 +8,7 @@ public class StaticValueNode extends AbstractNode{
 
     public TerminalNode INUM;
     public TerminalNode STRING;
-    public FunctionNode FunctionNode;
+    public FunctionNode functionNode;
 
     // INUM or STRING
     public StaticValueNode(int lineNumber, int colNumber, @Nullable TerminalNode INUM, @Nullable TerminalNode STRING) {
@@ -18,8 +18,8 @@ public class StaticValueNode extends AbstractNode{
     }
 
     // function
-    public StaticValueNode(int lineNumber, int colNumber, FunctionNode FunctionNode) {
+    public StaticValueNode(int lineNumber, int colNumber, FunctionNode functionNode) {
         super(lineNumber, colNumber);
-        this.FunctionNode = FunctionNode;
+        this.functionNode = functionNode;
     }
 }
