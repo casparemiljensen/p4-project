@@ -22,8 +22,9 @@ public class StatementNode extends AbstractNode {
 
     public StatementNode(int lineNumber, int colNumber, @Nullable AbstractNode node, @Nullable TerminalNode terminal) {
         super(lineNumber, colNumber);
-        if (terminal instanceof TerminalNode) {
-            this.terminal = terminal;
+            if (terminal instanceof TerminalNode) {
+                this.terminal = terminal;
+            }
             if (node instanceof DeclarationNode) {
                 this.declarationNode = (DeclarationNode) node;
             }
@@ -43,5 +44,4 @@ public class StatementNode extends AbstractNode {
                 throw new NotImplementedError();
             }
         }
-    }
 }

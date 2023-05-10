@@ -34,7 +34,8 @@ public class OfficeScriptsCG extends ReflectiveASTVisitor {
 			for (StatementNode statementNode : node.StatementNodes) {
 				statementNode.accept(this);
 			}
-			strBlr.append("}");
+			strBlr.append("}\n");
+			decreaseIndent();
 		}
 		else
 			throw new NullPointerException();
