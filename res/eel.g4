@@ -56,5 +56,5 @@ STRING: '"' ~[\r\n"]* '"';
 WS: [ \t\r\n]+ -> skip;
 ID: [a-zA-Z][a-zA-Z0-9]*;
 IDCALL: [a-zA-Z][a-zA-Z0-9]*'('((PARAM?)|(PARAM(','WS PARAM)*))')';
-PARAM:(([a-zA-Z]*)|STRING|INUM);
+PARAM:(([a-zA-Z]+)|STRING|INUM);
 
