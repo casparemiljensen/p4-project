@@ -3,24 +3,29 @@ grammar eel;
 program: procedure+ EOF;
 procedure: 'procedure' ID '(' formalParams? ')' statement* 'endProcedure';
 formalParams: ID (',' ID)*;
-statement: declaration
-           | expression
+statement  : declaration
            | controlStruct
-           | return;
+           | IDCALL
+           | ID assignment
+           | function
+           | return
+           ;
 
 declaration: 'let' ID assignment?;
-assignment: ASSIGNMENT expression;
+assignment: '=' expression;
 
 return: 'return' expression?;
 
-expression: left=expression operator right=expression
-            | value
-            | MINUS;
+expression  : '(' expression ')'                            #parenExpr
+            | PLUSORMINUS expression                        #unaryExpr
+            | left=expression operator right=expression     #infixExpr
+            | value                                         #valueExpr
+            ;
 
 operator: binaryOperator
           | booleanOperator
-          | ASSIGNMENT;
-binaryOperator: BINARYOP;
+          | '=';
+binaryOperator: PLUSORMINUS | MULTORDIV;
 booleanOperator: BOOLEANOP;
 controlStruct: iterativeStruct
                | selectiveStruct;
@@ -35,18 +40,21 @@ value: staticValue
        | userValue;
 staticValue: (INUM | STRING | function ) method*;
 function: FUNCTIONS '(' actualParams ')';
-userValue: ID ('(' actualParams? ')')?;
+userValue: IDCALL;
 actualParams: value (','value)*;
 method: METHODS ('(' actualParams? ')')?;
+
+
 
 FUNCTIONS: 'SUM' | 'AVERAGE' | 'print';
 METHODS: '.'('format' | 'count');
 BOOLEANOP: [<>]'='?|'=='|'!=';
-BINARYOP: '+'| '-' |'*'| '/';
-MINUS: '-'+[0-9]+;
+PLUSORMINUS: '+'|'-';
+MULTORDIV: '*'|'/';
 INUM: [0-9]+;
 STRING: '"' ~[\r\n"]* '"';
 WS: [ \t\r\n]+ -> skip;
 ID: [a-zA-Z][a-zA-Z0-9]*;
-ASSIGNMENT: '=';
+IDCALL: [a-zA-Z][a-zA-Z0-9]*'('((PARAM?)|(PARAM(','WS PARAM)*))')';
+PARAM:(([a-zA-Z]*)|STRING|INUM);
 
