@@ -6,25 +6,17 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class StaticValueNode extends AbstractNode{
-    public TerminalNode INUMORSTRING;
 
     public TerminalNode INUM;
     public TerminalNode STRING;
-    public FunctionNode FunctionNode;
-    MethodNode methodNode;
+    public TerminalNode FUNCTION;
+    public MethodNode methodNode;
 
-    // INUM or STRING
-    public StaticValueNode(int lineNumber, int colNumber, @Nullable TerminalNode INUM, @Nullable TerminalNode STRING, MethodNode methodNode) {
+    public StaticValueNode(int lineNumber, int colNumber, @Nullable TerminalNode INUM, @Nullable TerminalNode STRING, @Nullable TerminalNode FUNCTION, MethodNode methodNode) {
         super(lineNumber, colNumber);
         this.INUM = INUM;
         this.STRING = STRING;
-        this.methodNode = methodNode;
-    }
-
-    // function
-    public StaticValueNode(int lineNumber, int colNumber, FunctionNode FunctionNode, MethodNode methodNode) {
-        super(lineNumber, colNumber);
-        this.FunctionNode = FunctionNode;
+        this.FUNCTION = FUNCTION;
         this.methodNode = methodNode;
     }
 }

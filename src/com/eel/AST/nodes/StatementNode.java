@@ -12,9 +12,9 @@ public class StatementNode extends AbstractNode {
     @Nullable
     public ControlStructNode controlStructNode;
     @Nullable
-    public AssignmentNode assignmentNode;
+    public CallNode callNode;
     @Nullable
-    public FunctionNode functionNode;
+    public AssignmentNode assignmentNode;
     @Nullable
     public ReturnNode returnNode;
     @Nullable
@@ -26,15 +26,20 @@ public class StatementNode extends AbstractNode {
             this.terminal = terminal;
             if (node instanceof DeclarationNode) {
                 this.declarationNode = (DeclarationNode) node;
-            } else if (node instanceof ControlStructNode) {
+            }
+            else if (node instanceof ControlStructNode) {
                 this.controlStructNode = (ControlStructNode) node;
-            } else if (node instanceof AssignmentNode) {
+            }
+            else if (node instanceof CallNode) {
+                this.callNode = (CallNode) node;
+            }
+            else if (node instanceof AssignmentNode) {
                 this.assignmentNode = (AssignmentNode) node;
-            } else if (node instanceof FunctionNode) {
-                this.functionNode = (FunctionNode) node;
-            } else if (node instanceof ReturnNode) {
+            }
+            else if (node instanceof ReturnNode) {
                 this.returnNode = (ReturnNode) node;
-            } else {
+            }
+            else {
                 throw new NotImplementedError();
             }
         }

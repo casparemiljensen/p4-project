@@ -43,7 +43,7 @@ value              : staticValue
                    ;
 staticValue: (INUM | STRING | FUNCTION_CALL) method?;
 userValue          : ID
-                   | IDCALL
+                   | PROCEDURE_CALL
                    ;
 actualParams: value (','value)*;
 method: METHODS ('(' actualParams? ')')? method?;
