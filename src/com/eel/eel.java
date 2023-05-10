@@ -2,8 +2,6 @@ package com.eel;
 
 import com.eel.AST.ASTPrinter;
 import com.eel.AST.BuildASTVisitor;
-import com.eel.AST.*;
-import com.eel.AST.ReflectiveASTVisitor;
 import com.eel.AST.nodes.ProgramNode;
 import com.eel.antlr.*;
 import org.antlr.v4.runtime.*;
@@ -29,12 +27,12 @@ class Eel {
 		System.out.println("Look at this pretty OfficeScript code!");
 		System.out.println();
 
-		Compiler compiler = new Compiler();
+		OfficeScriptsCG officeScriptsCG = new OfficeScriptsCG();
 		// compiler.Visit(ast, 0); // typechecking
-		compiler.Visit(ast, 1); // code generation
+//		compiler.Visit(ast, 1); // code generation
 
-		ReflectiveASTVisitor visitor = new EvaluateASTVisitor();
-		visitor.performVisit(ast);
+		officeScriptsCG.performVisit(ast);
+
 
 	}
 

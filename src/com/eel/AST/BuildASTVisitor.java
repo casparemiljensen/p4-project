@@ -37,6 +37,7 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
     public AbstractNode visitStatement(eelParser.StatementContext ctx) {
         AbstractNode node = null;
         TerminalNode terminal = null;
+
         if (ctx.declaration() != null) {
             node = visit(ctx.declaration());
         }

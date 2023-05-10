@@ -1,5 +1,6 @@
-package com.eel.AST.nodes;
+package com.eel.AST;
 
+import com.eel.AST.nodes.*;
 import com.eel.antlr.eelParser;
 
 public abstract class AstVisitor<T> {
