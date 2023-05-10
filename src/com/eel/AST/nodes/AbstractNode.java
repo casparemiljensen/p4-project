@@ -1,8 +1,9 @@
 package com.eel.AST.nodes;
 
-import com.eel.AST.ReflectiveVisitor;
+import com.eel.AST.ReflectiveASTVisitor;
+import com.eel.AST.ReflectiveVisitable;
 
-public abstract class AbstractNode {
+public abstract class AbstractNode implements ReflectiveVisitable {
     protected int lineNumber, colNumber;
     public int getLineNumber() {
         return lineNumber;
@@ -18,6 +19,6 @@ public abstract class AbstractNode {
         this.colNumber = colNumber;
     }
 
-    public final void accept(ReflectiveVisitor v) { v.dispatch(this); }
+    public final void accept(ReflectiveASTVisitor v) { v.Visit(this); }
 
 }
