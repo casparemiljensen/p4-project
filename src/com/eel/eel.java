@@ -28,9 +28,6 @@ class Eel {
 		System.out.println();
 
 		OfficeScriptsCG officeScriptsCG = new OfficeScriptsCG();
-		// compiler.Visit(ast, 0); // typechecking
-//		compiler.Visit(ast, 1); // code generation
-
 		officeScriptsCG.performVisit(ast);
 
 

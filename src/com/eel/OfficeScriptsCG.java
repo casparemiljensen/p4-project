@@ -281,13 +281,10 @@ public class OfficeScriptsCG extends ReflectiveASTVisitor {
 			throw new NullPointerException();
 	}
 
-
 	@Override
 	public void defaultVisit(Object o) {
 
 	}
-
-
 
 	// Helper methods to manage indentation level
 	private int indentLevel = 0;
@@ -307,60 +304,4 @@ public class OfficeScriptsCG extends ReflectiveASTVisitor {
 		return " ".repeat(indentLevel * SPACES_PER_INDENT);
 	}
 
-
-//
-//        if(node.declarationNode != null && node.declarationNode.assignmentNode != null && node.declarationNode.assignmentNode.expressionNode.valueExprNode != null && node.declarationNode.assignmentNode.expressionNode.valueExprNode.valueNode.staticValueNode != null) {
-//			if (node.declarationNode.assignmentNode.expressionNode.valueExprNode.valueNode.staticValueNode.INUM != null) {
-//				System.out.println("    let " + node.declarationNode.IdToken + " = " + node.declarationNode.assignmentNode.expressionNode.valueExprNode.valueNode.staticValueNode.INUM);
-//			}
-//			if (node.declarationNode.assignmentNode.expressionNode.valueExprNode.valueNode.staticValueNode.STRING != null) {
-//				System.out.println("    let " + node.declarationNode.IdToken + " = " + node.declarationNode.assignmentNode.expressionNode.valueExprNode.valueNode.staticValueNode.STRING);
-//			}
-//		}
-//
-//        if(node.controlStructNode != null && node.controlStructNode.selectiveStructNode.ifStructNode != null) {
-//
-//			var left = node.controlStructNode.selectiveStructNode.ifStructNode.ifConditionNode.expressionNode.infixExprNode.left.valueExprNode.valueNode.staticValueNode.INUM;
-//			var operator = "+";
-//			var right = node.controlStructNode.selectiveStructNode.ifStructNode.ifConditionNode.expressionNode.infixExprNode.right.valueExprNode.valueNode.staticValueNode.INUM;
-//
-//			System.out.println("    if(" + left + operator + right + ") {");
-//
-//			for (StatementNode statementNode : node.controlStructNode.selectiveStructNode.ifStructNode.statementNodes) {
-//				Visit(statementNode);
-//			}
-//
-//			for (ElseIfStructNode elseIfStructNode : node.controlStructNode.selectiveStructNode.ifStructNode.elseIfStructNodes) {
-//				if (elseIfStructNode != null) {
-//					var elseLeft = elseIfStructNode.ifConditionNode.expressionNode.valueExprNode.left.valueNode.staticValueNode.INUM;
-//					var elseOperator = "+"; //elseIfStructNode.ifConditionNode.expressionNode.operatorNode.toString();
-//					var elseRight = elseIfStructNode.ifConditionNode.expressionNode.right.valueNode.staticValueNode.INUM;
-//					System.out.println("    } elseif(" + elseLeft + elseOperator + elseRight + ") { ");
-//
-//					for (StatementNode statementNode : elseIfStructNode.statementNodes) {
-//						Visit(statementNode);
-//					}
-//				}
-//			}
-//
-//			if(node.controlStructNode.selectiveStructNode.ifStructNode.elseStructNode != null) {
-//				System.out.println("	} else {");
-//				for (StatementNode statementNode : node.controlStructNode.selectiveStructNode.ifStructNode.elseStructNode.statementNode) {
-//					Visit(statementNode);
-//				}
-//			}
-//
-//			System.out.println("    }");
-//		}
-//
-//        if(node.expressionNode != null && node.expressionNode.valueNode.staticValueNode.functionNode.FUNCTION != null) {
-//			if(Objects.equals(node.expressionNode.valueNode.staticValueNode.functionNode.FUNCTION.toString(), "print")) {
-//				// INUM
-//				System.out.println("	console.log(\"" + node.expressionNode.valueNode.staticValueNode.functionNode.actualParamsNode.valuesNodes + "\")");
-//				// STRING
-//				System.out.println("	console.log(\"" + node.expressionNode.valueNode.staticValueNode.functionNode.actualParamsNode.valuesNodes + "\")");
-//			}
-//		}
-
-//	}
 }
