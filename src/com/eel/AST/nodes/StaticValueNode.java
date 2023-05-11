@@ -6,7 +6,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class StaticValueNode extends AbstractNode{
-
     public TerminalNode INUM;
     public TerminalNode STRING;
     public TerminalNode FUNCTION;

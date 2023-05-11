@@ -11,6 +11,7 @@ import java.nio.file.*;
 
 class Eel {
 	public static void main(String[] args) throws Exception {
+		Errors errors = new Errors();
 		var inputStream = CharStreams.fromString(readFileAsString("out/production/eel/program.txt"));
 
 		eelLexer lexer = new eelLexer(inputStream);
@@ -26,9 +27,33 @@ class Eel {
 		System.out.println();
 		System.out.println("Look at this pretty OfficeScript code!");
 		System.out.println();
+		SymbolTableVisitor symbolTableVisitor = new SymbolTableVisitor(new SymbolTable(), errors);
+		symbolTableVisitor.performVisit(ast);
 
-		OfficeScriptsCG officeScriptsCG = new OfficeScriptsCG();
-		officeScriptsCG.performVisit(ast);
+		if (!errors.containsErrors()) {
+			OfficeScriptsCG officeScriptsCG = new OfficeScriptsCG();
+			officeScriptsCG.performVisit(ast);
+		} else {
+			System.out.println("Code contains " + errors.errors.stream().count() + " errors:");
+			for (Item error : errors.errors) {
+				System.out.println(error.type.toString()+": "+error.message+" ("+error.type.name()+")" +
+							(error.lineNumber > 0 ? " on line "+error.lineNumber : ""));
+
+				//Enters if the error message is on multiple lines
+				if (error.lines.size() > 0) {
+					//Creates spaces, so the lines are aligned
+					String indent = " ".repeat(error.type.toString().length());
+
+					for (String line : error.lines) {
+						//Enters if line contains other characters than just spaces
+						if (line.trim().length() > 0) {
+							System.out.println(indent + "| " + line);
+						}
+					}
+					System.out.println();
+				}
+			}
+		}
 
 
 	}

@@ -17,6 +17,7 @@ public class OfficeScriptsCG extends ReflectiveASTVisitor {
 			for (ProcedureNode procedureNode : node.procedureNodes) {
 				procedureNode.accept(this);
 			}
+
 			System.out.println(strBlr.toString());
 		}
 		else
