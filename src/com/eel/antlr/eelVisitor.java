@@ -1,4 +1,3 @@
-// Generated from C:/Users/runeb/Desktop/hubben/p4-project/out/production/eel\eel.g4 by ANTLR 4.12.0
 package com.eel.antlr;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -35,6 +34,12 @@ public interface eelVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStatement(eelParser.StatementContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link eelParser#call}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCall(eelParser.CallContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link eelParser#declaration}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -53,11 +58,33 @@ public interface eelVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitReturn(eelParser.ReturnContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link eelParser#expression}.
+	 * Visit a parse tree produced by the {@code infixExpr}
+	 * labeled alternative in {@link eelParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExpression(eelParser.ExpressionContext ctx);
+	T visitInfixExpr(eelParser.InfixExprContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code unaryExpr}
+	 * labeled alternative in {@link eelParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnaryExpr(eelParser.UnaryExprContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code valueExpr}
+	 * labeled alternative in {@link eelParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitValueExpr(eelParser.ValueExprContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code parenExpr}
+	 * labeled alternative in {@link eelParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParenExpr(eelParser.ParenExprContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link eelParser#operator}.
 	 * @param ctx the parse tree
@@ -136,12 +163,6 @@ public interface eelVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitStaticValue(eelParser.StaticValueContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link eelParser#function}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFunction(eelParser.FunctionContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link eelParser#userValue}.
 	 * @param ctx the parse tree

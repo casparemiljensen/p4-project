@@ -1,19 +1,14 @@
 procedure main()
-    let var1 = 4
-    let var2 = "hej"
 
-    if(2<3) then
-    print(3)
+    let u = 3
 
-    else if(3>2) then
-    let y = 3
+    repeat while(2<3)
+        let x = 4+1
+    endRepeat
 
-    else then
-    let x = 5
+    let h = 4
 
-    endIf
 endProcedure
-
 
 procedure secondary()
     let x = 4

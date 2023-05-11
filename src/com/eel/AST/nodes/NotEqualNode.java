@@ -2,7 +2,7 @@ package com.eel.AST.nodes;
 
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-public class NotEqualNode extends ExpressionNode {
+public class NotEqualNode extends AbstractNode {
     public ExpressionNode leftChild;
     public TerminalNode operatorNode;
     public ExpressionNode rightChild;

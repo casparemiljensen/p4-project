@@ -1,15 +1,15 @@
 grammar eel;
 
 program: procedure+ EOF;
-procedure: 'procedure' ID '(' formalParams? ')' statement* 'endProcedure';
+procedure: 'procedure' PROCEDURE_CALL statement* 'endProcedure';
 formalParams: ID (',' ID)*;
 statement           : declaration
                     | controlStruct
-                    | IDCALL
+                    | call
                     | ID assignment
-                    | function
-                    | return
-                    ;
+                    | return;
+
+call: FUNCTION_CALL | PROCEDURE_CALL;
 
 declaration: 'let' ID assignment?;
 assignment: '=' expression;
@@ -24,7 +24,7 @@ expression          : '(' expression ')'                            #parenExpr
 
 operator            : binaryOperator
                     | booleanOperator
-                    | '='
+                    | ASSIGNMENT
                     ;
 binaryOperator: PLUSORMINUS | MULTORDIV;
 booleanOperator: BOOLEANOP;
@@ -41,16 +41,15 @@ repeatStruct: 'repeat' 'while' '(' expression ')' statement* 'endRepeat';
 value              : staticValue
                    | userValue
                    ;
-staticValue: (INUM | STRING | function) method*;
-function: FUNCTIONS '(' actualParams ')';
+staticValue: (INUM | STRING | FUNCTION_CALL) method?;
 userValue          : ID
-                   | IDCALL
+                   | PROCEDURE_CALL
                    ;
 actualParams: value (','value)*;
-method: METHODS ('(' actualParams? ')')?;
+method: METHODS ('(' actualParams? ')')? method?;
 
 
-
+FUNCTION_CALL: FUNCTIONS '(' (PARAM? (',' WS? PARAM)*)? ')';
 FUNCTIONS: 'SUM' | 'AVERAGE' | 'print';
 METHODS: '.'('format' | 'count');
 BOOLEANOP: [<>]'='?|'=='|'!='|'<'|'>';
@@ -60,6 +59,7 @@ INUM: [0-9]+;
 STRING: '"' ~[\r\n"]* '"';
 WS: [ \t\r\n]+ -> skip;
 ID: [a-zA-Z][a-zA-Z0-9]*;
-IDCALL: [a-zA-Z][a-zA-Z0-9]*'('((PARAM?)|(PARAM(','WS PARAM)*))')';
+PROCEDURE_CALL: [a-zA-Z][a-zA-Z0-9]*WS?'('((PARAM?)|(PARAM(','WS? PARAM)*))')';
+ASSIGNMENT: '=';
 PARAM:(([a-zA-Z]+)|STRING|INUM);
 
