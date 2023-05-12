@@ -1,4 +1,4 @@
-package com.eel;
+package com.eel.parsing;
 
 import java.util.*;
 
@@ -10,7 +10,7 @@ public class EelScope {
     private Map<String, Attributes> params = new LinkedHashMap<>();
 
     //Nested scopes within the current scope
-    List<EelScope> children = new ArrayList<>();
+    public List<EelScope> children = new ArrayList<>();
 
     public EelScope(String scopeName){
         this.scopeName = scopeName;

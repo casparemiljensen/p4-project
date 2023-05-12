@@ -1,4 +1,4 @@
-package com.eel;
+package com.eel.errors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,22 +51,6 @@ public class Errors {
             }
         }
         return true;
-    }
-}
-
-class Item {
-    ErrorType type;
-    String message;
-    int lineNumber;
-    int column;
-    List<String> lines;
-
-    public Item(ErrorType type, String message, int lineNumber, int column, List<String> lines) {
-        this.type = type;
-        this.message = message;
-        this.lineNumber = lineNumber;
-        this.column = column;
-        this.lines = lines;
     }
 }
 

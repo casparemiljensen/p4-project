@@ -1,4 +1,4 @@
-package com.eel;
+package com.eel.parsing;
 
 import com.eel.AST.nodes.Type;
 

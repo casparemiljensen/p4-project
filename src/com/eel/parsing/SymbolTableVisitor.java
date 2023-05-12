@@ -1,9 +1,10 @@
-package com.eel;
+package com.eel.parsing;
 
 import com.eel.AST.ReflectiveASTVisitor;
 import com.eel.AST.nodes.*;
+import com.eel.errors.ErrorType;
+import com.eel.errors.Errors;
 import kotlin.NotImplementedError;
-import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class SymbolTableVisitor extends ReflectiveASTVisitor {
     SymbolTable symbolTable;
@@ -170,8 +171,8 @@ public class SymbolTableVisitor extends ReflectiveASTVisitor {
                 node.operatorNode.accept(this);
                 node.right.accept(this);
 
-                System.out.println("left type: " + node.left.getType());
-                if (node.left.getType() != node.right.getType()) errors.addEntry(ErrorType.TYPE_ERROR,"Not same type in infix expression", node.getLineNumber(), node.getColumnNumber());
+                if (node.left.valueExprNode != null)
+                    if (node.left.valueExprNode.valueNode.staticValueNode.getType() != node.right.valueExprNode.valueNode.staticValueNode.getType()) errors.addEntry(ErrorType.IMPLICIT_TYPE_CONVERSION,"Not possible to implicitly convert types in expression. Types: " + node.left.valueExprNode.valueNode.staticValueNode.getType() + " and " + node.right.valueExprNode.valueNode.staticValueNode.getType() + ".", node.getLineNumber(), node.getColumnNumber());
             }
         }
         else
@@ -182,7 +183,7 @@ public class SymbolTableVisitor extends ReflectiveASTVisitor {
         if(node != null) {
             if (node.valueNode != null) {
                 node.valueNode.accept(this);
-
+            node.setType(node.valueNode.getType());
             }
         }
         else
@@ -198,7 +199,7 @@ public class SymbolTableVisitor extends ReflectiveASTVisitor {
                 node.userValueNode.accept(this);
             } else
                 throw new NotImplementedError();
-            System.out.println("value nodes static " + node.staticValueNode.getType());
+            node.setType(node.staticValueNode.getType());
             node.setType(node.staticValueNode.getType());
         }
         else

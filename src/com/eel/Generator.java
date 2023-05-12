@@ -3,12 +3,11 @@ package com.eel;
 import com.eel.AST.ReflectiveASTVisitor;
 import com.eel.AST.nodes.*;
 import kotlin.NotImplementedError;
-import org.antlr.v4.runtime.tree.TerminalNode;
 
-public class OfficeScriptsCG extends ReflectiveASTVisitor {
+public class Generator extends ReflectiveASTVisitor {
 	public StringBuilder strBlr;
 
-	public OfficeScriptsCG() {
+	public Generator() {
 		strBlr = new StringBuilder();
 	}
 

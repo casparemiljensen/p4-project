@@ -1,12 +1,13 @@
-package com.eel;
+package com.eel.errors;
 
 public enum ErrorType {
-    TYPE_ERROR("E1"),
-    DUPLICATE_VARS("E2"),
+    TYPE_ERROR("420"),
+    IMPLICIT_TYPE_CONVERSION("I1"),
+    DUPLICATE_VARIABLE("E2"),
     GENERAL_WARNING("W1"),
     UNDECLARED_FUNCTION_WARNING("W2");
 
-    private final String code;
+    public final String code;
 
     ErrorType(String code) {
         this.code = code;

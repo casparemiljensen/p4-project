@@ -4,6 +4,10 @@ import com.eel.AST.ASTPrinter;
 import com.eel.AST.BuildASTVisitor;
 import com.eel.AST.nodes.ProgramNode;
 import com.eel.antlr.*;
+import com.eel.errors.Errors;
+import com.eel.errors.Item;
+import com.eel.parsing.SymbolTable;
+import com.eel.parsing.SymbolTableVisitor;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
@@ -31,7 +35,7 @@ class Eel {
 		symbolTableVisitor.performVisit(ast);
 
 		if (!errors.containsErrors()) {
-			OfficeScriptsCG officeScriptsCG = new OfficeScriptsCG();
+			Generator officeScriptsCG = new Generator();
 			officeScriptsCG.performVisit(ast);
 		} else {
 			System.out.println("Code contains " + errors.errors.stream().count() + " errors:");

@@ -1,12 +1,10 @@
-package com.eel;
+package com.eel.parsing;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Stack;
 
 public class SymbolTable {
-    private EelScope currentScope;
+    public EelScope currentScope;
     final private EelScope globalScope;
     final private Stack<EelScope> scopeStack = new Stack<>();
     public ArrayList<String> declaredFunctions = new ArrayList<>();
