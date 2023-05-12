@@ -24,7 +24,7 @@ public class SymbolTableVisitor extends ReflectiveASTVisitor {
     }
     public void Visit(ProcedureNode node) {
         if (symbolTable.lookupSymbol(node.IdToken.toString()) != null) {
-            errors.addEntry(ErrorType.DUPLICATE_VARS, "Function '" + node.IdToken.toString() + "' already exists", node.getColumnNumber(), node.getLineNumber());
+            errors.addEntry(ErrorType.DUPLICATE_VARIABLE, "Function '" + node.IdToken.toString() + "' already exists", node.getColumnNumber(), node.getLineNumber());
         }
         else {
             //Creates and adds the function to the symbol table
@@ -236,7 +236,7 @@ public class SymbolTableVisitor extends ReflectiveASTVisitor {
 
     private boolean isDeclared(DeclarationNode node) {
         if (symbolTable.lookupSymbol(node.IdToken.toString()) != null){
-            errors.addEntry(ErrorType.DUPLICATE_VARS, "Variable '" + node.IdToken.toString() + "' already exists", node.getLineNumber(), node.getColumnNumber());
+            errors.addEntry(ErrorType.DUPLICATE_VARIABLE, "Variable '" + node.IdToken.toString() + "' already exists", node.getLineNumber(), node.getColumnNumber());
             // node.type = symbolTable.lookupSymbol(node.IdToken.toString()).getVariableType();
 
             return true;

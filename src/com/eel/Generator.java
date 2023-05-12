@@ -125,6 +125,30 @@ public class Generator extends ReflectiveASTVisitor {
 			throw new NullPointerException();
 	}
 
+	public void Visit(CallNode node) {
+		if(node != null) {
+			if(node.function != null) {
+				strBlr.append(getIndentation()).append(node.function.getText() + "\n");
+			}
+			else if(node.procedure != null) {
+				strBlr.append(getIndentation()).append(node.procedure.getText() + "\n");
+			}
+			else {
+				throw new NotImplementedError();
+			}
+		}
+		else
+			throw new NullPointerException();
+	}
+
+	public void Visit(ReturnNode node) {
+		if(node != null) {
+
+		}
+		else
+			throw new NullPointerException();
+	}
+
 	public void Visit(AssignmentNode node) {
 		if(node != null) {
 			if(node.expressionNode != null) {
