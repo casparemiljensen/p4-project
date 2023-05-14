@@ -71,8 +71,8 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
     @Override
     public ControlStructNode visitControlStruct(eelParser.ControlStructContext ctx) {
         // selectiveStruct
-        if (ctx.iterativeStruct() == null)
-            return new ControlStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitSelectiveStruct(ctx.selectiveStruct()));
+        if (ctx.iterativeStruct() != null)
+            return new ControlStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitIterativeStruct(ctx.iterativeStruct()));
             // iterativeStruct
         else
             return new ControlStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitIterativeStruct(ctx.iterativeStruct()));
@@ -121,7 +121,7 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
                 node = new MultDivNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().binaryOperator().MULTORDIV(), visitExpression(ctx.right));
             }
             else {
-                throw new NotImplementedError();
+                throw new NotImplementedError("InfixExpr");
             }
 
         } else if (ctx.operator().booleanOperator() != null) {
@@ -195,16 +195,6 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
 					visitUserValue(ctx.userValue()));
 	}
 
-    @Override
-    public UserValueNode visitUserValue(eelParser.UserValueContext ctx) {
-        return new UserValueNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), (ctx.ID() != null) ?  ctx.ID() : ctx.PROCEDURE_CALL());
-    }
-
-
-    @Override
-    public StaticValueNode visitStaticValue(eelParser.StaticValueContext ctx) {
-        return new StaticValueNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.INUM(), ctx.STRING(), ctx.FUNCTION_CALL(), ((ctx.method() != null) ? visitMethod(ctx.method()) : null));
-    }
 
 	@Override
 	public MethodNode visitMethod(eelParser.MethodContext ctx) {
@@ -212,12 +202,6 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
 				(ctx.actualParams() != null) ? visitActualParams(ctx.actualParams()) : null,
 				((ctx.method() != null) ? visitMethod(ctx.method()) : null));
 	}
-
-//	@Override
-//	public FunctionNode visitFunction(eelParser.FunctionContext ctx) {
-//		return new FunctionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.FUNCTIONS(),
-//				(ctx.actualParams() != null) ? visitActualParams(ctx.actualParams()) : null);
-//	}
 
 	@Override
 	public ActualParamsNode visitActualParams(eelParser.ActualParamsContext ctx) {
@@ -277,6 +261,12 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
 		return new RepeatStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),
 				visitExpression(ctx.expression()), statements);
 	}
+
+    @Override
+    public CellNode visitCell(eelParser.CellContext ctx) {
+
+        return new CellNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), (ctx.SINGLE_CELL() != null ? ctx.SINGLE_CELL() : null), (ctx.RANGE() != null ? ctx.RANGE() : null), (ctx.CELL_METHOD() != null ? ctx.CELL_METHOD() : null));
+    }
 
 	private static <T> Collection<T> nullSafe(Collection<T> c) {
 		return (c == null) ? Collections.<T>emptyList() : c;

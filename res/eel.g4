@@ -1,20 +1,22 @@
 grammar eel;
 
 program: procedure+ EOF;
-procedure: 'procedure' PROCEDURE_CALL statement* 'endProcedure';
-formalParams: ID (',' ID)*;
+procedure: 'procedure' procedureDeclaration statement* 'endProcedure';
+procedureDeclaration: PROCEDURE '(' formalParams? ')';
+formalParams: VARIABLE (',' VARIABLE)*;
+
 statement           : declaration
                     | controlStruct
-                    | call
-                    | ID assignment
-                    | return;
-
-call: FUNCTION_CALL | PROCEDURE_CALL;
-
-declaration: 'let' ID assignment?;
+                    | functionCall
+                    | procedureCall
+                    | VARIABLE assignment
+                    | cell     assignment
+                    | return
+                    ;
+declaration: 'let' VARIABLE assignment?;
 assignment: '=' expression;
 
-return: 'return' expression?;
+return: 'return' expression;
 
 expression          : '(' expression ')'                            #parenExpr
                     | PLUSORMINUS expression                        #unaryExpr
@@ -35,31 +37,37 @@ selectiveStruct: ifStruct;
 ifStruct: ifCondition 'then' statement* elseIfStruct* elseStruct? 'endIf';
 ifCondition: 'if' '(' expression ')';
 elseIfStruct: 'else' ifCondition 'then' statement*;
-elseStruct: 'else' 'then' statement*;
+elseStruct: 'else then' statement*;
 iterativeStruct: repeatStruct;
 repeatStruct: 'repeat' 'while' '(' expression ')' statement* 'endRepeat';
-value              : staticValue
-                   | userValue
-                   ;
-staticValue: (INUM | STRING | FUNCTION_CALL) method?;
-userValue          : ID
-                   | PROCEDURE_CALL
-                   ;
-actualParams: value (','value)*;
+value: ( INUM | FLOAT | STRING | VARIABLE | cell | functionCall | procedureCall ) method?;
+cell: (SINGLE_CELL | RANGE) CELL_METHOD?;
+functionCall: FUNCTIONS '(' actualParams? ')';
+procedureCall: PROCEDURE '(' actualParams? ')';
 method: METHODS ('(' actualParams? ')')? method?;
+actualParams: value (','value)*;
 
-
-FUNCTION_CALL: FUNCTIONS '(' (PARAM? (',' WS? PARAM)*)? ')';
+//callable
 FUNCTIONS: 'SUM' | 'AVERAGE' | 'print';
-METHODS: '.'('format' | 'count');
+PROCEDURE: [A-Z][a-zA-Z0-9]*;
+METHODS: '.'('count');
+CELL_METHOD: '.'('value' | 'format');
+
+//operators
 BOOLEANOP: [<>]'='?|'=='|'!='|'<'|'>';
 PLUSORMINUS: '+'|'-';
 MULTORDIV: '*'|'/';
-INUM: [0-9]+;
-STRING: '"' ~[\r\n"]* '"';
-WS: [ \t\r\n]+ -> skip;
-ID: [a-zA-Z][a-zA-Z0-9]*;
-PROCEDURE_CALL: [a-zA-Z][a-zA-Z0-9]*WS?'('((PARAM?)|(PARAM(','WS? PARAM)*))')';
 ASSIGNMENT: '=';
-PARAM:(([a-zA-Z]+)|STRING|INUM);
+
+//types
+VARIABLE: [a-z][a-zA-Z0-9]*;
+INUM: [0-9]+;
+FLOAT: INUM'.'INUM;
+STRING: '"' ~[\r\n"]* '"';
+CELL: (([A-Z]+[1-9][0-9]*)|([1-9][0-9]*','[1-9][0-9]*));
+SINGLE_CELL: '('CELL')';
+RANGE: '{'(CELL(':'CELL)?(';'CELL(':'CELL)?)*)'}';
+
+//spacing
+WS: [ \t\r\n]+ -> skip;
 

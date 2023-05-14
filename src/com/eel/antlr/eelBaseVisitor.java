@@ -1,3 +1,4 @@
+// Generated from C:/Users/caspa/Qsync/Dokumenter/Skole & Uddannelse/AAU/Software Bachelor/4. Semester/Project/p4-project/res\eel.g4 by ANTLR 4.12.0
 package com.eel.antlr;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
@@ -31,6 +32,13 @@ public class eelBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements ee
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitProcedureDeclaration(eelParser.ProcedureDeclarationContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitFormalParams(eelParser.FormalParamsContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
@@ -39,13 +47,6 @@ public class eelBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements ee
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitStatement(eelParser.StatementContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitCall(eelParser.CallContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -185,21 +186,21 @@ public class eelBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements ee
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitStaticValue(eelParser.StaticValueContext ctx) { return visitChildren(ctx); }
+	@Override public T visitCell(eelParser.CellContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitUserValue(eelParser.UserValueContext ctx) { return visitChildren(ctx); }
+	@Override public T visitFunctionCall(eelParser.FunctionCallContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitActualParams(eelParser.ActualParamsContext ctx) { return visitChildren(ctx); }
+	@Override public T visitProcedureCall(eelParser.ProcedureCallContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -207,4 +208,11 @@ public class eelBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements ee
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitMethod(eelParser.MethodContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitActualParams(eelParser.ActualParamsContext ctx) { return visitChildren(ctx); }
 }

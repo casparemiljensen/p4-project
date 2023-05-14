@@ -16,15 +16,17 @@ public class StatementNode extends AbstractNode {
     @Nullable
     public AssignmentNode assignmentNode;
     @Nullable
+    public TerminalNode terminal;
+    @Nullable
     public ReturnNode returnNode;
     @Nullable
-    public TerminalNode terminal;
+    public CellNode cellNode;
+
 
     public StatementNode(int lineNumber, int colNumber, @Nullable AbstractNode node, @Nullable TerminalNode terminal) {
         super(lineNumber, colNumber);
-            if (terminal instanceof TerminalNode) {
-                this.terminal = terminal;
-            }
+
+
             if (node instanceof DeclarationNode) {
                 this.declarationNode = (DeclarationNode) node;
             }

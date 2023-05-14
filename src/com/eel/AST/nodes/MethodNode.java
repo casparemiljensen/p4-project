@@ -4,15 +4,16 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import org.jetbrains.annotations.Nullable;
 
 public class MethodNode extends AbstractNode {
-    public TerminalNode method;
+    public TerminalNode METHODS;
+    @Nullable
     public ActualParamsNode actualParamsNode;
+    @Nullable
     public MethodNode methodNode;
 
-    public MethodNode(int lineNumber, int colNumber, TerminalNode method, ActualParamsNode actualParamsNode, @Nullable MethodNode methodNode) {
+    public MethodNode(int lineNumber, int colNumber, TerminalNode METHODS, @Nullable ActualParamsNode actualParamsNode, @Nullable MethodNode methodNode) {
         super(lineNumber, colNumber);
-        this.method = method;
+        this.METHODS = METHODS;
         this.actualParamsNode = actualParamsNode;
         this.methodNode = methodNode;
     }
-
 }

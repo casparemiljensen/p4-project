@@ -7,7 +7,7 @@ import com.eel.antlr.*;
 import com.eel.errors.Errors;
 import com.eel.errors.Item;
 import com.eel.parsing.SymbolTable;
-import com.eel.parsing.SymbolTableVisitor;
+//import com.eel.parsing.SymbolTableVisitor;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
@@ -31,33 +31,33 @@ class Eel {
 		System.out.println();
 		System.out.println("Look at this pretty OfficeScript code!");
 		System.out.println();
-		SymbolTableVisitor symbolTableVisitor = new SymbolTableVisitor(new SymbolTable(), errors);
-		symbolTableVisitor.performVisit(ast);
-
-		if (!errors.containsErrors()) {
-			Generator officeScriptsCG = new Generator();
-			officeScriptsCG.performVisit(ast);
-		} else {
-			System.out.println("Code contains " + errors.errors.stream().count() + " errors:");
-			for (Item error : errors.errors) {
-				System.out.println(error.type.toString()+": "+error.message+" ("+error.type.name()+")" +
-							(error.lineNumber > 0 ? " on line "+error.lineNumber : ""));
-
-				//Enters if the error message is on multiple lines
-				if (error.lines.size() > 0) {
-					//Creates spaces, so the lines are aligned
-					String indent = " ".repeat(error.type.toString().length());
-
-					for (String line : error.lines) {
-						//Enters if line contains other characters than just spaces
-						if (line.trim().length() > 0) {
-							System.out.println(indent + "| " + line);
-						}
-					}
-					System.out.println();
-				}
-			}
-		}
+//		SymbolTableVisitor symbolTableVisitor = new SymbolTableVisitor(new SymbolTable(), errors);
+//		symbolTableVisitor.performVisit(ast);
+//
+//		if (!errors.containsErrors()) {
+//			Generator generator = new Generator();
+//			generator.performVisit(ast);
+//		} else {
+//			System.out.println("Code contains " + errors.errors.stream().count() + " errors:");
+//			for (Item error : errors.errors) {
+//				System.out.println(error.type.toString()+": "+error.message+" ("+error.type.name()+")" +
+//							(error.lineNumber > 0 ? " on line "+error.lineNumber : ""));
+//
+//				//Enters if the error message is on multiple lines
+//				if (error.lines.size() > 0) {
+//					//Creates spaces, so the lines are aligned
+//					String indent = " ".repeat(error.type.toString().length());
+//
+//					for (String line : error.lines) {
+//						//Enters if line contains other characters than just spaces
+//						if (line.trim().length() > 0) {
+//							System.out.println(indent + "| " + line);
+//						}
+//					}
+//					System.out.println();
+//				}
+//			}
+//		}
 
 
 	}

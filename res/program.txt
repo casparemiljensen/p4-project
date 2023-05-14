@@ -1,6 +1,9 @@
-procedure main()
+procedure Main()
+    let i
 
-    let u = "hej"+"hej"
+    repeat while(2-2)
+        print(3)
+    endRepeat
 
 endProcedure
 
