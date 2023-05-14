@@ -126,6 +126,8 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
 
         } else if (ctx.operator().booleanOperator() != null) {
 
+            // This can be refactored...
+
             switch (ctx.operator().booleanOperator().BOOLEANOP().getText()) {
                 case "<":
                     node = new LessThanNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitExpression(ctx.left), ctx.operator().booleanOperator().BOOLEANOP(), visitExpression(ctx.right));

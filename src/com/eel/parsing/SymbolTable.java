@@ -5,7 +5,7 @@ import java.util.Stack;
 
 public class SymbolTable {
     public EelScope currentScope;
-    final private EelScope globalScope;
+    final EelScope globalScope;
     final private Stack<EelScope> scopeStack = new Stack<>();
     public ArrayList<String> declaredFunctions = new ArrayList<>();
 
@@ -111,8 +111,5 @@ public class SymbolTable {
         currentScope.getParams().put(id, attributes);
     }
 
-    //Checks if the Arduino functions are declared
-    public boolean isSetupAndLoopDefined() {
-        return (declaredFunctions.contains("setup") && declaredFunctions.contains("loop"));
-    }
+
 }

@@ -6,6 +6,8 @@ import com.eel.errors.ErrorType;
 import com.eel.errors.Errors;
 import kotlin.NotImplementedError;
 
+import java.util.Map;
+
 public class SymbolTableVisitor extends ReflectiveASTVisitor {
     SymbolTable symbolTable;
     Errors errors;
@@ -21,16 +23,18 @@ public class SymbolTableVisitor extends ReflectiveASTVisitor {
                 procedureNode.accept(this);
             }
         }
+        printSymbolTable();
     }
     public void Visit(ProcedureNode node) {
         if (symbolTable.lookupSymbol(node.IdToken.toString()) != null) {
-            errors.addEntry(ErrorType.DUPLICATE_VARIABLE, "Function '" + node.IdToken.toString() + "' already exists", node.getColumnNumber(), node.getLineNumber());
+            errors.addEntry(ErrorType.DUPLICATE_VARIABLE, "Procedure '" + node.IdToken.toString() + "' already exists", node.getColumnNumber(), node.getLineNumber());
         }
         else {
             //Creates and adds the function to the symbol table
-            Attributes attributes = new Attributes("function", node.getType());
+            Attributes attributes = new Attributes("procedure", node.getType());
             symbolTable.insertSymbol(node.IdToken.toString(), attributes);
 
+            symbolTable.addScope(node.IdToken.toString());
             //symbolTable.addScope(node.getNodeHash());
             for (StatementNode statementNode : node.StatementNodes) {
                 statementNode.accept(this);
@@ -73,23 +77,6 @@ public class SymbolTableVisitor extends ReflectiveASTVisitor {
             throw new NullPointerException();
     }
 
-//
-//    public void Visit(DeclarationNode node) {
-//        if(node != null) {
-//
-//            strBlr.append(getIndentation()).append("let ").append(node.IdToken);
-//            increaseIndent();
-//            if(node.assignmentNode != null) {
-//                strBlr.append("=");
-//                node.assignmentNode.accept(this);
-//            }
-//            strBlr.append("\n");
-//            decreaseIndent();
-//        }
-//        else
-//            throw new NullPointerException();
-//    }
-
     public void Visit(ControlStructNode node) {
         if(node != null) {
         }
@@ -126,15 +113,19 @@ public class SymbolTableVisitor extends ReflectiveASTVisitor {
         if(node != null) {
             if (node.parenExprNode != null) {
                 node.parenExprNode.accept(this);
+                node.setType(node.parenExprNode.getType());
             }
             else if (node.unaryExprNode != null) {
                 node.unaryExprNode.accept(this);
+                node.setType(node.unaryExprNode.getType());
             }
             else if (node.infixExprNode != null) {
                 node.infixExprNode.accept(this);
+                node.setType(node.infixExprNode.getType());
             }
             else if (node.valueExprNode != null) {
                 node.valueExprNode.accept(this);
+                node.setType(node.valueExprNode.getType());
             }
             else
                 throw new NotImplementedError();
@@ -148,6 +139,7 @@ public class SymbolTableVisitor extends ReflectiveASTVisitor {
         if(node != null) {
             if (node.leftPar != '\u0000' && node.expressionNode != null && node.rightPar != '\u0000') {
                 node.expressionNode.accept(this);
+                node.setType(node.expressionNode.getType());
             }
         }
         else
@@ -158,6 +150,7 @@ public class SymbolTableVisitor extends ReflectiveASTVisitor {
         if(node != null) {
             if (node.right != null && node.operator != null) {
                 node.right.accept(this);
+                node.setType(node.right.getType());
             }
         }
         else
@@ -171,8 +164,9 @@ public class SymbolTableVisitor extends ReflectiveASTVisitor {
                 node.operatorNode.accept(this);
                 node.right.accept(this);
 
-                if (node.left.valueExprNode != null)
-                    if (node.left.valueExprNode.valueNode.staticValueNode.getType() != node.right.valueExprNode.valueNode.staticValueNode.getType()) errors.addEntry(ErrorType.IMPLICIT_TYPE_CONVERSION,"Not possible to implicitly convert types in expression. Types: " + node.left.valueExprNode.valueNode.staticValueNode.getType() + " and " + node.right.valueExprNode.valueNode.staticValueNode.getType() + ".", node.getLineNumber(), node.getColumnNumber());
+                if (node.left.getType() != node.right.getType()) {
+                    errors.addEntry(ErrorType.IMPLICIT_TYPE_CONVERSION, "Not possible to implicitly convert types in expression. Types: " + node.left.getType() + " and " + node.right.getType() + ".", node.getLineNumber(), node.getColumnNumber());
+                }
             }
         }
         else
@@ -183,7 +177,7 @@ public class SymbolTableVisitor extends ReflectiveASTVisitor {
         if(node != null) {
             if (node.valueNode != null) {
                 node.valueNode.accept(this);
-            node.setType(node.valueNode.getType());
+                node.setType(node.valueNode.getType());
             }
         }
         else
@@ -195,12 +189,12 @@ public class SymbolTableVisitor extends ReflectiveASTVisitor {
 
             if (node.staticValueNode != null) {
                 node.staticValueNode.accept(this);
+                node.setType(node.staticValueNode.getType());
             } else if (node.userValueNode != null) {
                 node.userValueNode.accept(this);
+                node.setType(node.userValueNode.getType());
             } else
                 throw new NotImplementedError();
-            node.setType(node.staticValueNode.getType());
-            node.setType(node.staticValueNode.getType());
         }
         else
             throw new NullPointerException();
@@ -210,13 +204,29 @@ public class SymbolTableVisitor extends ReflectiveASTVisitor {
         if(node != null) {
             if (node.STRING != null) {
                 node.setType(Type.String);
-            } else if (node.INUM != null) {
+            }
+            else if (node.INUM != null) {
                 node.setType(Type.Integer);
-            } else if (node.FUNCTION != null) {
+            }
+//            else if(node.FLOAT != null) {
+//                node.setType(Type.Float);
+//            }
+            else if (node.FUNCTION != null) {
                 node.setType(Type.Function);
             }
             if (node.methodNode != null) {
                 node.methodNode.accept(this);
+            }
+        }
+        else
+            throw new NullPointerException();
+    }
+
+    public void Visit(UserValueNode node) {
+        if(node != null) {
+            if (node.ID != null) {
+                throw new NotImplementedError();
+
             }
         }
         else
@@ -242,15 +252,6 @@ public class SymbolTableVisitor extends ReflectiveASTVisitor {
             return true;
         }
         return false;
-    }
-
-    public void Visit(UserValueNode node) {
-        if(node != null) {
-            if (node.ID != null) {
-            }
-        }
-        else
-            throw new NullPointerException();
     }
 
     public void Visit(OperatorNode node) {
@@ -289,5 +290,28 @@ public class SymbolTableVisitor extends ReflectiveASTVisitor {
     @Override
     public void defaultVisit(Object o) {
 
+    }
+
+
+    private void printSymbolTable() {
+        printScope(symbolTable.globalScope);
+    }
+
+    private void printScope(EelScope scope) {
+        System.out.println("Scope: " + scope.getScopeName());
+        System.out.println("Symbols:");
+        for (Map.Entry<String, Attributes> entry : scope.getSymbols().entrySet()) {
+            String symbol = entry.getKey();
+            Attributes attributes = entry.getValue();
+            System.out.println("  Symbol: " + symbol);
+            System.out.println("  Attributes:");
+            System.out.println("    Type: " + attributes.getKind());
+            // Add more attribute printing if needed
+            System.out.println();
+        }
+
+        for (EelScope childScope : scope.children) {
+            printScope(childScope);
+        }
     }
 }

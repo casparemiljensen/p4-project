@@ -30,7 +30,7 @@ public class Errors {
 
     private void setHasErrors(ErrorType type) {
         //Enters if an error was reported
-        if (type.toString().startsWith("E")) {
+        if (type != null) {
             hasErrors = true;
         }
     }
