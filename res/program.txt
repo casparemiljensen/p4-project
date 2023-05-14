@@ -5,6 +5,40 @@ procedure Main()
         print(3)
     endRepeat
 
+    if(3<1) then
+        let x = 3
+
+
+    endIf
+
+    Secondary("hej")
+    Secondary(3)
 endProcedure
 
 
+procedure Secondary()
+let x = 4+2
+let z = 4-4
+
+let y = -4
+let y = +5
+
+
+let i = 4*4
+let o = 4/4
+
+let g = 4!=3
+let g = 4<4
+let y = 4>4
+let y = 4<=4
+let h = 4>=4
+let t = 3!=3
+let g = 6==6
+
+let r = 4.4 + 4.4
+let r = 4.4 - 4.4
+let y = 4.4 * 4.4
+let y = 4.4 / 4.4
+let y = 4.4 < 4.4
+
+endProcedure
