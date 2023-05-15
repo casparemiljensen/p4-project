@@ -128,7 +128,7 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
 
     @Override
     public UnaryExprNode visitUnaryExpr(eelParser.UnaryExprContext ctx) {
-        return new UnaryExprNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.PLUSORMINUS(), visitExpression(ctx.expression()));
+        return new UnaryExprNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), (ctx.PLUSORMINUS() != null ? ctx.PLUSORMINUS() : ctx.NOT()), visitExpression(ctx.expression()));
     }
 
     @Override

@@ -19,7 +19,7 @@ assignment: '=' expression;
 return: 'return' expression;
 
 expression          : '(' expression ')'                            #parenExpr
-                    | PLUSORMINUS expression                        #unaryExpr
+                    | (PLUSORMINUS | NOT) expression                #unaryExpr
                     | left=expression operator right=expression     #infixExpr
                     | value                                         #valueExpr
                     ;
@@ -55,6 +55,7 @@ CELL_METHOD: '.'('value' | 'format');
 
 //operators
 BOOLEANOP: [<>]'='?|'=='|'!='|'<'|'>';
+NOT: '!';
 PLUSORMINUS: '+'|'-';
 MULTORDIV: '*'|'/';
 ASSIGNMENT: '=';
