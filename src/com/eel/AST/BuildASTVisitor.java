@@ -87,7 +87,6 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
         );
     }
 
-
     @Override
     public DeclarationNode visitDeclaration(eelParser.DeclarationContext ctx) {
         return new DeclarationNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "let", ctx.VARIABLE(), (ctx.assignment() != null ? visitAssignment(ctx.assignment()) : null));
