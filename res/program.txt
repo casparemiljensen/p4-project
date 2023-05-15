@@ -1,8 +1,9 @@
 procedure Secondary()
 
-let a = 4+2
-let b = 4-4
-let c = 5+5
+let second1 = 4+2
+let second2 = 4-4
+let second3 = 5+5
+let second1
 
 endProcedure
 

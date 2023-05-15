@@ -9,7 +9,6 @@ import kotlin.NotImplementedError;
 import java.util.Map;
 
 public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
-
     SymbolTable symbolTable;
     Errors errors;
 
@@ -89,9 +88,7 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
                 node.assignmentNode.accept(this);
             }
         }
-        else
-            throw new NullPointerException();
-    }
+
 
     public void Visit(ControlStructNode node) {
         if(node != null) {
@@ -179,11 +176,8 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
                 node.left.accept(this);
                 node.operatorNode.accept(this);
                 node.right.accept(this);
-
-                if (node.left.getType() != node.right.getType()) {
-//                    errors.addEntry(ErrorType.IMPLICIT_TYPE_CONVERSION, "Not possible to implicitly convert types in expression. Types: " + node.left.getType() + " and " + node.right.getType() + ".", node.getLineNumber(), node.getColumnNumber());
-                }
             }
+
         }
         else
             throw new NullPointerException();
