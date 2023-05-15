@@ -1,18 +1,59 @@
 package com.eel.AST.nodes;
 
+import kotlin.NotImplementedError;
+import org.antlr.v4.runtime.tree.TerminalNode;
+import org.jetbrains.annotations.Nullable;
+
 public class ValueNode extends AbstractNode {
-    public StaticValueNode staticValueNode;
-    public UserValueNode userValueNode;
 
-    // staticValue
-    public ValueNode(int lineNumber, int colNumber, StaticValueNode staticValueNode) {
+    @Nullable
+    public TerminalNode INUM;
+    @Nullable
+    public TerminalNode FLOAT;
+    @Nullable
+    public TerminalNode STRING;
+    @Nullable
+    public TerminalNode VARIABLE;
+    @Nullable
+    public TerminalNode BOOLEAN;
+
+    @Nullable
+    public CellNode cellNode;
+    @Nullable
+    public FunctionCallNode functionCallNode;
+    @Nullable
+    public ProcedureCallNode procedureCallNode;
+    @Nullable
+    public MethodNode methodNode;
+
+
+    public ValueNode(int lineNumber, int colNumber, @Nullable AbstractNode node, @Nullable TerminalNode terminal, String terminalType, @Nullable MethodNode methodNode) {
         super(lineNumber, colNumber);
-        this.staticValueNode = staticValueNode;
+
+        if (terminal instanceof TerminalNode) {
+            switch (terminalType) {
+                case "INUM": this.INUM = terminal;
+                case "FLOAT": this.FLOAT = terminal;
+                case "STRING": this.STRING = terminal;
+                case "VARIABLE": this.VARIABLE = terminal;
+                case "BOOLEAN": this.BOOLEAN = terminal;
+            }
+        }
+        else if (node instanceof CellNode) {
+            this.cellNode = (CellNode) node;
+        }
+        else if (node instanceof FunctionCallNode) {
+            this.functionCallNode = (FunctionCallNode) node;
+        }
+        else if (node instanceof ProcedureCallNode) {
+            this.procedureCallNode = (ProcedureCallNode) node;
+        }
+        else {
+            throw new NotImplementedError();
+        }
+        if (methodNode != null) {
+            this.methodNode = methodNode;
+        }
     }
 
-    // userValue
-    public ValueNode(int lineNumber, int colNumber, UserValueNode userValueNode) {
-        super(lineNumber, colNumber);
-        this.userValueNode = userValueNode;
-    }
 }

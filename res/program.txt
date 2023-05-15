@@ -1,7 +1,7 @@
-procedure main()
+procedure Secondary()
 
-    let u = "hej"+"hej"
+let a = 4+2
+let b = 4-4
+let c = 5+5
 
 endProcedure
-
-
