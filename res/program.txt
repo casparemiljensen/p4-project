@@ -5,3 +5,11 @@ let b = 4-4
 let c = 5+5
 
 endProcedure
+
+procedure Terti()
+
+let ter1= 4+2
+let ter2 = 4-4
+let ter3 = 5+5
+
+endProcedure

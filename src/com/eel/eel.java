@@ -9,15 +9,17 @@ import com.eel.errors.Errors;
 import com.eel.errors.Item;
 import com.eel.parsing.SymbolTable;
 import com.eel.parsing.BuildSymbolTableVisitor;
-import com.eel.parsing.TypeCheckVisitor;
+import com.eel.parsing.SemanticVisitor;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.*;
 
 class Eel {
 	public static void main(String[] args) throws Exception {
-		Errors errors = new Errors();
+		Errors symbolTableErrors = new Errors();
+		Errors semanticErrors = new Errors();
 		SymbolTable symbolTable = new SymbolTable();
 
 		var inputStream = CharStreams.fromString(readFileAsString("out/production/eel/program.txt"));
@@ -31,44 +33,45 @@ class Eel {
 		ASTPrinter astPrinter = new ASTPrinter();
 		astPrinter.print(ast);
 
-		System.out.println();
-		System.out.println();
-		System.out.println("Look at this pretty OfficeScript code!");
-		System.out.println();
-
-		BuildSymbolTableVisitor buildSymbolTableVisitor = new BuildSymbolTableVisitor(symbolTable);
+		BuildSymbolTableVisitor buildSymbolTableVisitor = new BuildSymbolTableVisitor(symbolTable, symbolTableErrors);
 		buildSymbolTableVisitor.performVisit(ast);
 
-		TypeCheckVisitor typeCheckVisitor =  new TypeCheckVisitor(symbolTable, errors);
-		typeCheckVisitor.performVisit(ast);
+		if(!symbolTableErrors.containsErrors()) {
+			SemanticVisitor semanticVisitor =  new SemanticVisitor(symbolTable, semanticErrors);
+			semanticVisitor.performVisit(ast);
 
-
-		if (!errors.containsErrors()) {
-			Generator generator = new Generator();
-			generator.performVisit(ast);
-		} else {
-			System.out.println("Code contains " + errors.errors.stream().count() + " errors:");
-			for (Item error : errors.errors) {
-				System.out.println(error.type.toString()+": "+error.message+" ("+error.type.name()+")" +
-							(error.lineNumber > 0 ? " on line "+error.lineNumber : ""));
-
-				//Enters if the error message is on multiple lines
-				if (error.lines.size() > 0) {
-					//Creates spaces, so the lines are aligned
-					String indent = " ".repeat(error.type.toString().length());
-
-					for (String line : error.lines) {
-						//Enters if line contains other characters than just spaces
-						if (line.trim().length() > 0) {
-							System.out.println(indent + "| " + line);
-						}
-					}
-					System.out.println();
-				}
+			if (!semanticErrors.containsErrors()) {
+				Generator generator = new Generator();
+				generator.performVisit(ast);
 			}
 		}
+		else {
+			System.out.println("[SymbolTable] Code contains " + symbolTableErrors.errors.stream().count() + " errors:");
+			System.out.println("[TypeCheck] Code contains " + semanticErrors.errors.stream().count() + " errors:");
+			printErrors(symbolTableErrors);
+			printErrors(semanticErrors);
+		}
+	}
 
+	public static void printErrors(Errors errors) {
+		for (Item error : errors.errors) {
+			System.out.println(error.type.toString()+": "+error.message+" ("+error.type.name()+")" +
+					(error.lineNumber > 0 ? " on line "+error.lineNumber : ""));
 
+			//Enters if the error message is on multiple lines
+			if (error.lines.size() > 0) {
+				//Creates spaces, so the lines are aligned
+				String indent = " ".repeat(error.type.toString().length());
+
+				for (String line : error.lines) {
+					//Enters if line contains other characters than just spaces
+					if (line.trim().length() > 0) {
+						System.out.println(indent + "| " + line);
+					}
+				}
+				System.out.println();
+			}
+		}
 	}
 
 	public static String readFileAsString(String fileName) throws Exception {
