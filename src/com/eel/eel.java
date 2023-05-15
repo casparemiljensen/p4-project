@@ -1,5 +1,6 @@
 package com.eel;
 
+
 import com.eel.AST.ASTPrinter;
 import com.eel.AST.BuildASTVisitor;
 import com.eel.AST.nodes.ProgramNode;
@@ -34,8 +35,13 @@ class Eel {
 		System.out.println();
 		System.out.println("Look at this pretty OfficeScript code!");
 		System.out.println();
-//		SymbolTableVisitor symbolTableVisitor = new SymbolTableVisitor(new SymbolTable(), errors);
-//		symbolTableVisitor.performVisit(ast);
+
+		BuildSymbolTableVisitor buildSymbolTableVisitor = new BuildSymbolTableVisitor(symbolTable);
+		buildSymbolTableVisitor.performVisit(ast);
+
+		TypeCheckVisitor typeCheckVisitor =  new TypeCheckVisitor(symbolTable, errors);
+		typeCheckVisitor.performVisit(ast);
+
 
 		if (!errors.containsErrors()) {
 			Generator generator = new Generator();
