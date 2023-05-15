@@ -28,8 +28,8 @@ public class Generator extends ReflectiveASTVisitor {
 			// The line below it necessary because EEL addes () after proc calls but this is not used in the same way if OfficeScripts.
 			String inputProcName = node.procedureDeclarationNode.procedureToken.toString();
 			String outputProcName = inputProcName.replace("(", "").replace(")", "");
-			strBlr.append(getIndentation()).append("function " + outputProcName + "(workbook: ExcelScript.Workbook) {\n");
-			increaseIndent();
+			strBlr.append(getIndentation()).append("function " + outputProcName.toLowerCase() + "(workbook: ExcelScript.Workbook) {\n");
+            increaseIndent();
 
 			for (StatementNode statementNode : node.StatementNodes) {
 				strBlr.append(getIndentation());
@@ -37,6 +37,14 @@ public class Generator extends ReflectiveASTVisitor {
 			}
 			strBlr.append("}\n");
 			decreaseIndent();
+		}
+		else
+			throw new NullPointerException();
+	}
+
+	public void Visit(FormalParametersNode node) {
+		if (node != null) {
+
 		}
 		else
 			throw new NullPointerException();
@@ -85,12 +93,16 @@ public class Generator extends ReflectiveASTVisitor {
 
 	public void Visit(ControlStructNode node) {
 		if(node != null) {
-			if(node.iterativeStructNode.repeatStructNode != null){
-				node.iterativeStructNode.repeatStructNode.accept(this);
-			}
-			else if(node.selectiveStructNode.ifStructNode != null) {
-				node.selectiveStructNode.ifStructNode.accept(this);
-			}
+            if (node.iterativeStructNode != null) {
+                if(node.iterativeStructNode.repeatStructNode != null){
+                    node.iterativeStructNode.repeatStructNode.accept(this);
+                }
+            }
+            else if (node.selectiveStructNode != null) {
+                if(node.selectiveStructNode.ifStructNode != null) {
+                    node.selectiveStructNode.ifStructNode.accept(this);
+                }
+            }
 			else
 				throw new NotImplementedError();
 		}
@@ -101,19 +113,23 @@ public class Generator extends ReflectiveASTVisitor {
 	public void Visit(RepeatStructNode node) {
 		if (node != null) {
 			if (node.expressionNode != null) {
-				strBlr.append(getIndentation()).append("while (");
+				//strBlr.append(getIndentation()).append("while (");
+                strBlr.append("while (");
 				node.expressionNode.accept(this);
 				strBlr.append(") {\n");
 				increaseIndent();
 			}
 
+            // Repeat while loop body
 			if (node.statementNodes != null) {
 				if (node.statementNodes.size() > 0) {
+                    strBlr.append(getIndentation());
 					node.statementNodes.forEach(s -> {
 						s.accept(this);
 					});
 				}
 			}
+
 			decreaseIndent();
 			strBlr.append(getIndentation()).append("}\n");
 		} else {
@@ -123,15 +139,109 @@ public class Generator extends ReflectiveASTVisitor {
 
 	public void Visit(IfStructNode node) {
 		if(node != null) {
+            if (node.ifConditionNode != null) {
+                node.ifConditionNode.accept(this);
+            }
 
+            if (node.statementNodes != null) {
+                increaseIndent();
+                if (node.statementNodes.size() > 0) {
+                    strBlr.append(getIndentation());
+                    node.statementNodes.forEach(s -> {
+                        s.accept(this);
+                    });
+                }
+                decreaseIndent();
+            }
+
+            strBlr.append(getIndentation()).append("}\n");
+
+
+            if (node.elseIfStructNodes != null) {
+                if (node.elseIfStructNodes.size() > 0) {
+                    node.elseIfStructNodes.forEach(s -> {
+                        s.accept(this);
+                    });
+                }
+            }
+
+            if (node.elseStructNode != null) {
+				strBlr.append(getIndentation());
+                node.elseStructNode.accept(this);
+            }
 		}
 		else
 			throw new NullPointerException();
 	}
 
+    public void Visit(IfConditionNode node) {
+        if (node!= null) {
+            if (node.expressionNode != null) {
+                strBlr.append("if (");
+                node.expressionNode.accept(this);
+                strBlr.append(") {\n");
+            }
+        }
+        else
+            throw new NullPointerException();
+    }
+
+    public void Visit(ElseIfStructNode node) {
+        if (node != null) {
+			strBlr.append(getIndentation());
+            strBlr.append("else ");
+            if (node.ifConditionNode != null) {
+                node.ifConditionNode.accept(this);
+            }
+
+			increaseIndent();
+
+            if (node.statementNodes != null) {
+                if (node.statementNodes.size() > 0) {
+                    strBlr.append(getIndentation());
+                    node.statementNodes.forEach(s -> {
+                        s.accept(this);
+                    });
+                }
+            }
+			decreaseIndent();
+            strBlr.append(getIndentation()).append("}\n");
+        }
+        else throw new NullPointerException();
+    }
+
+    public void Visit(ElseStructNode node) {
+        if (node != null) {
+            strBlr.append("else {\n");
+
+			increaseIndent();
+
+            if (node.statementNode != null) {
+                if (node.statementNode.size() > 0) {
+                    strBlr.append(getIndentation());
+                    node.statementNode.forEach(s -> {
+						if (s != null) {
+							s.accept(this);
+						}
+                    });
+                }
+            }
+
+			decreaseIndent();
+
+			strBlr.append(getIndentation()).append("}\n");
+        }
+        else
+            throw new NullPointerException();
+    }
+
 	public void Visit(ReturnNode node) {
 		if(node != null) {
-
+            strBlr.append("return ");
+            if (node.expressionNode != null) {
+                node.expressionNode.accept(this);
+            }
+            strBlr.append("\n");
 		}
 		else
 			throw new NullPointerException();
