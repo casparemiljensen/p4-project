@@ -228,6 +228,10 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
             terminal = ctx.VARIABLE();
             terminalType = "VARIABLE";
         }
+        else if (ctx.BOOLEAN() != null) {
+            terminal = ctx.BOOLEAN();
+            terminalType = "BOOLEAN";
+        }
         else if (ctx.cell() != null) {
             node = visit(ctx.cell());
         }

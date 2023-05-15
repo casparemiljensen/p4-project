@@ -14,6 +14,8 @@ public class ValueNode extends AbstractNode {
     public TerminalNode STRING;
     @Nullable
     public TerminalNode VARIABLE;
+    @Nullable
+    public TerminalNode BOOLEAN;
 
     @Nullable
     public CellNode cellNode;
@@ -34,6 +36,7 @@ public class ValueNode extends AbstractNode {
                 case "FLOAT": this.FLOAT = terminal;
                 case "STRING": this.STRING = terminal;
                 case "VARIABLE": this.VARIABLE = terminal;
+                case "BOOLEAN": this.BOOLEAN = terminal;
             }
         }
         else if (node instanceof CellNode) {
