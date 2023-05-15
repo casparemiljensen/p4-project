@@ -28,7 +28,7 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
                     procedureNode.accept(this);
                     symbolTable.leaveScope(procedureNode.procedureDeclarationNode.procedureToken.toString()); }
                 else {
-                    errors.addEntry(ErrorType.DUPLICATE_VARIABLE, "Procedure " + procedureNode.procedureDeclarationNode.procedureToken.toString() + "' already exists", node.getColumnNumber(), node.getLineNumber());
+                    errors.addEntry(ErrorType.DUPLICATE_PROCEDURE, "Procedure " + procedureNode.procedureDeclarationNode.procedureToken.toString() + "' already exists", node.getColumnNumber(), node.getLineNumber());
                 }
             }
         }
