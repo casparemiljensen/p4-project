@@ -20,28 +20,21 @@ import java.util.ArrayList;
 
 public class CodeGenerationTest {
     @Test
-    public void CodeIsGenerated() throws IOException {
+    public void CodeIsGenerated() {
         TerminalNode terminalNode = new TerminalNodeImpl(new TestToken("main", 0));
-
         FormalParametersNode formalParametersNode = new FormalParametersNode(0,0, new ArrayList<>());
         ProcedureDeclarationNode procedureDeclarationNode = new ProcedureDeclarationNode(0,0, terminalNode, formalParametersNode);
 
         ProcedureNode procedureNode = new ProcedureNode(0,0, procedureDeclarationNode, new ArrayList<>());
+        ProcedureNode procedureNode2 = new ProcedureNode(0,0, procedureDeclarationNode, new ArrayList<>());
 
         ArrayList<ProcedureNode> procedureNodes = new ArrayList<>();
         procedureNodes.add(procedureNode);
 
-        var inputStream = CharStreams.fromPath(Paths.get("out/production/eel/program.txt"));
-
-        eelLexer lexer = new eelLexer(inputStream);
-        var tokens = new CommonTokenStream(lexer);
-        eelParser parser = new eelParser(tokens);
-
-        ParseTree cst = parser.program();
-        var ast = (ProgramNode) new BuildASTVisitor().visit(cst);
+        ProgramNode programNode = new ProgramNode(0, 0, procedureNodes);
 
         Generator officeScriptsCG = new Generator();
-        officeScriptsCG.performVisit(ast);
+        officeScriptsCG.performVisit(programNode);
 
         assert(true); //TODO: When cg isn't console output, check it here
     }
