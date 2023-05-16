@@ -15,7 +15,7 @@ public class SymbolTable {
     }
 
     //Adds a scope to the symbol table
-    public void addScope(String scopeName) {
+    public Boolean addScope(String scopeName) {
         //Enters if the scope name has not already been used
         if (lookupScope(scopeName) == null) {
             EelScope scope = new EelScope(scopeName);
@@ -23,7 +23,9 @@ public class SymbolTable {
             currentScope.children.add(scope);
             scopeStack.push(currentScope);
             currentScope = scope;
+            return true;
         }
+        else return false;
     }
 
     public void leaveScope() {

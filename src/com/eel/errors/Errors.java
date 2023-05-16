@@ -21,11 +21,11 @@ public class Errors {
     }
     public void addEntry(ErrorType type, String message, int lineNumber, int column, List<String> lines){
         //Enters if the error has not been added to the error list yet
-        if (shouldBeAdded(type, message)) {
+       // if (shouldBeAdded(type, message)) {
             this.errors.add(new Item(type, message, lineNumber, column, lines));
 
             setHasErrors(type);
-        }
+       // }
     }
 
     private void setHasErrors(ErrorType type) {

@@ -20,8 +20,8 @@ public class eelParser extends Parser {
 		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, 
 		T__9=10, T__10=11, T__11=12, T__12=13, T__13=14, T__14=15, FUNCTIONS=16, 
 		PROCEDURE=17, METHODS=18, CELL_METHOD=19, BOOLEANOP=20, NOT=21, PLUSORMINUS=22, 
-		MULTORDIV=23, ASSIGNMENT=24, VARIABLE=25, INUM=26, FLOAT=27, STRING=28, 
-		BOOLEAN=29, CELL=30, SINGLE_CELL=31, RANGE=32, WS=33;
+		MULTORDIV=23, ASSIGNMENT=24, BOOLEAN=25, VARIABLE=26, INUM=27, FLOAT=28, 
+		STRING=29, CELL=30, SINGLE_CELL=31, RANGE=32, WS=33;
 	public static final int
 		RULE_program = 0, RULE_procedure = 1, RULE_procedureDeclaration = 2, RULE_formalParams = 3, 
 		RULE_statement = 4, RULE_declaration = 5, RULE_assignment = 6, RULE_return = 7, 
@@ -54,8 +54,8 @@ public class eelParser extends Parser {
 		return new String[] {
 			null, null, null, null, null, null, null, null, null, null, null, null, 
 			null, null, null, null, "FUNCTIONS", "PROCEDURE", "METHODS", "CELL_METHOD", 
-			"BOOLEANOP", "NOT", "PLUSORMINUS", "MULTORDIV", "ASSIGNMENT", "VARIABLE", 
-			"INUM", "FLOAT", "STRING", "BOOLEAN", "CELL", "SINGLE_CELL", "RANGE", 
+			"BOOLEANOP", "NOT", "PLUSORMINUS", "MULTORDIV", "ASSIGNMENT", "BOOLEAN", 
+			"VARIABLE", "INUM", "FLOAT", "STRING", "CELL", "SINGLE_CELL", "RANGE", 
 			"WS"
 		};
 	}
@@ -202,7 +202,7 @@ public class eelParser extends Parser {
 			setState(64);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 6476211392L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 6509765824L) != 0)) {
 				{
 				{
 				setState(61);
@@ -704,11 +704,11 @@ public class eelParser extends Parser {
 				break;
 			case FUNCTIONS:
 			case PROCEDURE:
+			case BOOLEAN:
 			case VARIABLE:
 			case INUM:
 			case FLOAT:
 			case STRING:
-			case BOOLEAN:
 			case SINGLE_CELL:
 			case RANGE:
 				{
@@ -1042,7 +1042,7 @@ public class eelParser extends Parser {
 			setState(146);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 6476211392L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 6509765824L) != 0)) {
 				{
 				{
 				setState(143);
@@ -1173,7 +1173,7 @@ public class eelParser extends Parser {
 			setState(171);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 6476211392L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 6509765824L) != 0)) {
 				{
 				{
 				setState(168);
@@ -1228,7 +1228,7 @@ public class eelParser extends Parser {
 			setState(178);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 6476211392L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 6509765824L) != 0)) {
 				{
 				{
 				setState(175);
@@ -1331,7 +1331,7 @@ public class eelParser extends Parser {
 			setState(191);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 6476211392L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 6509765824L) != 0)) {
 				{
 				{
 				setState(188);
@@ -1842,17 +1842,17 @@ public class eelParser extends Parser {
 		"CD\u0005\u0002\u0000\u0000D\u0003\u0001\u0000\u0000\u0000EF\u0005\u0011"+
 		"\u0000\u0000FH\u0005\u0003\u0000\u0000GI\u0003\u0006\u0003\u0000HG\u0001"+
 		"\u0000\u0000\u0000HI\u0001\u0000\u0000\u0000IJ\u0001\u0000\u0000\u0000"+
-		"JK\u0005\u0004\u0000\u0000K\u0005\u0001\u0000\u0000\u0000LQ\u0005\u0019"+
-		"\u0000\u0000MN\u0005\u0005\u0000\u0000NP\u0005\u0019\u0000\u0000OM\u0001"+
+		"JK\u0005\u0004\u0000\u0000K\u0005\u0001\u0000\u0000\u0000LQ\u0005\u001a"+
+		"\u0000\u0000MN\u0005\u0005\u0000\u0000NP\u0005\u001a\u0000\u0000OM\u0001"+
 		"\u0000\u0000\u0000PS\u0001\u0000\u0000\u0000QO\u0001\u0000\u0000\u0000"+
 		"QR\u0001\u0000\u0000\u0000R\u0007\u0001\u0000\u0000\u0000SQ\u0001\u0000"+
 		"\u0000\u0000T_\u0003\n\u0005\u0000U_\u0003\u0018\f\u0000V_\u0003,\u0016"+
-		"\u0000W_\u0003.\u0017\u0000XY\u0005\u0019\u0000\u0000Y_\u0003\f\u0006"+
+		"\u0000W_\u0003.\u0017\u0000XY\u0005\u001a\u0000\u0000Y_\u0003\f\u0006"+
 		"\u0000Z[\u0003*\u0015\u0000[\\\u0003\f\u0006\u0000\\_\u0001\u0000\u0000"+
 		"\u0000]_\u0003\u000e\u0007\u0000^T\u0001\u0000\u0000\u0000^U\u0001\u0000"+
 		"\u0000\u0000^V\u0001\u0000\u0000\u0000^W\u0001\u0000\u0000\u0000^X\u0001"+
 		"\u0000\u0000\u0000^Z\u0001\u0000\u0000\u0000^]\u0001\u0000\u0000\u0000"+
-		"_\t\u0001\u0000\u0000\u0000`a\u0005\u0006\u0000\u0000ac\u0005\u0019\u0000"+
+		"_\t\u0001\u0000\u0000\u0000`a\u0005\u0006\u0000\u0000ac\u0005\u001a\u0000"+
 		"\u0000bd\u0003\f\u0006\u0000cb\u0001\u0000\u0000\u0000cd\u0001\u0000\u0000"+
 		"\u0000d\u000b\u0001\u0000\u0000\u0000ef\u0005\u0018\u0000\u0000fg\u0003"+
 		"\u0010\b\u0000g\r\u0001\u0000\u0000\u0000hi\u0005\u0007\u0000\u0000ij"+
@@ -1902,9 +1902,9 @@ public class eelParser extends Parser {
 		"\u00c1\u0001\u0000\u0000\u0000\u00bf\u00bd\u0001\u0000\u0000\u0000\u00bf"+
 		"\u00c0\u0001\u0000\u0000\u0000\u00c0\u00c2\u0001\u0000\u0000\u0000\u00c1"+
 		"\u00bf\u0001\u0000\u0000\u0000\u00c2\u00c3\u0005\u000f\u0000\u0000\u00c3"+
-		"\'\u0001\u0000\u0000\u0000\u00c4\u00cd\u0005\u001a\u0000\u0000\u00c5\u00cd"+
-		"\u0005\u001b\u0000\u0000\u00c6\u00cd\u0005\u001c\u0000\u0000\u00c7\u00cd"+
-		"\u0005\u0019\u0000\u0000\u00c8\u00cd\u0005\u001d\u0000\u0000\u00c9\u00cd"+
+		"\'\u0001\u0000\u0000\u0000\u00c4\u00cd\u0005\u001b\u0000\u0000\u00c5\u00cd"+
+		"\u0005\u001c\u0000\u0000\u00c6\u00cd\u0005\u001d\u0000\u0000\u00c7\u00cd"+
+		"\u0005\u001a\u0000\u0000\u00c8\u00cd\u0005\u0019\u0000\u0000\u00c9\u00cd"+
 		"\u0003*\u0015\u0000\u00ca\u00cd\u0003,\u0016\u0000\u00cb\u00cd\u0003."+
 		"\u0017\u0000\u00cc\u00c4\u0001\u0000\u0000\u0000\u00cc\u00c5\u0001\u0000"+
 		"\u0000\u0000\u00cc\u00c6\u0001\u0000\u0000\u0000\u00cc\u00c7\u0001\u0000"+

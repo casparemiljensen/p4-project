@@ -21,29 +21,18 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
     public void Visit(ProgramNode node) {
         if (node.procedureNodes != null)
             for (ProcedureNode procedureNode : node.procedureNodes) {
-                if (symbolTable.lookupSymbol(procedureNode.procedureDeclarationNode.procedureToken.toString()) == null) {
-                    System.out.println("no such symbol exists");
-                    // errors.addEntry(ErrorType.DUPLICATE_VARIABLE, "Procedure " + procedureNode.procedureDeclarationNode.procedureToken.toString() + "' already exists", node.getColumnNumber(), node.getLineNumber());
-                }
-                else {
                     symbolTable.enterScope(procedureNode.procedureDeclarationNode.procedureToken.toString());
                     procedureNode.accept(this);
                     symbolTable.leaveScope();
-                }
             }
     }
 
     public void Visit(ProcedureNode node) {
-        if (symbolTable.lookupSymbol(node.procedureDeclarationNode.procedureToken.toString()) != null) {
-            //errors.addEntry(ErrorType.DUPLICATE_VARIABLE, "Procedure '" + node.procedureDeclarationNode.procedureToken.toString() + "' already exists", node.getColumnNumber(), node.getLineNumber());
-        }
-        else {
             if (node.StatementNodes != null) {
                 for (StatementNode statementNode : node.StatementNodes) {
                     statementNode.accept(this);
                 }
             }
-        }
     }
 
     public void Visit(StatementNode node) {
@@ -71,10 +60,6 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
 
     public void Visit(DeclarationNode node) {
         if(node != null) {
-            if(symbolTable.lookupSymbol(node.IdToken.toString()) != null) {
-                errors.addEntry(ErrorType.DUPLICATE_VARIABLE, "Variable '" + node.IdToken.toString() + "' already exists", node.getLineNumber(), node.getColumnNumber());
-                node.type = symbolTable.lookupSymbol(node.IdToken.toString()).getVariableType();
-            }
             if(node.assignmentNode != null) {
                 node.assignmentNode.accept(this);
             }
@@ -83,13 +68,75 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
             throw new NullPointerException();
     }
 
+    public void Visit(AssignmentNode node) {
+        if(node != null) {
+            if(node.expressionNode != null) {
+                node.expressionNode.accept(this);
+            }
+        }
+        else
+            throw new NullPointerException();
+    }
+
+    public void Visit(ExpressionNode node) {
+        if(node != null) {
+            if (node.parenExprNode != null) {
+                node.parenExprNode.accept(this);
+            }
+            else if (node.unaryExprNode != null) {
+                node.unaryExprNode.accept(this);
+            }
+            else if (node.infixExprNode != null) {
+                node.infixExprNode.accept(this);
+            }
+            else if (node.valueExprNode != null) {
+                node.valueExprNode.accept(this);
+            }
+            else
+                throw new NotImplementedError();
+        }
+        else
+            throw new NullPointerException();
+    }
+
+    public void Visit(ParenExprNode node) {
+        if(node != null) {
+            if (node.leftPar != '\u0000' && node.expressionNode != null && node.rightPar != '\u0000') {
+                node.expressionNode.accept(this);
+            }
+        }
+        else
+            throw new NullPointerException();
+    }
+
+    public void Visit(UnaryExprNode node) {
+        if(node != null) {
+            if (node.right != null && node.operator != null) {
+                node.right.accept(this);
+            }
+        }
+        else
+            throw new NullPointerException();
+    }
+
+
+
     public void Visit(InfixExprNode node) {
             if (node.left != null && node.operatorNode != null && node.right != null) {
                 node.left.accept(this);
                 node.operatorNode.accept(this);
                 node.right.accept(this);
+                System.out.println("left: " + node.left.getType() + "| operator: " + node.operatorNode.getSymbol() + "| right: " + node.right.getType());
+
                 if (node.left.getType() != node.right.getType()) {
-                    errors.addEntry(ErrorType.IMPLICIT_TYPE_CONVERSION, "Not possible to implicitly convert types in expression. Types: " + node.left.getType() + " and " + node.right.getType() + ".", node.getLineNumber(), node.getColumnNumber());
+                    Enum<Type> left = node.left.getType();
+                    Enum<Type> right = node.right.getType();
+                    String operator = node.operatorNode.getSymbol();
+
+                    if (operator.equals("+") && (left == Type.String || right == Type.String)) node.setType(Type.String);
+                    else if(left == Type.Integer && right == Type.Float) node.setType(Type.Float);
+                    else if (left == Type.Float && right == Type.Integer) node.setType(Type.Float);
+                    else errors.addEntry(ErrorType.IMPLICIT_TYPE_CONVERSION, "Not possible to implicitly convert types in expression. Types: " + node.left.getType() + " and " + node.right.getType() + ".", node.getLineNumber(), node.getColumnNumber());
             }
         }
     }

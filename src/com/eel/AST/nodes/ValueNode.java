@@ -32,11 +32,11 @@ public class ValueNode extends AbstractNode {
 
         if (terminal instanceof TerminalNode) {
             switch (terminalType) {
-                case "INUM": this.INUM = terminal;
-                case "FLOAT": this.FLOAT = terminal;
-                case "STRING": this.STRING = terminal;
-                case "VARIABLE": this.VARIABLE = terminal;
-                case "BOOLEAN": this.BOOLEAN = terminal;
+                case "INUM": this.INUM = terminal; break;
+                case "FLOAT": this.FLOAT = terminal; break;
+                case "STRING": this.STRING = terminal; break;
+                case "VARIABLE": this.VARIABLE = terminal; break;
+                case "BOOLEAN": this.BOOLEAN = terminal; break;
             }
         }
         else if (node instanceof CellNode) {
