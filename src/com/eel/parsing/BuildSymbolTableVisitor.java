@@ -19,28 +19,21 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
     }
 
     public void Visit(ProgramNode node) {
+        symbolTable.addScope(symbolTable.globalScope.getScopeName());
         if (node.procedureNodes != null) {
             for (ProcedureNode procedureNode : node.procedureNodes) {
-                if (symbolTable.lookupSymbol(procedureNode.procedureDeclarationNode.procedureToken.toString()) == null) {
-                    Attributes attributes = new Attributes("procedure", node.getType());
-                    symbolTable.insertSymbol(procedureNode.procedureDeclarationNode.procedureToken.toString(), attributes);
-                    symbolTable.addScope(procedureNode.procedureDeclarationNode.procedureToken.toString());
                     procedureNode.accept(this);
-                    symbolTable.leaveScope(procedureNode.procedureDeclarationNode.procedureToken.toString()); }
-                else {
-                    errors.addEntry(ErrorType.DUPLICATE_PROCEDURE, "Procedure " + procedureNode.procedureDeclarationNode.procedureToken.toString() + "' already exists", node.getColumnNumber(), node.getLineNumber());
                 }
             }
-        }
         printSymbolTable();
     }
     public void Visit(ProcedureNode node) {
-        if (node != null) {
-            //Creates and adds the function to the symbol table
-
+            if (symbolTable.addScope(node.procedureDeclarationNode.procedureToken.toString())) {
             for (StatementNode statementNode : node.StatementNodes) {
                 statementNode.accept(this);
             }
+            symbolTable.leaveScope(node.procedureDeclarationNode.procedureToken.toString());
+        } else {errors.addEntry(ErrorType.DUPLICATE_PROCEDURE, "Procedure " + node.procedureDeclarationNode.procedureToken.toString() + "' already exists", node.procedureDeclarationNode.getLineNumber(), node.procedureDeclarationNode.getColumnNumber());
         }
     }
 
@@ -80,7 +73,7 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
                     symbolTable.insertSymbol(node.IdToken.toString(), attributes);
                 }
                 else {
-                    errors.addEntry(ErrorType.DUPLICATE_VARIABLE, "Procedure " + node.IdToken + "' already exists", node.getColumnNumber(), node.getLineNumber());
+                    errors.addEntry(ErrorType.DUPLICATE_VARIABLE, "Variable " + node.IdToken + "' already exists", node.getLineNumber(), node.getColumnNumber());
                 }
             }
 

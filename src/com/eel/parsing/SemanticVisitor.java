@@ -21,29 +21,18 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
     public void Visit(ProgramNode node) {
         if (node.procedureNodes != null)
             for (ProcedureNode procedureNode : node.procedureNodes) {
-                if (symbolTable.lookupSymbol(procedureNode.procedureDeclarationNode.procedureToken.toString()) == null) {
-                    System.out.println("no such symbol exists");
-                    // errors.addEntry(ErrorType.DUPLICATE_VARIABLE, "Procedure " + procedureNode.procedureDeclarationNode.procedureToken.toString() + "' already exists", node.getColumnNumber(), node.getLineNumber());
-                }
-                else {
                     symbolTable.enterScope(procedureNode.procedureDeclarationNode.procedureToken.toString());
                     procedureNode.accept(this);
                     symbolTable.leaveScope();
-                }
             }
     }
 
     public void Visit(ProcedureNode node) {
-        if (symbolTable.lookupSymbol(node.procedureDeclarationNode.procedureToken.toString()) != null) {
-            //errors.addEntry(ErrorType.DUPLICATE_VARIABLE, "Procedure '" + node.procedureDeclarationNode.procedureToken.toString() + "' already exists", node.getColumnNumber(), node.getLineNumber());
-        }
-        else {
             if (node.StatementNodes != null) {
                 for (StatementNode statementNode : node.StatementNodes) {
                     statementNode.accept(this);
                 }
             }
-        }
     }
 
     public void Visit(StatementNode node) {

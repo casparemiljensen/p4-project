@@ -55,8 +55,8 @@ class Eel {
 
 	public static void printErrors(Errors errors) {
 		for (Item error : errors.errors) {
-			System.out.println(error.type.toString()+": "+error.message+" ("+error.type.name()+")" +
-					(error.lineNumber > 0 ? " on line "+error.lineNumber : ""));
+			System.out.println(error.type.toString()+": "+error.message+" ("+error.type.name()+")" + " on line " + error.lineNumber + ", columm " + error.column);
+					//(error.lineNumber > 0 ? " on line "+error.lineNumber : ""));
 
 			//Enters if the error message is on multiple lines
 			if (error.lines.size() > 0) {
