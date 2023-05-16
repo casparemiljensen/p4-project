@@ -1,18 +1,13 @@
-procedure One()
-    let second1 = 4+2
-    let second2 = 4-4
-    let second3 = 5+5
-    let second1
+procedure Secondary()
+let u =  x
+let x = 5+5
 endProcedure
 
-procedure Two()
-    let ter1= 4+2
-    let ter2 = 4-4
-    let ter3 = 5+5
+procedure Secondary()
 endProcedure
 
-
-  procedure One ()
+procedure Secondary()
 endProcedure
-procedure One ()
+
+procedure Secondary()
 endProcedure

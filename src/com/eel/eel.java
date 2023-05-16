@@ -45,7 +45,7 @@ class Eel {
 				generator.performVisit(ast);
 			}
 		}
-		else {
+		if (symbolTableErrors.containsErrors() || semanticErrors.containsErrors()) {
 			System.out.println("[SymbolTable] Code contains " + symbolTableErrors.errors.stream().count() + " errors:");
 			System.out.println("[TypeCheck] Code contains " + semanticErrors.errors.stream().count() + " errors:");
 			printErrors(symbolTableErrors);

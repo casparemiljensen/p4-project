@@ -7,6 +7,17 @@ public class OperatorNode extends AbstractNode {
     public BinaryOperatorNode binaryOperatorNode;
     public BooleanOperatorNode booleanOperatorNode;
     public TerminalNode assignment;
+
+    public String symbol;
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(String _symbol) {
+        this.symbol = _symbol;
+    }
+
     public OperatorNode(int lineNumber, int colNumber, @Nullable AbstractNode node) {
         super(lineNumber, colNumber);
         if (node instanceof BinaryOperatorNode) this.binaryOperatorNode = (BinaryOperatorNode) node;

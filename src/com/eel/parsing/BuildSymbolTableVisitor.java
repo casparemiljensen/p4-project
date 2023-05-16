@@ -227,16 +227,11 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
 
     public void Visit(OperatorNode node) {
         if(node != null) {
-            if (node.binaryOperatorNode != null) {
-                node.binaryOperatorNode.accept(this);
-            }
-            else if (node.booleanOperatorNode != null) {
-                node.booleanOperatorNode.accept(this);
-            }
-            else
-                throw new NotImplementedError();
-        }
-        else
+            if (node.binaryOperatorNode != null) node.setSymbol(node.binaryOperatorNode.binaryOperator.toString());
+            else if (node.binaryOperatorNode != null) node.setSymbol(node.booleanOperatorNode.booleanOperator.toString());
+            else if (node.assignment != null) node.setSymbol("=");
+            else throw new NotImplementedError();
+        } else
             throw new NullPointerException();
     }
 
