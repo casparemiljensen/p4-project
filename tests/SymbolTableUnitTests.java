@@ -3,8 +3,6 @@ import com.eel.errors.Errors;
 import com.eel.parsing.SymbolTable;
 import com.eel.parsing.BuildSymbolTableVisitor;
 import kotlin.NotImplementedError;
-import org.antlr.v4.runtime.CommonToken;
-import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.antlr.v4.runtime.tree.TerminalNodeImpl;
 import org.junit.Test;
@@ -67,6 +65,6 @@ public class SymbolTableUnitTests {
             visitor.Visit(programNode);
         });
 
-        assertTrue(exception.getMessage().contentEquals("Could not find instance of StatementNode")); //TODO: This exception message probably should be something else.
+        assertTrue(exception.getMessage().contentEquals("Could not find instance of StatementNode"));
     }
 }

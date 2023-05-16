@@ -27,12 +27,9 @@ public class CodeGenerationTest {
         ProcedureDeclarationNode procedureDeclarationNode = new ProcedureDeclarationNode(0,0, terminalNode, formalParametersNode);
 
         ProcedureNode procedureNode = new ProcedureNode(0,0, procedureDeclarationNode, new ArrayList<>());
-        ProcedureNode procedureNode2 = new ProcedureNode(0,0, procedureDeclarationNode, new ArrayList<>());
 
         ArrayList<ProcedureNode> procedureNodes = new ArrayList<>();
         procedureNodes.add(procedureNode);
-
-        ProgramNode programNode = new ProgramNode(0, 0, procedureNodes);
 
         var inputStream = CharStreams.fromPath(Paths.get("out/production/eel/program.txt"));
 
