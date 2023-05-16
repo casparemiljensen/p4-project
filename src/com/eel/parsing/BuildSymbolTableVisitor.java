@@ -23,25 +23,25 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
         if (node.procedureNodes != null) {
             for (ProcedureNode procedureNode : node.procedureNodes) {
                 if (symbolTable.lookupSymbol(procedureNode.procedureDeclarationNode.procedureToken.toString()) == null) {
-                    Attributes attributes = new Attributes("procedure", node.getType());
+                    procedureNode.setType(Type.Procedure);
+                    Attributes attributes = new Attributes(Type.Procedure, null, symbolTable.currentScope);
                     symbolTable.insertSymbol(procedureNode.procedureDeclarationNode.procedureToken.toString(), attributes);
-                    symbolTable.addScope(procedureNode.procedureDeclarationNode.procedureToken.toString());
-                    procedureNode.accept(this);
-                    symbolTable.leaveScope(procedureNode.procedureDeclarationNode.procedureToken.toString()); }
+                    procedureNode.accept(this); }
                 else {
-                    errors.addEntry(ErrorType.DUPLICATE_PROCEDURE, "Procedure " + procedureNode.procedureDeclarationNode.procedureToken.toString() + "' already exists", node.getColumnNumber(), node.getLineNumber());
+                    errors.addEntry(ErrorType.DUPLICATE_PROCEDURE, "Procedure " + procedureNode.procedureDeclarationNode.procedureToken.toString() + "' already exists", procedureNode.getLineNumber(), procedureNode.getColumnNumber());
+                    }
                 }
             }
         }
-        printSymbolTable();
-    }
+
     public void Visit(ProcedureNode node) {
-            if (symbolTable.addScope(node.procedureDeclarationNode.procedureToken.toString())) {
+        if (symbolTable.addScope(node.procedureDeclarationNode.procedureToken.toString())) {
             for (StatementNode statementNode : node.StatementNodes) {
                 statementNode.accept(this);
             }
             symbolTable.leaveScope(node.procedureDeclarationNode.procedureToken.toString());
-        } else {errors.addEntry(ErrorType.DUPLICATE_PROCEDURE, "Procedure " + node.procedureDeclarationNode.procedureToken.toString() + "' already exists", node.procedureDeclarationNode.getLineNumber(), node.procedureDeclarationNode.getColumnNumber());
+        } else {
+            errors.addEntry(ErrorType.DUPLICATE_PROCEDURE, "Procedure " + node.procedureDeclarationNode.procedureToken.toString() + "' already exists", node.procedureDeclarationNode.getLineNumber(), node.procedureDeclarationNode.getColumnNumber());
         }
     }
 
@@ -77,7 +77,6 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
     public void Visit(DeclarationNode node) {
         if(node != null) {
                 if (symbolTable.lookupSymbol(node.IdToken.toString()) == null) {
-
                     Attributes attributes = new Attributes(node.getType(), null, symbolTable.currentScope);
                     symbolTable.insertSymbol(node.IdToken.toString(), attributes);
                 }
@@ -282,25 +281,4 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
     }
 
 
-    private void printSymbolTable() {
-        printScope(symbolTable.globalScope);
-    }
-
-    private void printScope(EelScope scope) {
-        System.out.println("Scope: " + scope.getScopeName());
-        System.out.println("Symbols:");
-        for (Map.Entry<String, Attributes> entry : scope.getSymbols().entrySet()) {
-            String symbol = entry.getKey();
-            Attributes attributes = entry.getValue();
-            System.out.println("  Symbol: " + symbol);
-            System.out.println("  Attributes:");
-            System.out.println("    Type: " + attributes.getKind());
-            // Add more attribute printing if needed
-            System.out.println();
-        }
-
-        for (EelScope childScope : scope.children) {
-            printScope(childScope);
-        }
-    }
 }
