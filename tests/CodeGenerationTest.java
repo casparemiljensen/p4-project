@@ -1,4 +1,6 @@
 import com.eel.AST.BuildASTVisitor;
+import com.eel.AST.nodes.FormalParametersNode;
+import com.eel.AST.nodes.ProcedureDeclarationNode;
 import com.eel.AST.nodes.ProcedureNode;
 import com.eel.AST.nodes.ProgramNode;
 import com.eel.Generator;
@@ -20,8 +22,12 @@ public class CodeGenerationTest {
     @Test
     public void CodeIsGenerated() throws IOException {
         TerminalNode terminalNode = new TerminalNodeImpl(new TestToken("main", 0));
-        ProcedureNode procedureNode = new ProcedureNode(0,0, terminalNode, new ArrayList<>());
-        ProcedureNode procedureNode2 = new ProcedureNode(0,0, terminalNode, new ArrayList<>());
+
+        FormalParametersNode formalParametersNode = new FormalParametersNode(0,0, new ArrayList<>());
+        ProcedureDeclarationNode procedureDeclarationNode = new ProcedureDeclarationNode(0,0, terminalNode, formalParametersNode);
+
+        ProcedureNode procedureNode = new ProcedureNode(0,0, procedureDeclarationNode, new ArrayList<>());
+        ProcedureNode procedureNode2 = new ProcedureNode(0,0, procedureDeclarationNode, new ArrayList<>());
 
         ArrayList<ProcedureNode> procedureNodes = new ArrayList<>();
         procedureNodes.add(procedureNode);
