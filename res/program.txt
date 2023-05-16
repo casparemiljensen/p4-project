@@ -3,7 +3,7 @@ procedure main()
     let u = 3
 
     repeat while(2<3)
-        let x = 4+hej
+        let x = 4
     endRepeat
 
     let h = 4

@@ -38,7 +38,7 @@ class Eel {
 			Generator officeScriptsCG = new Generator();
 			officeScriptsCG.performVisit(ast);
 		} else {
-			System.out.println("Code contains " + errors.errors.stream().count() + " errors:");
+			System.out.println("Compilation failed. Input contains " + errors.errors.stream().count() + " errors:");
 			for (Item error : errors.errors) {
 				System.out.println(error.type.toString()+": "+error.message+" ("+error.type.name()+")" +
 							(error.lineNumber > 0 ? " on line "+error.lineNumber : ""));
