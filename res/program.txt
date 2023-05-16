@@ -1,12 +1,19 @@
-procedure main()
+procedure Secondary()
 
-    let u = 3
-
-    repeat while(2<3)
-        let x = 4
-    endRepeat
-
-    let h = 4
+let second1 = 4+2
+let second2 = 4-4
+let second3 = 5+5
+let second1
 
 endProcedure
 
+procedure Terti()
+
+let ter1= 4+2
+let ter2 = 4-4
+let ter3 = 5+5
+
+endProcedure
+
+procedure Secondary()
+endProcedure

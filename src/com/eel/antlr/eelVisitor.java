@@ -1,3 +1,4 @@
+// Generated from C:/Users/runeb/Desktop/hubben/p4-project/res\eel.g4 by ANTLR 4.12.0
 package com.eel.antlr;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -22,6 +23,12 @@ public interface eelVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitProcedure(eelParser.ProcedureContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link eelParser#procedureDeclaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitProcedureDeclaration(eelParser.ProcedureDeclarationContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link eelParser#formalParams}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -33,12 +40,6 @@ public interface eelVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitStatement(eelParser.StatementContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link eelParser#call}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitCall(eelParser.CallContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link eelParser#declaration}.
 	 * @param ctx the parse tree
@@ -158,27 +159,33 @@ public interface eelVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitValue(eelParser.ValueContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link eelParser#staticValue}.
+	 * Visit a parse tree produced by {@link eelParser#cell}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitStaticValue(eelParser.StaticValueContext ctx);
+	T visitCell(eelParser.CellContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link eelParser#userValue}.
+	 * Visit a parse tree produced by {@link eelParser#functionCall}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitUserValue(eelParser.UserValueContext ctx);
+	T visitFunctionCall(eelParser.FunctionCallContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link eelParser#actualParams}.
+	 * Visit a parse tree produced by {@link eelParser#procedureCall}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitActualParams(eelParser.ActualParamsContext ctx);
+	T visitProcedureCall(eelParser.ProcedureCallContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link eelParser#method}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitMethod(eelParser.MethodContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link eelParser#actualParams}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitActualParams(eelParser.ActualParamsContext ctx);
 }

@@ -26,12 +26,13 @@ public class Generator extends ReflectiveASTVisitor {
 		if(node != null) {
 
 			// The line below it necessary because EEL addes () after proc calls but this is not used in the same way if OfficeScripts.
-			String inputProcName = node.IdToken.toString();
+			String inputProcName = node.procedureDeclarationNode.procedureToken.toString();
 			String outputProcName = inputProcName.replace("(", "").replace(")", "");
 			strBlr.append(getIndentation()).append("function " + outputProcName + "(workbook: ExcelScript.Workbook) {\n");
 			increaseIndent();
 
 			for (StatementNode statementNode : node.StatementNodes) {
+				strBlr.append(getIndentation());
 				statementNode.accept(this);
 			}
 			strBlr.append("}\n");
@@ -41,15 +42,21 @@ public class Generator extends ReflectiveASTVisitor {
 			throw new NullPointerException();
 	}
 
+
 	public void Visit(StatementNode node) {
 		if(node != null) {
 			if (node.declarationNode != null) {
 				node.declarationNode.accept(this);
 			} else if (node.controlStructNode != null) {
 				node.controlStructNode.accept(this);
-			} else if (node.callNode != null) {
-				node.callNode.accept(this);
-			} else if (node.assignmentNode != null) {
+			} else if (node.functionCallNode != null) {
+				node.functionCallNode.accept(this);
+			} else if (node.procedureCallNode != null) {
+				node.procedureCallNode.accept(this);
+			} else if (node.terminal != null) {
+				node.assignmentNode.accept(this);
+			} else if (node.cellNode != null) {
+				node.cellNode.accept(this);
 				node.assignmentNode.accept(this);
 			} else if (node.returnNode != null) {
 				node.returnNode.accept(this);
@@ -65,15 +72,12 @@ public class Generator extends ReflectiveASTVisitor {
 
 	public void Visit(DeclarationNode node) {
 		if(node != null) {
-
-			strBlr.append(getIndentation()).append("let ").append(node.IdToken);
-			increaseIndent();
+			strBlr.append("let ").append(node.IdToken);
 			if(node.assignmentNode != null) {
 				strBlr.append("=");
 				node.assignmentNode.accept(this);
 			}
 			strBlr.append("\n");
-			decreaseIndent();
 		}
 		else
 			throw new NullPointerException();
@@ -118,6 +122,14 @@ public class Generator extends ReflectiveASTVisitor {
 	}
 
 	public void Visit(IfStructNode node) {
+		if(node != null) {
+
+		}
+		else
+			throw new NullPointerException();
+	}
+
+	public void Visit(ReturnNode node) {
 		if(node != null) {
 
 		}
@@ -204,42 +216,35 @@ public class Generator extends ReflectiveASTVisitor {
 
 	public void Visit(ValueNode node) {
 		if(node != null) {
-			if (node.staticValueNode != null) {
-				node.staticValueNode.accept(this);
-			} else if (node.userValueNode != null) {
-				node.userValueNode.accept(this);
-			} else
-				throw new NotImplementedError();
-		}
-		else
-			throw new NullPointerException();
-	}
-
-	public void Visit(StaticValueNode node) {
-		if(node != null) {
 			if (node.INUM != null) {
 				strBlr.append(node.INUM);
+			}
+			else if(node.FLOAT != null) {
+				strBlr.append(node.FLOAT);
 			}
 			else if (node.STRING != null) {
 				strBlr.append(node.STRING);
 			}
-			else if (node.FUNCTION != null) {
-				strBlr.append(node.FUNCTION);
+			else if(node.VARIABLE != null) {
+				strBlr.append(node.VARIABLE);
 			}
-			else if (node.methodNode != null) {
-				strBlr.append(node.methodNode);
+			else if(node.BOOLEAN != null) {
+				strBlr.append(node.BOOLEAN);
+			}
+			else if (node.cellNode != null) {
+				strBlr.append(node.cellNode);
+			}
+			else if(node.functionCallNode != null) {
+				strBlr.append(node.functionCallNode);
+			}
+			else if(node.procedureCallNode != null) {
+				strBlr.append(node.procedureCallNode);
 			}
 			else
 				throw new NotImplementedError();
-		}
-		else
-			throw new NullPointerException();
-	}
 
-	public void Visit(UserValueNode node) {
-		if(node != null) {
-			if (node.ID != null) {
-				strBlr.append(node.ID);
+			if(node.methodNode != null) {
+				strBlr.append(node.methodNode);
 			}
 		}
 		else
