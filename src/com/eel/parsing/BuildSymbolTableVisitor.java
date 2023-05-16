@@ -22,9 +22,17 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
         symbolTable.addScope(symbolTable.globalScope.getScopeName());
         if (node.procedureNodes != null) {
             for (ProcedureNode procedureNode : node.procedureNodes) {
+                if (symbolTable.lookupSymbol(procedureNode.procedureDeclarationNode.procedureToken.toString()) == null) {
+                    Attributes attributes = new Attributes("procedure", node.getType());
+                    symbolTable.insertSymbol(procedureNode.procedureDeclarationNode.procedureToken.toString(), attributes);
+                    symbolTable.addScope(procedureNode.procedureDeclarationNode.procedureToken.toString());
                     procedureNode.accept(this);
+                    symbolTable.leaveScope(procedureNode.procedureDeclarationNode.procedureToken.toString()); }
+                else {
+                    errors.addEntry(ErrorType.DUPLICATE_PROCEDURE, "Procedure " + procedureNode.procedureDeclarationNode.procedureToken.toString() + "' already exists", node.getColumnNumber(), node.getLineNumber());
                 }
             }
+        }
         printSymbolTable();
     }
     public void Visit(ProcedureNode node) {
@@ -69,7 +77,8 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
     public void Visit(DeclarationNode node) {
         if(node != null) {
                 if (symbolTable.lookupSymbol(node.IdToken.toString()) == null) {
-                    Attributes attributes = new Attributes("dcl", node.getType());
+
+                    Attributes attributes = new Attributes(node.getType(), null, symbolTable.currentScope);
                     symbolTable.insertSymbol(node.IdToken.toString(), attributes);
                 }
                 else {
@@ -85,6 +94,14 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
 
     public void Visit(ControlStructNode node) {
         if(node != null) {
+            if(node.iterativeStructNode != null) {
+                node.iterativeStructNode.accept(this);
+            }
+            else if(node.selectiveStructNode != null) {
+                node.selectiveStructNode.accept(this);
+            }
+            else
+                throw new NotImplementedError();
         }
         else
             throw new NullPointerException();
@@ -227,9 +244,15 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
 
     public void Visit(OperatorNode node) {
         if(node != null) {
-            if (node.binaryOperatorNode != null) node.setSymbol(node.binaryOperatorNode.binaryOperator.toString());
-            else if (node.binaryOperatorNode != null) node.setSymbol(node.booleanOperatorNode.booleanOperator.toString());
-            else if (node.assignment != null) node.setSymbol("=");
+            if (node.binaryOperatorNode != null) {
+                node.setSymbol(node.binaryOperatorNode.binaryOperator.toString());
+            }
+            else if (node.booleanOperatorNode != null) {
+                node.setSymbol(node.booleanOperatorNode.booleanOperator.toString());
+            }
+            else if (node.assignment != null) {
+                node.setSymbol("=");
+            }
             else throw new NotImplementedError();
         } else
             throw new NullPointerException();

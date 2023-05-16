@@ -10,6 +10,7 @@ import com.eel.errors.Item;
 import com.eel.parsing.SymbolTable;
 import com.eel.parsing.BuildSymbolTableVisitor;
 import com.eel.parsing.SemanticVisitor;
+import com.eel.parsing.SymbolTablePrinter;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 import org.jetbrains.annotations.Nullable;
@@ -36,7 +37,12 @@ class Eel {
 		BuildSymbolTableVisitor buildSymbolTableVisitor = new BuildSymbolTableVisitor(symbolTable, symbolTableErrors);
 		buildSymbolTableVisitor.performVisit(ast);
 
+		SymbolTablePrinter symbolTablePrinter = new SymbolTablePrinter();
+		symbolTablePrinter.printSymbolTable(symbolTable);
+
 		if(!symbolTableErrors.containsErrors()) {
+
+
 			SemanticVisitor semanticVisitor =  new SemanticVisitor(symbolTable, semanticErrors);
 			semanticVisitor.performVisit(ast);
 
@@ -45,7 +51,7 @@ class Eel {
 				generator.performVisit(ast);
 			}
 		}
-		if (symbolTableErrors.containsErrors() || semanticErrors.containsErrors()) {
+		else {
 			System.out.println("[SymbolTable] Code contains " + symbolTableErrors.errors.stream().count() + " errors:");
 			System.out.println("[TypeCheck] Code contains " + semanticErrors.errors.stream().count() + " errors:");
 			printErrors(symbolTableErrors);
@@ -55,8 +61,7 @@ class Eel {
 
 	public static void printErrors(Errors errors) {
 		for (Item error : errors.errors) {
-			System.out.println(error.type.toString()+": "+error.message+" ("+error.type.name()+")" + " on line " + error.lineNumber + ", columm " + error.column);
-					//(error.lineNumber > 0 ? " on line "+error.lineNumber : ""));
+			System.out.println(error.type.toString()+": "+error.message+" ("+error.type.name()+")" + "on line: " + error.lineNumber + " " + error.column);
 
 			//Enters if the error message is on multiple lines
 			if (error.lines.size() > 0) {
