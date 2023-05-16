@@ -5,19 +5,20 @@ import com.eel.AST.nodes.Type;
 public class Attributes {
     private Enum<Type> type;
     private EelScope scope;
-    private String value;
+    private Enum<Type> dataType;
 
-    public Attributes(Enum<Type> type) {
+    public Attributes(Enum<Type> type, EelScope scope) {
         this.type = type;
+        this.scope = scope;
     }
-    public Attributes(Enum<Type> type, String value, EelScope scope ) {
+    public Attributes(Enum<Type> type, Enum<Type> dataType, EelScope scope ) {
         this.type = type;
-        this.value = value;
+        this.dataType = dataType;
         this.scope = scope;
     }
 
-    public String getValue() {
-        return value;
+    public Enum<Type> getDataType() {
+        return dataType;
     }
 
     public Enum<Type> getType() {

@@ -4,6 +4,6 @@ let second1 = 4+2
 
 endProcedure
 
-procedure Secondary()
-
+procedure Tertiary()
+let x = 3
 endProcedure

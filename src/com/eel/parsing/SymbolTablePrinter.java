@@ -22,7 +22,7 @@ public class SymbolTablePrinter {
             if(attributes.getScope() != null) {
                 System.out.println("  Scope: " + attributes.getScope().getScopeName());
             }
-            System.out.println("  Value: " + attributes.getValue());
+            System.out.println("  DataType: " + attributes.getDataType());
             System.out.println();
         }
 
