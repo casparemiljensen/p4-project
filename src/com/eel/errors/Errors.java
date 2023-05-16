@@ -52,5 +52,9 @@ public class Errors {
         }
         return true;
     }
+
+    public boolean isEmpty(){
+        return this.errors.isEmpty();
+    }
 }
 

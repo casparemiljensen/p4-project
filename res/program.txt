@@ -1,7 +1,6 @@
 procedure main()
 
     let u = 3
-    let u = 3
 
     repeat while(2<3)
         let x = 4+hej
@@ -10,11 +9,4 @@ procedure main()
     let h = 4
 
 endProcedure
-
-procedure secondary()
-    let x = 4 + "hej"
-    let k = 4 + "hej"
-    let y = -4 < 1
-endProcedure
-
 
