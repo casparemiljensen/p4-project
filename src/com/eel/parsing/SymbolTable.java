@@ -5,7 +5,7 @@ import java.util.Stack;
 
 public class SymbolTable {
     public EelScope currentScope;
-    final EelScope globalScope;
+    public final EelScope globalScope;
     final private Stack<EelScope> scopeStack = new Stack<>();
     public ArrayList<String> declaredFunctions = new ArrayList<>();
 

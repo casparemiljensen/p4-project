@@ -1,4 +1,4 @@
-package com.eel.AST;
+package com.eel.helpers;
 
 import com.eel.AST.nodes.AbstractNode;
 import org.antlr.v4.runtime.tree.TerminalNode;

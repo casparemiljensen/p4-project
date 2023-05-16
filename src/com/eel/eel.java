@@ -1,6 +1,6 @@
 package com.eel;
 
-import com.eel.AST.ASTPrinter;
+import com.eel.helpers.ASTPrinter;
 import com.eel.AST.BuildASTVisitor;
 import com.eel.AST.nodes.ProgramNode;
 import com.eel.antlr.*;
@@ -9,10 +9,9 @@ import com.eel.errors.Item;
 import com.eel.parsing.SymbolTable;
 import com.eel.parsing.BuildSymbolTableVisitor;
 import com.eel.parsing.SemanticVisitor;
-import com.eel.parsing.SymbolTablePrinter;
+import com.eel.helpers.SymbolTablePrinter;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
-import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.*;
 
@@ -46,8 +45,8 @@ class Eel {
 			semanticVisitor.performVisit(ast);
 
 			if (!semanticErrors.containsErrors()) {
-				Generator generator = new Generator();
-				generator.performVisit(ast);
+//				Generator generator = new Generator();
+//				generator.performVisit(ast);
 			}
 		}
 		else {

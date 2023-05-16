@@ -1,4 +1,8 @@
-package com.eel.parsing;
+package com.eel.helpers;
+
+import com.eel.parsing.Attributes;
+import com.eel.parsing.EelScope;
+import com.eel.parsing.SymbolTable;
 
 import java.util.Map;
 

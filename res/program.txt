@@ -1,9 +1,17 @@
-procedure Secondary()
-
-let second1 = 4+2
-
-endProcedure
-
 procedure Tertiary()
-let x = 3
+
+let dav = 123
+
+if(2) then
+let  y = 4
+
+else if(3) then
+let z = 5
+
+else then
+let u = 6
+endIf
+
+let farvel = 321
+
 endProcedure
