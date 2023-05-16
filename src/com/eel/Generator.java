@@ -13,10 +13,14 @@ public class Generator extends ReflectiveASTVisitor {
 
 	public void Visit(ProgramNode node) {
 		if(node != null) {
+			strBlr.append(getIndentation()).append("function main (workbook: ExcelScript.Workbook) {\n");
+			increaseIndent();
 			for (ProcedureNode procedureNode : node.procedureNodes) {
 				procedureNode.accept(this);
 			}
-
+			decreaseIndent();
+			strBlr.append(getIndentation()).append("}");
+			
 			System.out.println(strBlr.toString());
 		}
 		else
@@ -28,15 +32,20 @@ public class Generator extends ReflectiveASTVisitor {
 			// The line below it necessary because EEL addes () after proc calls but this is not used in the same way if OfficeScripts.
 			String inputProcName = node.procedureDeclarationNode.procedureToken.toString();
 			String outputProcName = inputProcName.replace("(", "").replace(")", "");
-			strBlr.append(getIndentation()).append("function " + outputProcName.toLowerCase() + "(workbook: ExcelScript.Workbook) {\n");
+			strBlr.append(getIndentation()).append("function " + outputProcName.toLowerCase() + "( ");
+			if (node.procedureDeclarationNode.formalParametersNode != null) {
+				node.procedureDeclarationNode.formalParametersNode.accept(this);
+			}
+			strBlr.append(") {\n");
             increaseIndent();
 
 			for (StatementNode statementNode : node.StatementNodes) {
 				strBlr.append(getIndentation());
 				statementNode.accept(this);
 			}
-			strBlr.append("}\n");
 			decreaseIndent();
+			strBlr.append(getIndentation()).append("}\n");
+
 		}
 		else
 			throw new NullPointerException();
@@ -44,12 +53,15 @@ public class Generator extends ReflectiveASTVisitor {
 
 	public void Visit(FormalParametersNode node) {
 		if (node != null) {
-
+			if (node.variables.size() > 0) {
+				node.variables.forEach(param -> {
+					strBlr.append(", " + param + ": unknown");
+				});
+			}
 		}
 		else
 			throw new NullPointerException();
 	}
-
 
 	public void Visit(StatementNode node) {
 		if(node != null) {
@@ -82,7 +94,7 @@ public class Generator extends ReflectiveASTVisitor {
 		if(node != null) {
 			strBlr.append("let ").append(node.IdToken);
 			if(node.assignmentNode != null) {
-				strBlr.append("=");
+				strBlr.append(" = ");
 				node.assignmentNode.accept(this);
 			}
 			strBlr.append("\n");
@@ -354,12 +366,87 @@ public class Generator extends ReflectiveASTVisitor {
 				throw new NotImplementedError();
 
 			if(node.methodNode != null) {
-				strBlr.append(node.methodNode);
+				//strBlr.append(node.methodNode);
+				node.methodNode.accept(this);
 			}
 		}
 		else
 			throw new NullPointerException();
 	}
+
+	public void Visit(CellNode node) {
+		if (node != null) {
+
+		}
+		else
+			throw new NullPointerException();
+	}
+
+
+	public void Visit(FunctionCallNode node){
+		if (node != null) {
+			strBlr.append(node.FUNCTIONS + "(");
+			if (node.actualParamsNode != null) {
+				node.actualParamsNode.accept(this);
+			}
+			strBlr.append(")\n");
+		}
+		else
+			throw new NullPointerException();
+	}
+
+
+
+	public void Visit(ProcedureCallNode node) {
+		if (node != null) {
+			strBlr.append(node.PROCEDURE + "(");
+			if (node.actualParamsNode != null) {
+				node.actualParamsNode.accept(this);
+			}
+			strBlr.append(")\n");
+		}
+		else
+			throw new NullPointerException();
+	}
+
+
+	public void Visit(MethodNode node) {
+		if (node != null) {
+			strBlr.append(node.METHODS.toString() + "(");
+			if (node.actualParamsNode != null) {
+				node.actualParamsNode.accept(this);
+			}
+			strBlr.append(")");
+
+			if (node.methodNode != null) {
+				node.methodNode.accept(this);
+			}
+		}
+
+		else
+			throw new NullPointerException();
+	}
+
+
+	public void Visit(ActualParamsNode node) {
+		if (node != null){
+			if (node.valuesNodes.size() > 0) {
+				boolean isFirstValue = true;
+				for (ValueNode value : node.valuesNodes) {
+					if (isFirstValue) {
+						value.accept(this);
+						isFirstValue = false;
+					} else {
+						strBlr.append(", ");
+						value.accept(this);
+					}
+				}
+			}
+		}
+		else
+			throw new NullPointerException();
+	}
+
 
 	public void Visit(OperatorNode node) {
 		if(node != null) {
