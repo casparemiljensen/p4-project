@@ -6,8 +6,6 @@ import com.eel.errors.ErrorType;
 import com.eel.errors.Errors;
 import kotlin.NotImplementedError;
 
-import javax.sound.midi.SysexMessage;
-
 public class SemanticVisitor extends ReflectiveASTVisitor {
 
     SymbolTable symbolTable;
@@ -73,7 +71,7 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
         if(node != null) {
             if(symbolTable.lookupSymbol(node.IdToken.toString()) != null) {
                 errors.addEntry(ErrorType.DUPLICATE_VARIABLE, "Variable '" + node.IdToken.toString() + "' already exists", node.getLineNumber(), node.getColumnNumber());
-                node.type = symbolTable.lookupSymbol(node.IdToken.toString()).getVariableType();
+                node.type = symbolTable.lookupSymbol(node.IdToken.toString()).getType();
             }
             if(node.assignmentNode != null) {
                 node.assignmentNode.accept(this);

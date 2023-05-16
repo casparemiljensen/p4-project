@@ -10,6 +10,7 @@ import com.eel.errors.Item;
 import com.eel.parsing.SymbolTable;
 import com.eel.parsing.BuildSymbolTableVisitor;
 import com.eel.parsing.SemanticVisitor;
+import com.eel.parsing.SymbolTablePrinter;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 import org.jetbrains.annotations.Nullable;
@@ -37,6 +38,9 @@ class Eel {
 		buildSymbolTableVisitor.performVisit(ast);
 
 		if(!symbolTableErrors.containsErrors()) {
+			SymbolTablePrinter symbolTablePrinter = new SymbolTablePrinter();
+			symbolTablePrinter.printSymbolTable(symbolTable);
+
 			SemanticVisitor semanticVisitor =  new SemanticVisitor(symbolTable, semanticErrors);
 			semanticVisitor.performVisit(ast);
 
