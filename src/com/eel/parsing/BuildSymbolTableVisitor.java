@@ -23,13 +23,16 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
             for (ProcedureNode procedureNode : node.procedureNodes) {
                 if (symbolTable.lookupSymbol(procedureNode.procedureDeclarationNode.procedureToken.toString()) == null) {
                     procedureNode.setType(Type.Procedure);
-                    Attributes attributes = new Attributes(procedureNode.getType(),null, symbolTable.currentScope);
+                    Attributes attributes = new Attributes(procedureNode.getType(), null, symbolTable.currentScope);
+
                     symbolTable.insertSymbol(procedureNode.procedureDeclarationNode.procedureToken.toString(), attributes);
                     symbolTable.addScope(procedureNode.procedureDeclarationNode.procedureToken.toString());
                     procedureNode.accept(this);
                     symbolTable.leaveScope(procedureNode.procedureDeclarationNode.procedureToken.toString()); }
+
+
                 else {
-                    errors.addEntry(ErrorType.DUPLICATE_PROCEDURE, "Procedure " + procedureNode.procedureDeclarationNode.procedureToken.toString() + "' already exists", node.getColumnNumber(), node.getLineNumber());
+                    errors.addEntry(ErrorType.DUPLICATE_PROCEDURE, "Procedure " + procedureNode.procedureDeclarationNode.procedureToken.toString() + "' already exists", procedureNode.getColumnNumber(), procedureNode.getLineNumber());
                 }
             }
         }
@@ -48,21 +51,26 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
         if(node != null) {
             if (node.declarationNode != null) {
                 node.declarationNode.accept(this);
-            } else if (node.controlStructNode != null) {
+            }
+            else if (node.controlStructNode != null) {
                 node.controlStructNode.accept(this);
-            } else if (node.functionCallNode != null) {
+            }
+            else if (node.functionCallNode != null) {
                 node.functionCallNode.accept(this);
-            } else if (node.procedureCallNode != null) {
+            }
+            else if (node.procedureCallNode != null) {
                 node.procedureCallNode.accept(this);
-            } else if (node.terminal != null) {
+            }
+            else if (node.terminal != null && node.assignmentNode != null) {
                 node.assignmentNode.accept(this);
-            } else if (node.cellNode != null) {
+            }
+            else if (node.cellNode != null && node.assignmentNode != null) {
                 node.cellNode.accept(this);
                 node.assignmentNode.accept(this);
-            } else if (node.returnNode != null) {
+            }
+            else if (node.returnNode != null) {
                 node.returnNode.accept(this);
             }
-
             // And what about the terminalNode?
             else
                 throw new NotImplementedError();
@@ -74,9 +82,10 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
     public void Visit(DeclarationNode node) {
         if(node != null) {
                 if (symbolTable.lookupSymbol(node.IdToken.toString()) == null) {
-                    node.setType(Type.Declaration);
+
                     Attributes attributes = new Attributes(node.getType(), null, symbolTable.currentScope);
                     symbolTable.insertSymbol(node.IdToken.toString(), attributes);
+                    node.assignmentNode.accept(this);
                 }
                 else {
                     errors.addEntry(ErrorType.DUPLICATE_VARIABLE, "Procedure " + node.IdToken + "' already exists", node.getColumnNumber(), node.getLineNumber());
@@ -91,6 +100,14 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
 
     public void Visit(ControlStructNode node) {
         if(node != null) {
+            if(node.iterativeStructNode != null) {
+                node.iterativeStructNode.accept(this);
+            }
+            else if(node.selectiveStructNode != null) {
+                node.selectiveStructNode.accept(this);
+            }
+            else
+                throw new NotImplementedError();
         }
         else
             throw new NullPointerException();

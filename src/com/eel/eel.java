@@ -37,9 +37,11 @@ class Eel {
 		BuildSymbolTableVisitor buildSymbolTableVisitor = new BuildSymbolTableVisitor(symbolTable, symbolTableErrors);
 		buildSymbolTableVisitor.performVisit(ast);
 
+		SymbolTablePrinter symbolTablePrinter = new SymbolTablePrinter();
+		symbolTablePrinter.printSymbolTable(symbolTable);
+
 		if(!symbolTableErrors.containsErrors()) {
-			SymbolTablePrinter symbolTablePrinter = new SymbolTablePrinter();
-			symbolTablePrinter.printSymbolTable(symbolTable);
+
 
 			SemanticVisitor semanticVisitor =  new SemanticVisitor(symbolTable, semanticErrors);
 			semanticVisitor.performVisit(ast);
@@ -59,8 +61,7 @@ class Eel {
 
 	public static void printErrors(Errors errors) {
 		for (Item error : errors.errors) {
-			System.out.println(error.type.toString()+": "+error.message+" ("+error.type.name()+")" +
-					(error.lineNumber > 0 ? " on line "+error.lineNumber : ""));
+			System.out.println(error.type.toString()+": "+error.message+" ("+error.type.name()+")" + "on line: " + error.lineNumber + " " + error.column);
 
 			//Enters if the error message is on multiple lines
 			if (error.lines.size() > 0) {
