@@ -118,24 +118,29 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
             node.operatorNode.accept(this);
             node.right.accept(this);
 
-
             Enum<Type> left = node.left.getType();
             Enum<Type> right = node.right.getType();
             String operator = node.operatorNode.getSymbol();
 
+
             if(left == Type.Variable) {
                 if (symbolTable.lookupSymbol(node.left.getName()) != null) {
+                    if (symbolTable.lookupSymbol(node.left.getName()).getDataType() == Type.Uninitialized)
+                        System.out.println(node.left.getName() + " has not been assigned a VALUE");
+
                     left = symbolTable.lookupSymbol(node.left.getName()).getDataType();
                 } else {
-                    System.out.println("VERY BAD ERRRORRRRRRR");
+                    System.out.println(node.left.getName() + " has bot been DECLARED");
                 }
             }
 
             if(right == Type.Variable) {
                 if (symbolTable.lookupSymbol(node.right.getName()) != null) {
+                    if (symbolTable.lookupSymbol(node.right.getName()).getDataType() == Type.Uninitialized)
+                        System.out.println(node.right.getName() + " has not been assigned a VALUE");
                     right = symbolTable.lookupSymbol(node.right.getName()).getDataType();
                 } else {
-                    System.out.println("VERY BAD ERRRORRRRRRR");
+                    System.out.println(node.right.getName() + " has bot been DECLARED");
                 }
             }
 
