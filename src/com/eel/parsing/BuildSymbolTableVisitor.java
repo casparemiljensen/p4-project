@@ -6,6 +6,7 @@ import com.eel.errors.ErrorType;
 import com.eel.errors.Errors;
 import com.eel.helpers.HashCodeGenerator;
 import kotlin.NotImplementedError;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
     SymbolTable symbolTable;
@@ -36,6 +37,9 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
                 for (StatementNode statementNode : node.StatementNodes) {
                     statementNode.accept(this);
                 }
+
+                node.procedureDeclarationNode.formalParametersNode.accept(this);
+
                 symbolTable.leaveScope(node.procedureDeclarationNode.procedureToken.toString());
             } else {
                 errors.addEntry(ErrorType.DUPLICATE_PROCEDURE, "Procedure " + node.procedureDeclarationNode.procedureToken.toString() + "' already exists", node.procedureDeclarationNode.getLineNumber(), node.procedureDeclarationNode.getColumnNumber());
@@ -76,14 +80,16 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
     public void Visit(DeclarationNode node) {
         if (node != null) {
             if (symbolTable.lookupSymbol(node.IdToken.toString()) == null) {
-                Attributes attributes = new Attributes(Type.Variable, Type.Unresolved, symbolTable.currentScope);
+                var type = Type.Uninitialized;
+                if (node.assignmentNode != null) {
+                    type = Type.Initialized;
+                    node.assignmentNode.accept(this);
+                }
+                Attributes attributes = new Attributes(Type.Variable, type, symbolTable.currentScope);
                 symbolTable.insertSymbol(node.IdToken.toString(), attributes);
             } else {
                 errors.addEntry(ErrorType.DUPLICATE_VARIABLE, "Variable " + node.IdToken + "' already exists", node.getLineNumber(), node.getColumnNumber());
             }
-        }
-        if (node.assignmentNode != null) {
-            node.assignmentNode.accept(this);
         }
     }
 
@@ -102,6 +108,20 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
 
     public void Visit(RepeatStructNode node) {
         if (node != null) {
+
+            String hashedName = HashCodeGenerator.generateHashNameFromObject("repeat", node);
+            if (symbolTable.addScope(hashedName)) {
+
+                node.expressionNode.accept(this);
+
+                if (node.statementNodes != null) {
+                    node.statementNodes.forEach(s -> s.accept(this));
+                }
+
+                symbolTable.leaveScope(hashedName);
+            } else {
+                errors.addEntry(ErrorType.DUPLICATE_SCOPE, "A scope with the same hashcode already exists : " + node.getLineNumber() + node.getColumnNumber());
+            }
         } else {
             throw new NullPointerException();
         }
@@ -130,6 +150,8 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
             } else {
                 errors.addEntry(ErrorType.DUPLICATE_SCOPE, "A scope with the same hashcode already exists : " + node.getLineNumber() + node.getColumnNumber());
             }
+        } else {
+            throw new NullPointerException();
         }
     }
 
@@ -290,6 +312,50 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
         } else
             throw new NullPointerException();
     }
+
+    public void Visit(FormalParametersNode node) {
+        if (node != null) {
+
+            for (TerminalNode t : node.IDs) {
+                if (symbolTable.lookupSymbol(t.toString()) == null) {
+                    node.setType(Type.FormalParam);
+                    Attributes attributes = new Attributes(node.getType(), Type.Unresolved, symbolTable.currentScope);
+                    symbolTable.insertParam(t.toString(), attributes);
+                }
+            }
+
+        } else
+            throw new NullPointerException();
+    }
+
+//    public void Visit(CellNode node) {
+//        if (node != null) {
+//
+//            if (node.SINGLE_CELL != null) {
+//                if (symbolTable.lookupSymbol(node.SINGLE_CELL.toString()) == null) {
+//                    node.setType(Type.Variable);
+//                    Attributes attributes = new Attributes(node.getType(), Type.Initialized, symbolTable.currentScope);
+//                    symbolTable.insertSymbol(node.SINGLE_CELL.toString(), attributes);
+//                } else {
+//                    errors.addEntry(ErrorType.DUPLICATE_VARIABLE, "Variable " + node.SINGLE_CELL + "' already exists", node.getLineNumber(), node.getColumnNumber());
+//                }
+//
+//
+//            } else if (node.RANGE != null) {
+//                if (symbolTable.lookupSymbol(node.RANGE.toString()) == null) {
+//                    node.setType(Type.Variable);
+//                    Attributes attributes = new Attributes(node.getType(), Type.Initialized, symbolTable.currentScope);
+//                    symbolTable.insertSymbol(node.RANGE.toString(), attributes);
+//                } else {
+//                    errors.addEntry(ErrorType.DUPLICATE_VARIABLE, "Variable " + node.RANGE + "' already exists", node.getLineNumber(), node.getColumnNumber());
+//                }
+//
+//            } else
+//                throw new NotImplementedError();
+//        } else
+//            throw new NullPointerException();
+//    }
+
 
     @Override
     public void defaultVisit(Object o) {

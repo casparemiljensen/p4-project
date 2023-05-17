@@ -1,17 +1,12 @@
-procedure Tertiary()
+procedure Tertiary(hej)
 
-let dav = 123
+(A1)
 
-if(2) then
-let  y = 4
+(A1) = 5
+{B1:B3} = 6
 
-else if(3) then
-let z = 5
+(A1) = 3
 
-else then
-let u = 6
-endIf
-
-let farvel = 321
+let x = (A1) + (A2)
 
 endProcedure
