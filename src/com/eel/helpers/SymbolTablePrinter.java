@@ -13,7 +13,7 @@ public class SymbolTablePrinter {
 
     private void printScope(EelScope scope) {
         System.out.println();
-        System.out.println("[ --- Scope: " + scope.getScopeName()+" --- ]");
+        System.out.println("[ --- Scope: " + scope.getScopeName() + " --- ]");
         System.out.println();
         System.out.println("Symbols:");
         for (Map.Entry<String, Attributes> entry : scope.getSymbols().entrySet()) {
@@ -23,7 +23,20 @@ public class SymbolTablePrinter {
             System.out.println("  Name: " + symbol);
             System.out.println("  Attributes:");
             System.out.println("  Type: " + attributes.getType());
-            if(attributes.getScope() != null) {
+            if (attributes.getScope() != null) {
+                System.out.println("  Scope: " + attributes.getScope().getScopeName());
+            }
+            System.out.println("  DataType: " + attributes.getDataType());
+            System.out.println();
+        }
+        for (Map.Entry<String, Attributes> entry : scope.getParams().entrySet()) {
+            String symbol = entry.getKey();
+            Attributes attributes = entry.getValue();
+            System.out.println("---   Param   ---");
+            System.out.println("  Name: " + symbol);
+            System.out.println("  Attributes:");
+            System.out.println("  Type: " + attributes.getType());
+            if (attributes.getScope() != null) {
                 System.out.println("  Scope: " + attributes.getScope().getScopeName());
             }
             System.out.println("  DataType: " + attributes.getDataType());
