@@ -38,7 +38,9 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
                     statementNode.accept(this);
                 }
 
-                node.procedureDeclarationNode.formalParametersNode.accept(this);
+                if (node.procedureDeclarationNode.formalParametersNode != null) {
+                    node.procedureDeclarationNode.formalParametersNode.accept(this);
+                }
 
                 symbolTable.leaveScope(node.procedureDeclarationNode.procedureToken.toString());
             } else {
