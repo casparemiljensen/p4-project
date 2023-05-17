@@ -6,15 +6,7 @@ import com.eel.AST.ReflectiveVisitable;
 public abstract class AbstractNode implements ReflectiveVisitable {
     protected int lineNumber, colNumber;
     public Enum<Type> type;
-    public String name;
 
-
-    public String getName() {
-        return name;
-    }
-    public void setName(String _name) {
-        this.name = _name;
-    }
     public Enum<Type> getType() {
         return type;
     }
@@ -31,12 +23,16 @@ public abstract class AbstractNode implements ReflectiveVisitable {
         return colNumber;
     }
 
-    public AbstractNode() {}
+    public AbstractNode() {
+    }
+
     public AbstractNode(int lineNumber, int colNumber) {
         this.lineNumber = lineNumber;
         this.colNumber = colNumber;
     }
 
-    public final void accept(ReflectiveASTVisitor v) { v.Visit(this); }
+    public final void accept(ReflectiveASTVisitor v) {
+        v.Visit(this);
+    }
 
 }

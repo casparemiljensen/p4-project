@@ -7,9 +7,9 @@ public class Attributes {
     private EelScope scope;
     private Enum<Type> dataType;
 
-    public Attributes(Enum<Type> type, EelScope scope) {
+    public Attributes(Enum<Type> type, Enum<Type> dataType) {
         this.type = type;
-        this.scope = scope;
+        this.dataType = dataType;
     }
 
     public Attributes(Enum<Type> type, Enum<Type> dataType, EelScope scope) {
