@@ -1,17 +1,3 @@
 procedure Tertiary()
-
-let dav = 123
-
-if(2) then
-let  y = 4
-
-else if(3) then
-let z = 5
-
-else then
-let u = 6
-endIf
-
-let farvel = 321
-
+variable = 4 + "" == 13
 endProcedure

@@ -83,6 +83,7 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
             }
         }
         if (node.assignmentNode != null) {
+
             node.assignmentNode.accept(this);
         }
     }
@@ -225,6 +226,8 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
                 node.left.accept(this);
                 node.operatorNode.accept(this);
                 node.right.accept(this);
+
+
             }
 
         } else
