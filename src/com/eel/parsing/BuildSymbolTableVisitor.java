@@ -189,7 +189,7 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
                 node.setType(node.unaryExprNode.getType());
             } else if (node.infixExprNode != null) {
                 node.infixExprNode.accept(this);
-                node.setType(node.infixExprNode.getType());
+//                node.setType(node.infixExprNode.getType());
             } else if (node.valueExprNode != null) {
                 node.valueExprNode.accept(this);
                 node.setType(node.valueExprNode.getType());
@@ -226,8 +226,6 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
                 node.left.accept(this);
                 node.operatorNode.accept(this);
                 node.right.accept(this);
-
-
             }
 
         } else
