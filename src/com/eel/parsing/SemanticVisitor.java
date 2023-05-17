@@ -45,7 +45,11 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
         } else if (node.procedureCallNode != null) {
             node.procedureCallNode.accept(this);
         } else if (node.terminal != null) {
-            node.assignmentNode.accept(this);
+            if (symbolTable.lookupSymbol(node.terminal.toString()) != null) {
+                node.assignmentNode.accept(this);
+                Attributes attributes = symbolTable.lookupSymbol(node.terminal.toString());
+                attributes.setDataType(node.assignmentNode.getType());
+            }
         } else if (node.cellNode != null) {
             node.cellNode.accept(this);
             node.assignmentNode.accept(this);
@@ -69,6 +73,9 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
         if (node != null) {
             if (node.expressionNode != null) {
                 node.expressionNode.accept(this);
+
+
+                node.setType(node.expressionNode.getType());
             }
         } else
             throw new NullPointerException();

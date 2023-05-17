@@ -275,6 +275,7 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
                 node.setType(Type.Float);
             } else if (node.VARIABLE != null) {
                 node.setType(Type.Variable);
+//                node.setName(node.VARIABLE.toString());
             } else if (node.BOOLEAN != null) {
                 node.setType(Type.Boolean);
             } else if (node.cellNode != null) {

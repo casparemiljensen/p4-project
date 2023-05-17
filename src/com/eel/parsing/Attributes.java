@@ -12,15 +12,6 @@ public class Attributes {
         this.dataType = dataType;
     }
 
-    public Attributes(Enum<Type> type, EelScope scope) {
-        this.type = type;
-        this.scope = scope;
-    }
-    public Attributes(Enum<Type> type, Enum<Type> dataType, EelScope scope ) {
-        this.type = type;
-        this.dataType = dataType;
-        this.scope = scope;
-    }
 
     public Enum<Type> getDataType() {
         return dataType;
