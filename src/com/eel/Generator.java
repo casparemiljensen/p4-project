@@ -3,6 +3,9 @@ package com.eel;
 import com.eel.AST.ReflectiveASTVisitor;
 import com.eel.AST.nodes.*;
 import kotlin.NotImplementedError;
+import java.io.IOException;
+import java.nio.file.*;
+import java.util.Objects;
 
 public class Generator extends ReflectiveASTVisitor {
 	public StringBuilder strBlr;
@@ -19,20 +22,49 @@ public class Generator extends ReflectiveASTVisitor {
 				procedureNode.accept(this);
 			}
 			decreaseIndent();
-			strBlr.append(getIndentation()).append("}");
-			
+			strBlr.append(getIndentation()).append("}\n");
+
+			String content = loadEelLibFile();
+			if (content != null) {
+				strBlr.append(content);
+			}
+
 			System.out.println(strBlr.toString());
+			writeToFile(strBlr.toString());
 		}
 		else
 			throw new NullPointerException();
 	}
+
+	public static String loadEelLibFile() {
+		String filePath = "out/production/eel/com/eel/EelLib.ts";
+		try {
+			byte[] bytes = Files.readAllBytes(Paths.get(filePath));
+			return new String(bytes);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static void writeToFile(String content) {
+		String filePath = "out/production/eel/com/eel/OutputCode.ts";
+		try {
+			Path path = Paths.get(filePath);
+			Files.write(path, content.getBytes());
+			System.out.println("Content written to file: " + filePath);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public void Visit(ProcedureNode node) {
 		if(node != null) {
 
 			// The line below it necessary because EEL addes () after proc calls but this is not used in the same way if OfficeScripts.
 			String inputProcName = node.procedureDeclarationNode.procedureToken.toString();
 			String outputProcName = inputProcName.replace("(", "").replace(")", "");
-			strBlr.append(getIndentation()).append("function " + outputProcName.toLowerCase() + "( ");
+			strBlr.append(getIndentation()).append("function " + outputProcName.toLowerCase() + "(");
 			if (node.procedureDeclarationNode.formalParametersNode != null) {
 				node.procedureDeclarationNode.formalParametersNode.accept(this);
 			}
@@ -354,7 +386,8 @@ public class Generator extends ReflectiveASTVisitor {
 				strBlr.append(node.BOOLEAN);
 			}
 			else if (node.cellNode != null) {
-				strBlr.append(node.cellNode);
+				//strBlr.append(node.cellNode);
+				node.cellNode.accept(this);
 			}
 			else if(node.functionCallNode != null) {
 				strBlr.append(node.functionCallNode);
@@ -376,16 +409,31 @@ public class Generator extends ReflectiveASTVisitor {
 
 	public void Visit(CellNode node) {
 		if (node != null) {
+			if (node.SINGLE_CELL != null) {
+				strBlr.append(node.SINGLE_CELL);
+			}
+			else if (node.RANGE != null) {
+				strBlr.append(node.RANGE);
+			}
 
+			if (node.CELL_METHOD != null) {
+				strBlr.append(node.CELL_METHOD);
+			}
 		}
 		else
 			throw new NullPointerException();
 	}
 
 
+
 	public void Visit(FunctionCallNode node){
 		if (node != null) {
-			strBlr.append(node.FUNCTIONS + "(");
+			// Check for "print" and rewrite to "console.log"
+			if (Objects.equals(node.FUNCTIONS.toString(), "print")) {
+				strBlr.append("console.log(");
+			} else {
+				strBlr.append(node.FUNCTIONS).append("(");
+			}
 			if (node.actualParamsNode != null) {
 				node.actualParamsNode.accept(this);
 			}

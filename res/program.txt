@@ -1,7 +1,5 @@
-procedure Secondary()
-
-let a = 4+2
-let b = 4-4
-let c = 5+5
-
+procedure Test()
+    SUM([1, 2])
+    AVERAGE([3, 4])
+    let h = (1, 1)
 endProcedure
