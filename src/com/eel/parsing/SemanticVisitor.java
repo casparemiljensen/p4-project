@@ -21,18 +21,18 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
     public void Visit(ProgramNode node) {
         if (node.procedureNodes != null)
             for (ProcedureNode procedureNode : node.procedureNodes) {
-                symbolTable.enterScope(procedureNode.procedureDeclarationNode.procedureToken.toString());
-                procedureNode.accept(this);
-                symbolTable.leaveScope();
+                    symbolTable.enterScope(procedureNode.procedureDeclarationNode.procedureToken.toString());
+                    procedureNode.accept(this);
+                    symbolTable.leaveScope();
             }
     }
 
     public void Visit(ProcedureNode node) {
-        if (node.StatementNodes != null) {
-            for (StatementNode statementNode : node.StatementNodes) {
-                statementNode.accept(this);
+            if (node.StatementNodes != null) {
+                for (StatementNode statementNode : node.StatementNodes) {
+                    statementNode.accept(this);
+                }
             }
-        }
     }
 
     public void Visit(StatementNode node) {
@@ -61,28 +61,32 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
             node.assignmentNode.accept(this);
         } else if (node.returnNode != null) {
             node.returnNode.accept(this);
-        } else
+        }  else
             throw new NotImplementedError();
     }
 
 
+
+
     public void Visit(DeclarationNode node) {
-        if (node != null) {
-            if (node.assignmentNode != null) {
+        if(node != null) {
+            if(node.assignmentNode != null) {
                 node.assignmentNode.accept(this);
                 node.setType(node.assignmentNode.getType());
             }
-        } else
+        }
+        else
             throw new NullPointerException();
     }
 
     public void Visit(AssignmentNode node) {
-        if (node != null) {
-            if (node.expressionNode != null) {
+        if(node != null) {
+            if(node.expressionNode != null) {
                 node.expressionNode.accept(this);
                 node.setType(node.expressionNode.getType());
             }
-        } else
+        }
+        else
             throw new NullPointerException();
     }
 
@@ -114,19 +118,39 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
         } else
             throw new NullPointerException();
     }
-
     public void Visit(InfixExprNode node) {
-        if (node.left != null && node.operatorNode != null && node.right != null) {
-            node.left.accept(this);
-            node.operatorNode.accept(this);
-            node.right.accept(this);
+            if (node.left != null && node.operatorNode != null && node.right != null) {
+                node.left.accept(this);
+                node.operatorNode.accept(this);
+                node.right.accept(this);
+
+            Enum<Type> left = node.left.getType();
+            Enum<Type> right = node.right.getType();
+            String operator = node.operatorNode.getSymbol();
 
 
-            if (node.left.getType() != node.right.getType()) {
+            if(left == Type.Variable) {
+                if (symbolTable.lookupSymbol(node.left.getName()) != null) {
+                    if (symbolTable.lookupSymbol(node.left.getName()).getDataType() == Type.Uninitialized)
+                        System.out.println(node.left.getName() + " has not been assigned a VALUE");
 
-                Enum<Type> left = node.left.getType();
-                Enum<Type> right = node.right.getType();
-                String operator = node.operatorNode.getSymbol();
+                    left = symbolTable.lookupSymbol(node.left.getName()).getDataType();
+                } else {
+                    System.out.println(node.left.getName() + " has bot been DECLARED");
+                }
+            }
+
+            if(right == Type.Variable) {
+                if (symbolTable.lookupSymbol(node.right.getName()) != null) {
+                    if (symbolTable.lookupSymbol(node.right.getName()).getDataType() == Type.Uninitialized)
+                        System.out.println(node.right.getName() + " has not been assigned a VALUE");
+                    right = symbolTable.lookupSymbol(node.right.getName()).getDataType();
+                } else {
+                    System.out.println(node.right.getName() + " has bot been DECLARED");
+                }
+            }
+
+            if (left != right) {
 
                 if (operator.equals("+") && (left == Type.String || right == Type.String)) node.setType(Type.String);
                     // Ikke slet!
@@ -134,7 +158,7 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
                 else if (left == Type.Integer && right == Type.Float) node.setType(Type.Float);
                 else if (left == Type.Float && right == Type.Integer) node.setType(Type.Float);
                 else
-                    errors.addEntry(ErrorType.ILLEGAL_TYPE_CONVERSION, "Not possible to implicitly convert types in expression. Types: " + node.left.getType() + " and " + node.right.getType() + ".", node.getLineNumber(), node.getColumnNumber());
+                    errors.addEntry(ErrorType.ILLEGAL_TYPE_CONVERSION, "Not possible to implicitly convert types in expression. Types: " + left + " and " + right + ".", node.getLineNumber(), node.getColumnNumber());
             } else node.setType(node.left.getType());
         }
     }

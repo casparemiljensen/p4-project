@@ -30,7 +30,7 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
     public void Visit(ProcedureNode node) {
         if (symbolTable.lookupSymbol(node.procedureDeclarationNode.procedureToken.toString()) == null) {
             node.setType(Type.Procedure);
-            Attributes attributes = new Attributes(Type.Procedure, Type.Void, symbolTable.currentScope);
+            Attributes attributes = new Attributes(Type.Procedure, Type.Void);
             symbolTable.insertSymbol(node.procedureDeclarationNode.procedureToken.toString(), attributes);
 
             if (symbolTable.addScope(node.procedureDeclarationNode.procedureToken.toString())) {
@@ -87,7 +87,7 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
                     type = Type.Initialized;
                     node.assignmentNode.accept(this);
                 }
-                Attributes attributes = new Attributes(Type.Variable, type, symbolTable.currentScope);
+                Attributes attributes = new Attributes(Type.Variable, type);
                 symbolTable.insertSymbol(node.IdToken.toString(), attributes);
             } else {
                 errors.addEntry(ErrorType.DUPLICATE_VARIABLE, "Variable " + node.IdToken + "' already exists", node.getLineNumber(), node.getColumnNumber());
@@ -216,6 +216,7 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
             } else if (node.valueExprNode != null) {
                 node.valueExprNode.accept(this);
                 node.setType(node.valueExprNode.getType());
+                node.setName(node.valueExprNode.getName());
             } else
                 throw new NotImplementedError();
         } else
@@ -260,6 +261,7 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
             if (node.valueNode != null) {
                 node.valueNode.accept(this);
                 node.setType(node.valueNode.getType());
+                node.setName(node.valueNode.getName());
             }
         } else
             throw new NullPointerException();
@@ -275,6 +277,7 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
                 node.setType(Type.Float);
             } else if (node.VARIABLE != null) {
                 node.setType(Type.Variable);
+                node.setName(node.VARIABLE.toString());
             } else if (node.BOOLEAN != null) {
                 node.setType(Type.Boolean);
             } else if (node.cellNode != null) {
@@ -321,7 +324,7 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
             for (TerminalNode t : node.IDs) {
                 if (symbolTable.lookupSymbol(t.toString()) == null) {
                     node.setType(Type.FormalParam);
-                    Attributes attributes = new Attributes(node.getType(), Type.Unresolved, symbolTable.currentScope);
+                    Attributes attributes = new Attributes(node.getType(), Type.Unresolved);
                     symbolTable.insertParam(t.toString(), attributes);
                 }
             }
