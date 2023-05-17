@@ -11,7 +11,8 @@ public class Attributes {
         this.type = type;
         this.scope = scope;
     }
-    public Attributes(Enum<Type> type, Enum<Type> dataType, EelScope scope ) {
+
+    public Attributes(Enum<Type> type, Enum<Type> dataType, EelScope scope) {
         this.type = type;
         this.dataType = dataType;
         this.scope = scope;
@@ -34,4 +35,7 @@ public class Attributes {
     }
 
 
+    public void setDataType(Enum<Type> dataType) {
+        this.dataType = dataType;
+    }
 }

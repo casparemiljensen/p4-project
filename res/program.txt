@@ -1,3 +1,6 @@
 procedure Tertiary(hej)
-variable = "4" + 13 - ""
+
+let h = x-u
+h = 5
+h = "hej"
 endProcedure
