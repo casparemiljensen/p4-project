@@ -64,6 +64,8 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
         if (node != null) {
             if (node.assignmentNode != null) {
                 node.assignmentNode.accept(this);
+                Attributes attributes = symbolTable.lookupSymbol(node.IdToken.toString());
+                attributes.setDataType(node.assignmentNode.getType());
             }
         } else
             throw new NullPointerException();
@@ -121,9 +123,20 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
             Enum<Type> right = node.right.getType();
             String operator = node.operatorNode.getSymbol();
 
-            if(node.left.getType() == Type.Variable) {
-//                left = symbolTable.lookupSymbol(left.getName()).getDataType());
+            if(left == Type.Variable) {
+                if (symbolTable.lookupSymbol(node.left.getName()) != null) {
+                    left = symbolTable.lookupSymbol(node.left.getName()).getDataType();
+                } else {
+                    System.out.println("VERY BAD ERRRORRRRRRR");
+                }
+            }
 
+            if(right == Type.Variable) {
+                if (symbolTable.lookupSymbol(node.right.getName()) != null) {
+                    right = symbolTable.lookupSymbol(node.right.getName()).getDataType();
+                } else {
+                    System.out.println("VERY BAD ERRRORRRRRRR");
+                }
             }
 
             if (left != right) {
@@ -134,7 +147,7 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
                 else if (left == Type.Integer && right == Type.Float) node.setType(Type.Float);
                 else if (left == Type.Float && right == Type.Integer) node.setType(Type.Float);
                 else
-                    errors.addEntry(ErrorType.ILLEGAL_TYPE_CONVERSION, "Not possible to implicitly convert types in expression. Types: " + node.left.getType() + " and " + node.right.getType() + ".", node.getLineNumber(), node.getColumnNumber());
+                    errors.addEntry(ErrorType.ILLEGAL_TYPE_CONVERSION, "Not possible to implicitly convert types in expression. Types: " + left + " and " + right + ".", node.getLineNumber(), node.getColumnNumber());
             } else node.setType(node.left.getType());
         }
     }

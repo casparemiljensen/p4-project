@@ -216,6 +216,7 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
             } else if (node.valueExprNode != null) {
                 node.valueExprNode.accept(this);
                 node.setType(node.valueExprNode.getType());
+                node.setName(node.valueExprNode.getName());
             } else
                 throw new NotImplementedError();
         } else
@@ -260,6 +261,7 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
             if (node.valueNode != null) {
                 node.valueNode.accept(this);
                 node.setType(node.valueNode.getType());
+                node.setName(node.valueNode.getName());
             }
         } else
             throw new NullPointerException();
@@ -275,7 +277,7 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
                 node.setType(Type.Float);
             } else if (node.VARIABLE != null) {
                 node.setType(Type.Variable);
-//                node.setName(node.VARIABLE.toString());
+                node.setName(node.VARIABLE.toString());
             } else if (node.BOOLEAN != null) {
                 node.setType(Type.Boolean);
             } else if (node.cellNode != null) {
