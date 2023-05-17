@@ -79,68 +79,56 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
     }
 
     public void Visit(ExpressionNode node) {
-        if(node != null) {
+        if (node != null) {
             if (node.parenExprNode != null) {
                 node.parenExprNode.accept(this);
-            }
-            else if (node.unaryExprNode != null) {
-                node.unaryExprNode.accept(this);
-            }
-            else if (node.infixExprNode != null) {
+                node.setType(node.parenExprNode.getType());
+            } else if (node.unaryExprNode != null) {
+            } else if (node.infixExprNode != null) {
                 node.infixExprNode.accept(this);
-            }
-            else if (node.valueExprNode != null) {
-                node.valueExprNode.accept(this);
-            }
-            else
+                node.setType(node.infixExprNode.getType());
+            } else if (node.valueExprNode != null) {
+            } else
                 throw new NotImplementedError();
-        }
-        else
+        } else
             throw new NullPointerException();
     }
 
+    // Nødvendigt onde at have denne i SemanticVisitor. Vi ville hellere have visit(ParenExprNode) i BSTV, Så vi kun har typeChecking logikken her i SemanticVisitor.
+    // Desværre besøger ExpressionNode, som kan besøge InfixExpressionNod, der først får sin type her i SemanticVisitor
     public void Visit(ParenExprNode node) {
-        if(node != null) {
+        // Hackish char null check
+        if (node != null) {
             if (node.leftPar != '\u0000' && node.expressionNode != null && node.rightPar != '\u0000') {
                 node.expressionNode.accept(this);
+                node.setType(node.expressionNode.getType());
             }
-        }
-        else
+        } else
             throw new NullPointerException();
     }
-
-    public void Visit(UnaryExprNode node) {
-        if(node != null) {
-            if (node.right != null && node.operator != null) {
-                node.right.accept(this);
-            }
-        }
-        else
-            throw new NullPointerException();
-    }
-
-
-
     public void Visit(InfixExprNode node) {
             if (node.left != null && node.operatorNode != null && node.right != null) {
                 node.left.accept(this);
                 node.operatorNode.accept(this);
                 node.right.accept(this);
-                System.out.println("left: " + node.left.getType() + "| operator: " + node.operatorNode.getSymbol() + "| right: " + node.right.getType());
+
 
                 if (node.left.getType() != node.right.getType()) {
+
                     Enum<Type> left = node.left.getType();
                     Enum<Type> right = node.right.getType();
                     String operator = node.operatorNode.getSymbol();
 
                     if (operator.equals("+") && (left == Type.String || right == Type.String)) node.setType(Type.String);
+                    // Ikke slet!
+//                    else if (!operator.equals("+") && (right != Type.Integer || right != Type.Float)) errors.addEntry(ErrorType.ILLEGAL_TYPE_CONVERSION, "righthand side of expression can only be number", node.getLineNumber(), node.getColumnNumber());
                     else if(left == Type.Integer && right == Type.Float) node.setType(Type.Float);
                     else if (left == Type.Float && right == Type.Integer) node.setType(Type.Float);
-                    else errors.addEntry(ErrorType.IMPLICIT_TYPE_CONVERSION, "Not possible to implicitly convert types in expression. Types: " + node.left.getType() + " and " + node.right.getType() + ".", node.getLineNumber(), node.getColumnNumber());
+                    else errors.addEntry(ErrorType.ILLEGAL_TYPE_CONVERSION, "Not possible to implicitly convert types in expression. Types: " + node.left.getType() + " and " + node.right.getType() + ".", node.getLineNumber(), node.getColumnNumber());
             }
+                else node.setType(node.left.getType());
         }
     }
-
 
 
     @Override

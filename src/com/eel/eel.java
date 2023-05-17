@@ -45,8 +45,15 @@ class Eel {
 			semanticVisitor.performVisit(ast);
 
 			if (!semanticErrors.containsErrors()) {
-//				Generator generator = new Generator();
-//				generator.performVisit(ast);
+				Generator generator = new Generator();
+				System.out.println("----------------TS----------------");
+				generator.performVisit(ast);
+			}
+			else {
+				System.out.println("[SymbolTable] Code contains " + symbolTableErrors.errors.stream().count() + " errors:");
+				System.out.println("[TypeCheck] Code contains " + semanticErrors.errors.stream().count() + " errors:");
+				printErrors(symbolTableErrors);
+				printErrors(semanticErrors);
 			}
 		}
 		else {

@@ -2,7 +2,7 @@ package com.eel.errors;
 
 public enum ErrorType {
     TYPE_ERROR("420"),
-    IMPLICIT_TYPE_CONVERSION("I1"),
+    ILLEGAL_TYPE_CONVERSION("I1"),
     DUPLICATE_PROCEDURE("E3"),
     DUPLICATE_VARIABLE("E2"),
     DUPLICATE_SCOPE("E3"),

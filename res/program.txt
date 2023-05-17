@@ -1,12 +1,3 @@
-procedure Tertiary(hej)
-
-(A1)
-
-(A1) = 5
-{B1:B3} = 6
-
-(A1) = 3
-
-let x = (A1) + (A2)
-
+procedure Tertiary()
+variable = "4" + 13 - ""
 endProcedure
