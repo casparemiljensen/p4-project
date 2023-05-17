@@ -1,3 +1,24 @@
-procedure Tertiary(hej)
-variable = "4" + 13 - ""
+procedure Tertiary()
+
+
+let x = u + 8
+
+
+
+if(1) then
+    let a = 4
+
+else if(2) then
+    let c = 5
+
+else then
+    let d = 6
+endIf
+
+repeat while (3)
+    let e = 7
+endRepeat
+
+let f = 8
+
 endProcedure

@@ -21,18 +21,18 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
     public void Visit(ProgramNode node) {
         if (node.procedureNodes != null)
             for (ProcedureNode procedureNode : node.procedureNodes) {
-                    symbolTable.enterScope(procedureNode.procedureDeclarationNode.procedureToken.toString());
-                    procedureNode.accept(this);
-                    symbolTable.leaveScope();
+                symbolTable.enterScope(procedureNode.procedureDeclarationNode.procedureToken.toString());
+                procedureNode.accept(this);
+                symbolTable.leaveScope();
             }
     }
 
     public void Visit(ProcedureNode node) {
-            if (node.StatementNodes != null) {
-                for (StatementNode statementNode : node.StatementNodes) {
-                    statementNode.accept(this);
-                }
+        if (node.StatementNodes != null) {
+            for (StatementNode statementNode : node.StatementNodes) {
+                statementNode.accept(this);
             }
+        }
     }
 
     public void Visit(StatementNode node) {
@@ -51,30 +51,26 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
             node.assignmentNode.accept(this);
         } else if (node.returnNode != null) {
             node.returnNode.accept(this);
-        }  else
+        } else
             throw new NotImplementedError();
     }
 
 
-
-
     public void Visit(DeclarationNode node) {
-        if(node != null) {
-            if(node.assignmentNode != null) {
+        if (node != null) {
+            if (node.assignmentNode != null) {
                 node.assignmentNode.accept(this);
             }
-        }
-        else
+        } else
             throw new NullPointerException();
     }
 
     public void Visit(AssignmentNode node) {
-        if(node != null) {
-            if(node.expressionNode != null) {
+        if (node != null) {
+            if (node.expressionNode != null) {
                 node.expressionNode.accept(this);
             }
-        }
-        else
+        } else
             throw new NullPointerException();
     }
 
@@ -106,27 +102,33 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
         } else
             throw new NullPointerException();
     }
+
     public void Visit(InfixExprNode node) {
-            if (node.left != null && node.operatorNode != null && node.right != null) {
-                node.left.accept(this);
-                node.operatorNode.accept(this);
-                node.right.accept(this);
+        if (node.left != null && node.operatorNode != null && node.right != null) {
+            node.left.accept(this);
+            node.operatorNode.accept(this);
+            node.right.accept(this);
 
 
-                if (node.left.getType() != node.right.getType()) {
+            Enum<Type> left = node.left.getType();
+            Enum<Type> right = node.right.getType();
+            String operator = node.operatorNode.getSymbol();
 
-                    Enum<Type> left = node.left.getType();
-                    Enum<Type> right = node.right.getType();
-                    String operator = node.operatorNode.getSymbol();
+            if(node.left.getType() == Type.Variable) {
+//                left = symbolTable.lookupSymbol(left.getName()).getDataType());
 
-                    if (operator.equals("+") && (left == Type.String || right == Type.String)) node.setType(Type.String);
+            }
+
+            if (left != right) {
+
+                if (operator.equals("+") && (left == Type.String || right == Type.String)) node.setType(Type.String);
                     // Ikke slet!
 //                    else if (!operator.equals("+") && (right != Type.Integer || right != Type.Float)) errors.addEntry(ErrorType.ILLEGAL_TYPE_CONVERSION, "righthand side of expression can only be number", node.getLineNumber(), node.getColumnNumber());
-                    else if(left == Type.Integer && right == Type.Float) node.setType(Type.Float);
-                    else if (left == Type.Float && right == Type.Integer) node.setType(Type.Float);
-                    else errors.addEntry(ErrorType.ILLEGAL_TYPE_CONVERSION, "Not possible to implicitly convert types in expression. Types: " + node.left.getType() + " and " + node.right.getType() + ".", node.getLineNumber(), node.getColumnNumber());
-            }
-                else node.setType(node.left.getType());
+                else if (left == Type.Integer && right == Type.Float) node.setType(Type.Float);
+                else if (left == Type.Float && right == Type.Integer) node.setType(Type.Float);
+                else
+                    errors.addEntry(ErrorType.ILLEGAL_TYPE_CONVERSION, "Not possible to implicitly convert types in expression. Types: " + node.left.getType() + " and " + node.right.getType() + ".", node.getLineNumber(), node.getColumnNumber());
+            } else node.setType(node.left.getType());
         }
     }
 

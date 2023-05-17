@@ -30,7 +30,7 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
     public void Visit(ProcedureNode node) {
         if (symbolTable.lookupSymbol(node.procedureDeclarationNode.procedureToken.toString()) == null) {
             node.setType(Type.Procedure);
-            Attributes attributes = new Attributes(Type.Procedure, Type.Void, symbolTable.currentScope);
+            Attributes attributes = new Attributes(Type.Procedure, Type.Void);
             symbolTable.insertSymbol(node.procedureDeclarationNode.procedureToken.toString(), attributes);
 
             if (symbolTable.addScope(node.procedureDeclarationNode.procedureToken.toString())) {
@@ -87,7 +87,7 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
                     type = Type.Initialized;
                     node.assignmentNode.accept(this);
                 }
-                Attributes attributes = new Attributes(Type.Variable, type, symbolTable.currentScope);
+                Attributes attributes = new Attributes(Type.Variable, type);
                 symbolTable.insertSymbol(node.IdToken.toString(), attributes);
             } else {
                 errors.addEntry(ErrorType.DUPLICATE_VARIABLE, "Variable " + node.IdToken + "' already exists", node.getLineNumber(), node.getColumnNumber());
@@ -321,7 +321,7 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
             for (TerminalNode t : node.IDs) {
                 if (symbolTable.lookupSymbol(t.toString()) == null) {
                     node.setType(Type.FormalParam);
-                    Attributes attributes = new Attributes(node.getType(), Type.Unresolved, symbolTable.currentScope);
+                    Attributes attributes = new Attributes(node.getType(), Type.Unresolved);
                     symbolTable.insertParam(t.toString(), attributes);
                 }
             }
