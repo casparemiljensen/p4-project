@@ -52,7 +52,6 @@ public class Generator extends ReflectiveASTVisitor {
 		try {
 			Path path = Paths.get(filePath);
 			Files.write(path, content.getBytes());
-			System.out.println("Content written to file: " + filePath);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -409,15 +408,52 @@ public class Generator extends ReflectiveASTVisitor {
 
 	public void Visit(CellNode node) {
 		if (node != null) {
-			if (node.SINGLE_CELL != null) {
+
+
+			if (node.CELL_METHOD != null) {
+				if (Objects.equals(node.CELL_METHOD.toString(), ".value")) {
+					// Set Value
+					/*
+					strBlr.append("workbook.getActiveWorksheet().getCell")
+							.append(node.SINGLE_CELL)
+							.append(".setValue(\"")
+							.append(value)
+							.append("\")");
+					 */
+
+					// Get Value
+					strBlr.append("workbook.getActiveWorksheet().getCell")
+							.append(node.SINGLE_CELL)
+							.append(".getValue()");
+				}
+				else if (Objects.equals(node.CELL_METHOD.toString(), ".format")) {
+					String valueString = "color:red";
+					String[] parts = valueString.split(":");
+					String key = parts[0];
+					String value = parts[1];
+
+					if (Objects.equals(key, "backgroundColor")) {
+						strBlr.append("workbook.getActiveWorksheet().getCell")
+								.append(node.SINGLE_CELL)
+								.append(".getFormat().getFill().setColor(\"")
+								.append(value)
+								.append("\")");
+					}
+					else if (Objects.equals(key, "textColor")) {
+						strBlr.append("workbook.getActiveWorksheet().getCell")
+								.append(node.SINGLE_CELL)
+								.append(".getFormat().getFont().setColor(\"")
+								.append(value)
+								.append("\")");
+					}
+
+				}
+			}
+			else if (node.SINGLE_CELL != null) {
 				strBlr.append(node.SINGLE_CELL);
 			}
 			else if (node.RANGE != null) {
 				strBlr.append(node.RANGE);
-			}
-
-			if (node.CELL_METHOD != null) {
-				strBlr.append(node.CELL_METHOD);
 			}
 		}
 		else
@@ -432,12 +468,17 @@ public class Generator extends ReflectiveASTVisitor {
 			if (Objects.equals(node.FUNCTIONS.toString(), "print")) {
 				strBlr.append("console.log(");
 			} else {
-				strBlr.append(node.FUNCTIONS).append("(");
+				strBlr.append(node.FUNCTIONS).append("([");
 			}
 			if (node.actualParamsNode != null) {
 				node.actualParamsNode.accept(this);
 			}
-			strBlr.append(")\n");
+			if (Objects.equals(node.FUNCTIONS.toString(), "print")) {
+				strBlr.append(")\n");
+			} else {
+				strBlr.append("])\n");
+			}
+
 		}
 		else
 			throw new NullPointerException();

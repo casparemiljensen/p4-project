@@ -1,5 +1,3 @@
 procedure Test()
-    SUM([1, 2])
-    AVERAGE([3, 4])
-    let h = (1, 1)
+    (3,3).format = "color:red"
 endProcedure
