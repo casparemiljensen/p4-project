@@ -4,6 +4,7 @@ import com.eel.AST.ReflectiveASTVisitor;
 import com.eel.AST.nodes.*;
 import com.eel.errors.ErrorType;
 import com.eel.errors.Errors;
+import com.eel.helpers.HashCodeGenerator;
 import kotlin.NotImplementedError;
 
 import javax.sound.midi.SysexMessage;
@@ -38,7 +39,7 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
 
     public void Visit(StatementNode node) {
         if (node.declarationNode != null) {
-            Visit(node.declarationNode);
+            node.declarationNode.accept(this);
         } else if (node.controlStructNode != null) {
             node.controlStructNode.accept(this);
         } else if (node.functionCallNode != null) {
@@ -50,6 +51,9 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
                 node.assignmentNode.accept(this);
                 Attributes attributes = symbolTable.lookupSymbol(node.terminal.toString());
                 attributes.setDataType(node.assignmentNode.getType());
+                node.setType(node.assignmentNode.getType());
+
+                symbolTable.insertSymbol(node.terminal.toString(), attributes);
             }
         } else if (node.cellNode != null) {
             node.cellNode.accept(this);
@@ -67,6 +71,9 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
                 node.assignmentNode.accept(this);
                 Attributes attributes = symbolTable.lookupSymbol(node.IdToken.toString());
                 attributes.setDataType(node.assignmentNode.getType());
+                node.setType(node.assignmentNode.getType());
+
+                symbolTable.insertSymbol(node.IdToken.toString(), attributes);
             }
         } else
             throw new NullPointerException();
@@ -84,14 +91,85 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
 
     public void Visit(ProcedureCallNode node) {
         if (node != null) {
-
             if (symbolTable.lookupSymbol(node.PROCEDURE.toString()) != null) {
-
-
             } else
                 System.out.println("Procedure: " + node.PROCEDURE.toString() + " does not exist...");
         } else
             throw new NullPointerException();
+    }
+
+
+    public void Visit(ControlStructNode node) {
+        if (node != null) {
+            if (node.iterativeStructNode != null) {
+                node.iterativeStructNode.repeatStructNode.accept(this);
+            } else if (node.selectiveStructNode != null) {
+                node.selectiveStructNode.ifStructNode.accept(this);
+            } else
+                throw new NotImplementedError();
+        } else
+            throw new NullPointerException();
+    }
+
+    public void Visit(RepeatStructNode node) {
+        if (node != null) {
+            String hashedName = HashCodeGenerator.generateHashNameFromObject("repeat", node);
+                symbolTable.enterScope(hashedName);
+                node.expressionNode.accept(this);
+                if (node.statementNodes != null) {
+                    node.statementNodes.forEach(s -> s.accept(this));
+                }
+                symbolTable.leaveScope(hashedName);
+        } else {
+            throw new NullPointerException();
+        }
+    }
+
+    public void Visit(IfStructNode node) {
+        if (node != null) {
+
+            String hashedName = HashCodeGenerator.generateHashNameFromObject("if", node);
+                symbolTable.enterScope(hashedName);
+                node.ifConditionNode.expressionNode.accept(this);
+                if (node.statementNodes != null) {
+                    node.statementNodes.forEach(s -> s.accept(this));
+                }
+
+                if (node.elseIfStructNodes != null) {
+                    node.elseIfStructNodes.forEach(s -> s.accept(this));
+                }
+                if (node.elseStructNode != null) {
+                    node.elseStructNode.accept(this);
+                }
+                symbolTable.leaveScope(hashedName);
+        } else {
+            throw new NullPointerException();
+        }
+    }
+
+
+    public void Visit(ElseIfStructNode node) {
+        if (node != null) {
+            String hashedName = HashCodeGenerator.generateHashNameFromObject("elseif", node);
+            symbolTable.enterScope(hashedName);
+                node.ifConditionNode.expressionNode.accept(this);
+                if (node.statementNodes != null) {
+                    node.statementNodes.forEach(s -> s.accept(this));
+                }
+                symbolTable.leaveScope(hashedName);
+
+        }
+    }
+
+    public void Visit(ElseStructNode node) {
+        if (node != null) {
+            String hashedName = HashCodeGenerator.generateHashNameFromObject("else", node);
+             symbolTable.enterScope(hashedName);
+                if (node.statementNode != null) {
+                    node.statementNode.forEach(s -> s.accept(this));
+                }
+                symbolTable.leaveScope(hashedName);
+        }
     }
 
     public void Visit(ExpressionNode node) {
@@ -100,18 +178,29 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
                 node.parenExprNode.accept(this);
                 node.setType(node.parenExprNode.getType());
             } else if (node.unaryExprNode != null) {
+                node.unaryExprNode.accept(this);
+                node.setType(node.unaryExprNode.getType());
             } else if (node.infixExprNode != null) {
                 node.infixExprNode.accept(this);
                 node.setType(node.infixExprNode.getType());
             } else if (node.valueExprNode != null) {
+                node.valueExprNode.accept(this);
+                node.setType(node.valueExprNode.getType());
+                node.setName(node.valueExprNode.getName());
             } else
                 throw new NotImplementedError();
         } else
             throw new NullPointerException();
     }
 
-    // Nødvendigt onde at have denne i SemanticVisitor. Vi ville hellere have visit(ParenExprNode) i BSTV, Så vi kun har typeChecking logikken her i SemanticVisitor.
-    // Desværre besøger ExpressionNode, som kan besøge InfixExpressionNod, der først får sin type her i SemanticVisitor
+
+
+
+
+
+
+
+
     public void Visit(ParenExprNode node) {
         // Hackish char null check
         if (node != null) {
@@ -123,6 +212,17 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
             throw new NullPointerException();
     }
 
+    public void Visit(UnaryExprNode node) {
+        if (node != null) {
+            if (node.right != null && node.operator != null) {
+                node.right.accept(this);
+                node.setType(node.right.getType());
+            }
+        } else
+            throw new NullPointerException();
+    }
+
+
     public void Visit(InfixExprNode node) {
         if (node.left != null && node.operatorNode != null && node.right != null) {
             node.left.accept(this);
@@ -133,43 +233,6 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
             Enum<Type> right = node.right.getType();
             String operator = node.operatorNode.getSymbol();
 
-//            if (left == Type.Unresolved) {
-//                System.out.println("Nodename: " + node.left.getName());
-//
-//                if (symbolTable.lookupSymbol(node.left.getName()) != null) {
-//                    System.out.println("Nodename: " + node.left.getName());
-//                }
-//            }
-//            if (right == Type.Unresolved) {
-//
-//            }
-
-
-            if (left == Type.Variable) {
-                if (symbolTable.lookupSymbol(node.left.getName()) != null) {
-                    if (symbolTable.lookupSymbol(node.left.getName()).getDataType() == Type.Uninitialized)
-                        System.out.println(node.left.getName() + " has not been assigned a VALUE");
-                    else if (symbolTable.lookupSymbol(node.left.getName()).getDataType() == Type.Unresolved) {
-                        System.out.println("");
-                    }
-                    left = symbolTable.lookupSymbol(node.left.getName()).getDataType();
-                }
-            } else {
-                // TJEK I PAREN cope hvis nuværende er i eller else if eller else
-                System.out.println(node.left.getName() + " has not been DECLARED");
-            }
-
-
-            if (right == Type.Variable) {
-                if (symbolTable.lookupSymbol(node.right.getName()) != null) {
-                    if (symbolTable.lookupSymbol(node.right.getName()).getDataType() == Type.Uninitialized)
-                        System.out.println(node.right.getName() + " has not been assigned a VALUE");
-                    right = symbolTable.lookupSymbol(node.right.getName()).getDataType();
-                } else {
-                    // TJEK I PAREN cope hvis nuværende er i eller else if eller else
-                    System.out.println(node.right.getName() + " has not been DECLARED");
-                }
-            }
 
             if (left != right) {
 
@@ -183,7 +246,84 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
             } else node.setType(node.left.getType());
         }
     }
+    public void Visit(ValueExprNode node) {
+        if (node != null) {
+            if (node.valueNode != null) {
+                node.valueNode.accept(this);
+                node.setType(node.valueNode.getType());
+                node.setName(node.valueNode.getName());
+            }
+        } else
+            throw new NullPointerException();
+    }
+    public void Visit(ValueNode node) {
+        if (node != null) {
 
+            if (node.STRING != null) {
+                node.setType(Type.String);
+            } else if (node.INUM != null) {
+                node.setType(Type.Integer);
+            } else if (node.FLOAT != null) {
+                node.setType(Type.Float);
+            } else if (node.VARIABLE != null) {
+                if (symbolTable.lookupSymbol(node.VARIABLE.toString()).getDataType() == Type.Uninitialized)
+                    errors.addEntry(ErrorType.VARIABLE_NOT_INITIALED, "'" + node.VARIABLE.toString() + "' has not been initialized", node.getLineNumber(), node.getColumnNumber());
+
+                node.setType(symbolTable.lookupSymbol(node.VARIABLE.toString()).getDataType());
+                node.setName(node.VARIABLE.toString());
+
+            } else if (node.BOOLEAN != null) {
+                node.setType(Type.Boolean);
+            } else if (node.cellNode != null) {
+                if (node.cellNode.SINGLE_CELL != null)
+                    node.setType(Type.SingleCell);
+                else if (node.cellNode.RANGE != null)
+                    node.setType(Type.Range);
+                else throw new NotImplementedError();
+
+                if (node.cellNode.CELL_METHOD != null) {
+                    if (node.cellNode.CELL_METHOD.toString().equals(".value") && node.cellNode.SINGLE_CELL != null)
+                        node.setType(Type.String);
+                    else if (node.cellNode.CELL_METHOD.toString().equals(".value") && node.cellNode.RANGE != null)
+//                        HVAD SKAL TYPEN VÆRE HER????
+                        node.setType(Type.Array);
+                    else if (node.cellNode.CELL_METHOD.toString().equals(".format")) node.setType(node.getType());
+                    else throw new NotImplementedError();
+                }
+            }
+            if (node.methodNode != null) {
+                node.methodNode.accept(this);
+            }
+        } else
+            throw new NullPointerException();
+    }
+
+    public void Visit(OperatorNode node) {
+        if (node != null) {
+            if (node.binaryOperatorNode != null) {
+                node.setSymbol(node.binaryOperatorNode.binaryOperator.toString());
+            } else if (node.booleanOperatorNode != null) {
+                node.setSymbol(node.booleanOperatorNode.booleanOperator.toString());
+            } else if (node.assignment != null) {
+                node.setSymbol("=");
+            } else throw new NotImplementedError();
+        } else
+            throw new NullPointerException();
+    }
+
+    public void Visit(ReturnNode node) {
+        if (node != null) {
+            if (symbolTable.lookupSymbol("Return") == null) throw new NullPointerException();
+            node.expressionNode.accept(this);
+            node.setType(node.expressionNode.getType());
+
+            Attributes attributes = symbolTable.lookupSymbol("Return");
+            attributes.setDataType(node.expressionNode.getType());
+            node.setType(node.expressionNode.getType());
+
+            symbolTable.insertSymbol("Return", attributes);
+        } else throw new NullPointerException();
+    }
 
     @Override
     public void defaultVisit(Object o) {

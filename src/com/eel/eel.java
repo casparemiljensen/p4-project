@@ -31,12 +31,12 @@ class Eel {
         var ast = (ProgramNode) new BuildASTVisitor().visit(cst);
         ASTPrinter astPrinter = new ASTPrinter();
         astPrinter.print(ast);
-
+        System.out.println("");
         BuildSymbolTableVisitor buildSymbolTableVisitor = new BuildSymbolTableVisitor(symbolTable, symbolTableErrors);
         buildSymbolTableVisitor.performVisit(ast);
 
-        SymbolTablePrinter symbolTablePrinter = new SymbolTablePrinter();
-        symbolTablePrinter.printSymbolTable(symbolTable);
+//        SymbolTablePrinter symbolTablePrinter = new SymbolTablePrinter();
+//        symbolTablePrinter.printSymbolTable(symbolTable);
 
         if (!symbolTableErrors.containsErrors()) {
 
@@ -45,14 +45,15 @@ class Eel {
             semanticVisitor.performVisit(ast);
 
 
-            symbolTablePrinter = new SymbolTablePrinter();
+            SymbolTablePrinter symbolTablePrinter = new SymbolTablePrinter();
             symbolTablePrinter.printSymbolTable(symbolTable);
 
             if (!semanticErrors.containsErrors()) {
                 Generator generator = new Generator();
-                System.out.println("----------------TS----------------");
+//                System.out.println("----------------TS----------------");
 //                generator.performVisit(ast);
             } else {
+
                 System.out.println("[SymbolTable] Code contains " + symbolTableErrors.errors.stream().count() + " errors:");
                 System.out.println("[TypeCheck] Code contains " + semanticErrors.errors.stream().count() + " errors:");
                 printErrors(symbolTableErrors);
@@ -68,7 +69,7 @@ class Eel {
 
     public static void printErrors(Errors errors) {
         for (Item error : errors.errors) {
-            System.out.println(error.type.toString() + ": " + error.message + " (" + error.type.name() + ")" + "on line: " + error.lineNumber + ", column " + error.column);
+            System.out.println(error.type.toString() + ": " + error.message + " (" + error.type.name() + ")" + " on line: " + error.lineNumber + ", column " + error.column);
 
             //Enters if the error message is on multiple lines
             if (error.lines.size() > 0) {
