@@ -1,20 +1,16 @@
-package com.eel;
+package com.eel.parsing;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Stack;
 
 public class SymbolTable {
-    private EELScope currentScope;
-    final private EELScope globalScope;
-    final private Stack<EELScope> scopeStack = new Stack<>();
+    public EelScope currentScope;
+    final EelScope globalScope;
+    final private Stack<EelScope> scopeStack = new Stack<>();
     public ArrayList<String> declaredFunctions = new ArrayList<>();
-    public ArrayList<String> calledFunctions = new ArrayList<>();
-    public HashMap<String, PinAttributes> pinList = new HashMap<>();
 
     public SymbolTable() {
-        globalScope = new EELScope("global");
+        globalScope = new EelScope("global");
         currentScope = globalScope;
     }
 
@@ -22,7 +18,7 @@ public class SymbolTable {
     public void addScope(String scopeName) {
         //Enters if the scope name has not already been used
         if (lookupScope(scopeName) == null) {
-            CStarScope scope = new CStarScope(scopeName);
+            EelScope scope = new EelScope(scopeName);
             scope.setParent(currentScope);
             currentScope.children.add(scope);
             scopeStack.push(currentScope);
@@ -46,13 +42,13 @@ public class SymbolTable {
         }
     }
 
-    public CStarScope getCurrentScope() {
+    public EelScope getCurrentScope() {
         return currentScope;
     }
 
     //Enters a scope depending on the given scope name
     public void enterScope(String scopeName) {
-        CStarScope scope = this.findScope(scopeName, globalScope);
+        EelScope scope = this.findScope(scopeName, globalScope);
 
         if (scope != null) {
             scopeStack.push(currentScope);
@@ -61,16 +57,16 @@ public class SymbolTable {
     }
 
     //Finds a scope based on the name
-    private CStarScope findScope(String scopeName, CStarScope current_scope) {
+    private EelScope findScope(String scopeName, EelScope currentScope) {
         //Checks if the desired scope is the current scope
-        if (current_scope.getScopeName().equals(scopeName)) {
-            return current_scope;
+        if (currentScope.getScopeName().equals(scopeName)) {
+            return currentScope;
         }
 
-        CStarScope scope = null;
+        EelScope scope = null;
 
         //Iterates through all nested scopes
-        for (CStarScope childScope : current_scope.children) {
+        for (EelScope childScope : currentScope.children) {
             scope = this.findScope(scopeName, childScope);
 
             //Enters if the correct scope was found
@@ -83,13 +79,13 @@ public class SymbolTable {
     }
 
     //Returns the scope or null if the scope was not found
-    public CStarScope lookupScope(String scopeName){
+    public EelScope lookupScope(String scopeName){
         return this.findScope(scopeName, globalScope);
     }
 
     //Returns the attributes for the symbol that is being looked up
     public Attributes lookupSymbol(String symbol) {
-        CStarScope scope = currentScope;
+        EelScope scope = currentScope;
 
         do {
             //Enters if the symbol is a parameter
@@ -115,8 +111,5 @@ public class SymbolTable {
         currentScope.getParams().put(id, attributes);
     }
 
-    //Checks if the Arduino functions are declared
-    public boolean isSetupAndLoopDefined() {
-        return (declaredFunctions.contains("setup") && declaredFunctions.contains("loop"));
-    }
+
 }

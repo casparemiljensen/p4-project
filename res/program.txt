@@ -1,16 +1,3 @@
-procedure main()
-
-    let u = 3
-
-    repeat while(2<3)
-        let x = 4+1
-    endRepeat
-
-    let h = 4
-
-endProcedure
-
-procedure secondary()
-    let x = 4
-    let y = -4 < 1
+procedure Test()
+    (3,3).format = "color:red"
 endProcedure

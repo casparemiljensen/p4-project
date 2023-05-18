@@ -5,6 +5,16 @@ import com.eel.AST.ReflectiveVisitable;
 
 public abstract class AbstractNode implements ReflectiveVisitable {
     protected int lineNumber, colNumber;
+    public Enum<Type> type;
+
+    public Enum<Type> getType() {
+        return type;
+    }
+
+    public void setType(Enum<Type> type) {
+        this.type = type;
+    }
+
     public int getLineNumber() {
         return lineNumber;
     }
@@ -12,6 +22,7 @@ public abstract class AbstractNode implements ReflectiveVisitable {
     public int getColumnNumber() {
         return colNumber;
     }
+    
 
     public AbstractNode() {}
     public AbstractNode(int lineNumber, int colNumber) {

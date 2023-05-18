@@ -8,8 +8,4 @@ public class ActualParamsNode extends AbstractNode {
         super(lineNumber, colNumber);
         this.valuesNodes = valuesNodes;
     }
-
-    public ActualParamsNode(int lineNumber, int colNumber) {
-        super(lineNumber, colNumber);
-    }
 }

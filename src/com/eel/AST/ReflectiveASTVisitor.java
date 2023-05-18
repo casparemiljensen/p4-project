@@ -2,12 +2,12 @@ package com.eel.AST;
 
 import com.eel.AST.nodes.AbstractNode;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 public abstract class ReflectiveASTVisitor<T> {
-
-
     public static boolean debug = false;
     private static Class objectClass = (new Object()).getClass();
 
