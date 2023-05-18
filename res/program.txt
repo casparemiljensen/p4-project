@@ -1,5 +1,8 @@
-procedure Test()
-    (3,3).format = "color:red"
-    (3,3).value = "color:red"
+procedure Main()
+    (5,3).value = "hejsa"
+    (B3).value = "hejsa"
+
+    (5,3).format = "backgroundColor:red"
+    (B3).format = "textColor:blue"
 
 endProcedure

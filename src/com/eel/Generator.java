@@ -26,6 +26,8 @@ public class Generator extends ReflectiveASTVisitor {
 			for (ProcedureNode procedureNode : node.procedureNodes) {
 				procedureNode.accept(this);
 			}
+			// Always run main()
+			strBlr.append("\n").append(getIndentation()).append("main()\n");
 			decreaseIndent();
 			strBlr.append(getIndentation()).append("}\n");
 
@@ -57,7 +59,6 @@ public class Generator extends ReflectiveASTVisitor {
 		try {
 			Path path = Paths.get(filePath);
 			Files.write(path, content.getBytes());
-			System.out.println("Content written to file: " + filePath);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -423,8 +424,9 @@ public class Generator extends ReflectiveASTVisitor {
 
 	public void Visit(CellNode node) {
 		if (node != null) {
+
 			if (node.SINGLE_CELL != null) {
-				//strBlr.append(node.SINGLE_CELL);
+				// strBlr.append(EelCelltoExcelCell(node.SINGLE_CELL));
 			}
 			else if (node.RANGE != null) {
 				strBlr.append(node.RANGE);
@@ -435,17 +437,38 @@ public class Generator extends ReflectiveASTVisitor {
 					if(cellAccessor.get(node.SINGLE_CELL) != null) {
 						// Set Value
 						strBlr.append("workbook.getActiveWorksheet().getCell");
-						strBlr.append(node.SINGLE_CELL);
+						strBlr.append(EelCelltoExcelCell(node.SINGLE_CELL));
 						strBlr.append(".setValue(");
 						strBlr.append(cellAccessor.get(node.SINGLE_CELL));
 						strBlr.append(")\n");
 					} else {
 						// Get Value
-						strBlr.append("workbook.getActiveWorksheet().getCell");
+						strBlr.append("workbook.getActiveWorksheet().getCell")
+								.append(EelCelltoExcelCell(node.SINGLE_CELL))
+								.append(".getValue()\n");
 					}
 				}
 				else if (Objects.equals(node.CELL_METHOD.toString(), ".format")) {
+					if(cellAccessor.get(node.SINGLE_CELL) != null) {
+						String[] parts = cellAccessor.get(node.SINGLE_CELL).toString().replace("\"", "").split(":");
+						String key = parts[0];
+						String value = parts[1];
 
+						if (Objects.equals(key, "backgroundColor")) {
+							strBlr.append("workbook.getActiveWorksheet().getCell");
+									strBlr.append(EelCelltoExcelCell(node.SINGLE_CELL));
+									strBlr.append(".getFormat().getFill().setColor(\"");
+									strBlr.append(value);
+									strBlr.append("\")\n");
+						}
+						else if (Objects.equals(key, "textColor")) {
+							strBlr.append("workbook.getActiveWorksheet().getCell");
+							strBlr.append(EelCelltoExcelCell(node.SINGLE_CELL));
+							strBlr.append(".getFormat().getFont().setColor(\"");
+							strBlr.append(value);
+							strBlr.append("\")\n");
+						}
+					}
 				}
 			}
 		}
@@ -453,6 +476,53 @@ public class Generator extends ReflectiveASTVisitor {
 			throw new NullPointerException();
 	}
 
+
+	public String EelCelltoExcelCell(TerminalNode n) {
+		int x = 0, y = 0;
+		int row = -1;
+		int column = -1;
+
+		if (n.toString().matches(".*[a-zA-Z].*")) {
+			String cellRefWithoutParentheses = n.toString().replaceAll("[()]", "");
+			StringBuilder columnLetters = new StringBuilder();
+			StringBuilder rowNumbers = new StringBuilder();
+
+			for (char ch : cellRefWithoutParentheses.toCharArray()) {
+				if (Character.isLetter(ch)) {
+					columnLetters.append(ch);
+				} else if (Character.isDigit(ch)) {
+					rowNumbers.append(ch);
+				}
+			}
+
+			x = getColumnIndex(columnLetters.toString());
+			y = Integer.parseInt(rowNumbers.toString()) - 1;
+		}
+		else {
+			try {
+				String[] parts = n.toString().substring(1, n.toString().length() - 1).split(",");
+				x = Integer.parseInt(parts[0].trim()) - 1;
+				y = Integer.parseInt(parts[1].trim()) - 1;
+			} catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+				System.out.println("Invalid input format");
+			}
+		}
+
+		return "(" + x + ", " + y + ")";
+	}
+
+	private static int getColumnIndex(String letters) {
+		int index = 0;
+		int power = 1;
+
+		for (int i = letters.length() - 1; i >= 0; i--) {
+			char letter = letters.charAt(i);
+			index += (letter - 'A' + 1) * power;
+			power *= 26;
+		}
+
+		return index - 1;
+	}
 
 
 	public void Visit(FunctionCallNode node){
