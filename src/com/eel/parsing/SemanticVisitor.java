@@ -123,23 +123,25 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
             String operator = node.operatorNode.getSymbol();
 
 
-            if(left == Type.Variable) {
+            if (left == Type.Variable) {
                 if (symbolTable.lookupSymbol(node.left.getName()) != null) {
                     if (symbolTable.lookupSymbol(node.left.getName()).getDataType() == Type.Uninitialized)
                         System.out.println(node.left.getName() + " has not been assigned a VALUE");
 
                     left = symbolTable.lookupSymbol(node.left.getName()).getDataType();
                 } else {
+                    // TJEK I PAREN cope hvis nuværende er i eller else if eller else
                     System.out.println(node.left.getName() + " has bot been DECLARED");
                 }
             }
 
-            if(right == Type.Variable) {
+            if (right == Type.Variable) {
                 if (symbolTable.lookupSymbol(node.right.getName()) != null) {
                     if (symbolTable.lookupSymbol(node.right.getName()).getDataType() == Type.Uninitialized)
                         System.out.println(node.right.getName() + " has not been assigned a VALUE");
                     right = symbolTable.lookupSymbol(node.right.getName()).getDataType();
                 } else {
+                    // TJEK I PAREN cope hvis nuværende er i eller else if eller else
                     System.out.println(node.right.getName() + " has bot been DECLARED");
                 }
             }

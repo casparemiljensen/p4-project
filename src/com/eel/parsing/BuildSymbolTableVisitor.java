@@ -90,6 +90,7 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
                 Attributes attributes = new Attributes(Type.Variable, type);
                 symbolTable.insertSymbol(node.IdToken.toString(), attributes);
             } else {
+
                 errors.addEntry(ErrorType.DUPLICATE_VARIABLE, "Variable " + node.IdToken + "' already exists", node.getLineNumber(), node.getColumnNumber());
             }
         }
