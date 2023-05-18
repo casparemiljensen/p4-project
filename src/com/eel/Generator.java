@@ -17,6 +17,8 @@ public class Generator extends ReflectiveASTVisitor {
 		strBlr = new StringBuilder();
 	}
 
+	private HashMap<TerminalNode, TerminalNode> cellAccessor = new HashMap<>();
+
 	public void Visit(ProgramNode node) {
 		if(node != null) {
 			strBlr.append(getIndentation()).append("function main (workbook: ExcelScript.Workbook) {\n");
@@ -122,7 +124,6 @@ public class Generator extends ReflectiveASTVisitor {
 				node.assignmentNode.accept(this);
 			} else if (node.cellNode != null) {
 				node.cellNode.accept(this);
-				//node.assignmentNode.accept(this);
 			} else if (node.returnNode != null) {
 				node.returnNode.accept(this);
 			}
@@ -431,7 +432,6 @@ public class Generator extends ReflectiveASTVisitor {
 
 			if (node.CELL_METHOD != null) {
 				if (Objects.equals(node.CELL_METHOD.toString(), ".value")) {
-
 					if(cellAccessor.get(node.SINGLE_CELL) != null) {
 						// Set Value
 						strBlr.append("workbook.getActiveWorksheet().getCell");
