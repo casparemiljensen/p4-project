@@ -3,6 +3,11 @@ package com.eel;
 import com.eel.AST.ReflectiveASTVisitor;
 import com.eel.AST.nodes.*;
 import kotlin.NotImplementedError;
+import java.io.IOException;
+import java.nio.file.*;
+import java.util.HashMap;
+import java.util.Objects;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class Generator extends ReflectiveASTVisitor {
 	public StringBuilder strBlr;
@@ -11,37 +16,98 @@ public class Generator extends ReflectiveASTVisitor {
 		strBlr = new StringBuilder();
 	}
 
+	public HashMap<TerminalNode, TerminalNode> cellAccessor = new HashMap<>();
+
 	public void Visit(ProgramNode node) {
 		if(node != null) {
+			strBlr.append(getIndentation()).append("function main (workbook: ExcelScript.Workbook) {\n");
+			increaseIndent();
 			for (ProcedureNode procedureNode : node.procedureNodes) {
 				procedureNode.accept(this);
 			}
+			decreaseIndent();
+			strBlr.append(getIndentation()).append("}\n");
+
+			String content = loadEelLibFile();
+			if (content != null) {
+				strBlr.append(content);
+			}
 
 			System.out.println(strBlr.toString());
+			writeToFile(strBlr.toString());
 		}
 		else
 			throw new NullPointerException();
 	}
+
+	public static String loadEelLibFile() {
+		String filePath = "out/production/eel/com/eel/EelLib.ts";
+		try {
+			byte[] bytes = Files.readAllBytes(Paths.get(filePath));
+			return new String(bytes);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static void writeToFile(String content) {
+		String filePath = "out/production/eel/com/eel/OutputCode.ts";
+		try {
+			Path path = Paths.get(filePath);
+			Files.write(path, content.getBytes());
+			System.out.println("Content written to file: " + filePath);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public void Visit(ProcedureNode node) {
 		if(node != null) {
 
 			// The line below it necessary because EEL addes () after proc calls but this is not used in the same way if OfficeScripts.
 			String inputProcName = node.procedureDeclarationNode.procedureToken.toString();
 			String outputProcName = inputProcName.replace("(", "").replace(")", "");
-			strBlr.append(getIndentation()).append("function " + outputProcName + "(workbook: ExcelScript.Workbook) {\n");
-			increaseIndent();
+			strBlr.append(getIndentation()).append("function " + outputProcName.toLowerCase() + "(");
+			if (node.procedureDeclarationNode.formalParametersNode != null) {
+				node.procedureDeclarationNode.formalParametersNode.accept(this);
+			}
+			strBlr.append(") {\n");
+            increaseIndent();
 
 			for (StatementNode statementNode : node.StatementNodes) {
 				strBlr.append(getIndentation());
+
+				if(statementNode.cellNode != null && statementNode.assignmentNode != null) {
+					if(statementNode.assignmentNode.expressionNode.valueExprNode.valueNode.STRING != null)
+						cellAccessor.put(statementNode.cellNode.SINGLE_CELL, statementNode.assignmentNode.expressionNode.valueExprNode.valueNode.STRING);
+					if(statementNode.assignmentNode.expressionNode.valueExprNode.valueNode.INUM != null)
+						cellAccessor.put(statementNode.cellNode.SINGLE_CELL, statementNode.assignmentNode.expressionNode.valueExprNode.valueNode.INUM);
+					if(statementNode.assignmentNode.expressionNode.valueExprNode.valueNode.FLOAT != null)
+						cellAccessor.put(statementNode.cellNode.SINGLE_CELL, statementNode.assignmentNode.expressionNode.valueExprNode.valueNode.FLOAT);
+				}
+
 				statementNode.accept(this);
 			}
-			strBlr.append("}\n");
 			decreaseIndent();
+			strBlr.append(getIndentation()).append("}\n");
+
 		}
 		else
 			throw new NullPointerException();
 	}
 
+	public void Visit(FormalParametersNode node) {
+		if (node != null) {
+			if (node.variables.size() > 0) {
+				node.variables.forEach(param -> {
+					strBlr.append(", " + param + ": unknown");
+				});
+			}
+		}
+		else
+			throw new NullPointerException();
+	}
 
 	public void Visit(StatementNode node) {
 		if(node != null) {
@@ -57,7 +123,7 @@ public class Generator extends ReflectiveASTVisitor {
 				node.assignmentNode.accept(this);
 			} else if (node.cellNode != null) {
 				node.cellNode.accept(this);
-				node.assignmentNode.accept(this);
+				//node.assignmentNode.accept(this);
 			} else if (node.returnNode != null) {
 				node.returnNode.accept(this);
 			}
@@ -74,7 +140,7 @@ public class Generator extends ReflectiveASTVisitor {
 		if(node != null) {
 			strBlr.append("let ").append(node.IdToken);
 			if(node.assignmentNode != null) {
-				strBlr.append("=");
+				strBlr.append(" = ");
 				node.assignmentNode.accept(this);
 			}
 			strBlr.append("\n");
@@ -85,12 +151,16 @@ public class Generator extends ReflectiveASTVisitor {
 
 	public void Visit(ControlStructNode node) {
 		if(node != null) {
-			if(node.iterativeStructNode.repeatStructNode != null){
-				node.iterativeStructNode.repeatStructNode.accept(this);
-			}
-			else if(node.selectiveStructNode.ifStructNode != null) {
-				node.selectiveStructNode.ifStructNode.accept(this);
-			}
+            if (node.iterativeStructNode != null) {
+                if(node.iterativeStructNode.repeatStructNode != null){
+                    node.iterativeStructNode.repeatStructNode.accept(this);
+                }
+            }
+            else if (node.selectiveStructNode != null) {
+                if(node.selectiveStructNode.ifStructNode != null) {
+                    node.selectiveStructNode.ifStructNode.accept(this);
+                }
+            }
 			else
 				throw new NotImplementedError();
 		}
@@ -101,19 +171,23 @@ public class Generator extends ReflectiveASTVisitor {
 	public void Visit(RepeatStructNode node) {
 		if (node != null) {
 			if (node.expressionNode != null) {
-				strBlr.append(getIndentation()).append("while (");
+				//strBlr.append(getIndentation()).append("while (");
+                strBlr.append("while (");
 				node.expressionNode.accept(this);
 				strBlr.append(") {\n");
 				increaseIndent();
 			}
 
+            // Repeat while loop body
 			if (node.statementNodes != null) {
 				if (node.statementNodes.size() > 0) {
+                    strBlr.append(getIndentation());
 					node.statementNodes.forEach(s -> {
 						s.accept(this);
 					});
 				}
 			}
+
 			decreaseIndent();
 			strBlr.append(getIndentation()).append("}\n");
 		} else {
@@ -123,15 +197,109 @@ public class Generator extends ReflectiveASTVisitor {
 
 	public void Visit(IfStructNode node) {
 		if(node != null) {
+            if (node.ifConditionNode != null) {
+                node.ifConditionNode.accept(this);
+            }
 
+            if (node.statementNodes != null) {
+                increaseIndent();
+                if (node.statementNodes.size() > 0) {
+                    strBlr.append(getIndentation());
+                    node.statementNodes.forEach(s -> {
+                        s.accept(this);
+                    });
+                }
+                decreaseIndent();
+            }
+
+            strBlr.append(getIndentation()).append("}\n");
+
+
+            if (node.elseIfStructNodes != null) {
+                if (node.elseIfStructNodes.size() > 0) {
+                    node.elseIfStructNodes.forEach(s -> {
+                        s.accept(this);
+                    });
+                }
+            }
+
+            if (node.elseStructNode != null) {
+				strBlr.append(getIndentation());
+                node.elseStructNode.accept(this);
+            }
 		}
 		else
 			throw new NullPointerException();
 	}
 
+    public void Visit(IfConditionNode node) {
+        if (node!= null) {
+            if (node.expressionNode != null) {
+                strBlr.append("if (");
+                node.expressionNode.accept(this);
+                strBlr.append(") {\n");
+            }
+        }
+        else
+            throw new NullPointerException();
+    }
+
+    public void Visit(ElseIfStructNode node) {
+        if (node != null) {
+			strBlr.append(getIndentation());
+            strBlr.append("else ");
+            if (node.ifConditionNode != null) {
+                node.ifConditionNode.accept(this);
+            }
+
+			increaseIndent();
+
+            if (node.statementNodes != null) {
+                if (node.statementNodes.size() > 0) {
+                    strBlr.append(getIndentation());
+                    node.statementNodes.forEach(s -> {
+                        s.accept(this);
+                    });
+                }
+            }
+			decreaseIndent();
+            strBlr.append(getIndentation()).append("}\n");
+        }
+        else throw new NullPointerException();
+    }
+
+    public void Visit(ElseStructNode node) {
+        if (node != null) {
+            strBlr.append("else {\n");
+
+			increaseIndent();
+
+            if (node.statementNode != null) {
+                if (node.statementNode.size() > 0) {
+                    strBlr.append(getIndentation());
+                    node.statementNode.forEach(s -> {
+						if (s != null) {
+							s.accept(this);
+						}
+                    });
+                }
+            }
+
+			decreaseIndent();
+
+			strBlr.append(getIndentation()).append("}\n");
+        }
+        else
+            throw new NullPointerException();
+    }
+
 	public void Visit(ReturnNode node) {
 		if(node != null) {
-
+            strBlr.append("return ");
+            if (node.expressionNode != null) {
+                node.expressionNode.accept(this);
+            }
+            strBlr.append("\n");
 		}
 		else
 			throw new NullPointerException();
@@ -232,7 +400,8 @@ public class Generator extends ReflectiveASTVisitor {
 				strBlr.append(node.BOOLEAN);
 			}
 			else if (node.cellNode != null) {
-				strBlr.append(node.cellNode);
+				//strBlr.append(node.cellNode);
+				node.cellNode.accept(this);
 			}
 			else if(node.functionCallNode != null) {
 				strBlr.append(node.functionCallNode);
@@ -244,12 +413,118 @@ public class Generator extends ReflectiveASTVisitor {
 				throw new NotImplementedError();
 
 			if(node.methodNode != null) {
-				strBlr.append(node.methodNode);
+				//strBlr.append(node.methodNode);
+				node.methodNode.accept(this);
 			}
 		}
 		else
 			throw new NullPointerException();
 	}
+
+	public void Visit(CellNode node) {
+		if (node != null) {
+			if (node.SINGLE_CELL != null) {
+				//strBlr.append(node.SINGLE_CELL);
+			}
+			else if (node.RANGE != null) {
+				strBlr.append(node.RANGE);
+			}
+
+			if (node.CELL_METHOD != null) {
+				if (Objects.equals(node.CELL_METHOD.toString(), ".value")) {
+
+					if(cellAccessor.get(node.SINGLE_CELL) != null) {
+						// Set Value
+						strBlr.append("workbook.getActiveWorksheet().getCell");
+						strBlr.append(node.SINGLE_CELL);
+						strBlr.append(".setValue(");
+						strBlr.append(cellAccessor.get(node.SINGLE_CELL));
+						strBlr.append(")\n");
+					} else {
+						// Get Value
+						strBlr.append("workbook.getActiveWorksheet().getCell");
+					}
+				}
+				else if (Objects.equals(node.CELL_METHOD.toString(), ".format")) {
+
+				}
+			}
+		}
+		else
+			throw new NullPointerException();
+	}
+
+
+
+	public void Visit(FunctionCallNode node){
+		if (node != null) {
+			// Check for "print" and rewrite to "console.log"
+			if (Objects.equals(node.FUNCTIONS.toString(), "print")) {
+				strBlr.append("console.log(");
+			} else {
+				strBlr.append(node.FUNCTIONS).append("(");
+			}
+			if (node.actualParamsNode != null) {
+				node.actualParamsNode.accept(this);
+			}
+			strBlr.append(")\n");
+		}
+		else
+			throw new NullPointerException();
+	}
+
+
+
+	public void Visit(ProcedureCallNode node) {
+		if (node != null) {
+			strBlr.append(node.PROCEDURE + "(");
+			if (node.actualParamsNode != null) {
+				node.actualParamsNode.accept(this);
+			}
+			strBlr.append(")\n");
+		}
+		else
+			throw new NullPointerException();
+	}
+
+
+	public void Visit(MethodNode node) {
+		if (node != null) {
+			strBlr.append(node.METHODS.toString() + "(");
+			if (node.actualParamsNode != null) {
+				node.actualParamsNode.accept(this);
+			}
+			strBlr.append(")");
+
+			if (node.methodNode != null) {
+				node.methodNode.accept(this);
+			}
+		}
+
+		else
+			throw new NullPointerException();
+	}
+
+
+	public void Visit(ActualParamsNode node) {
+		if (node != null){
+			if (node.valuesNodes.size() > 0) {
+				boolean isFirstValue = true;
+				for (ValueNode value : node.valuesNodes) {
+					if (isFirstValue) {
+						value.accept(this);
+						isFirstValue = false;
+					} else {
+						strBlr.append(", ");
+						value.accept(this);
+					}
+				}
+			}
+		}
+		else
+			throw new NullPointerException();
+	}
+
 
 	public void Visit(OperatorNode node) {
 		if(node != null) {

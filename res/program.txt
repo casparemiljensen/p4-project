@@ -1,3 +1,7 @@
-procedure Tertiary(hej)
-variable = "4" + 13 - ""
+procedure Test()
+    SUM(1, 2)
+    print("hejsa")
+
+    (3,3).value = "Hejsa"
+
 endProcedure
