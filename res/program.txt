@@ -1,7 +1,5 @@
 procedure Test()
-    SUM(1, 2)
-    print("hejsa")
-
-    (3,3).value = "Hejsa"
-
+    SUM([1, 2])
+    AVERAGE([3, 4])
+    let h = (1, 1)
 endProcedure
