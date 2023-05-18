@@ -1,17 +1,9 @@
-procedure Tertiary()
-
-let x = 4
-
-if(5) then
-let y = x + 5
-endIf
-
-
+procedure Second(x)
+    let h = x - 2
+    return h
 endProcedure
 
-procedure Secondy()
-
-
-let x = 5
-let y = x+8
+procedure First()
+    let var = Second("string") - 3
 endProcedure
+

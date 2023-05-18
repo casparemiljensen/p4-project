@@ -29,6 +29,7 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
 
     public void Visit(ProcedureNode node) {
         if (node.StatementNodes != null) {
+
             for (StatementNode statementNode : node.StatementNodes) {
                 statementNode.accept(this);
             }
@@ -75,10 +76,20 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
         if (node != null) {
             if (node.expressionNode != null) {
                 node.expressionNode.accept(this);
-
-
                 node.setType(node.expressionNode.getType());
             }
+        } else
+            throw new NullPointerException();
+    }
+
+    public void Visit(ProcedureCallNode node) {
+        if (node != null) {
+
+            if (symbolTable.lookupSymbol(node.PROCEDURE.toString()) != null) {
+
+
+            } else
+                System.out.println("Procedure: " + node.PROCEDURE.toString() + " does not exist...");
         } else
             throw new NullPointerException();
     }
@@ -122,18 +133,32 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
             Enum<Type> right = node.right.getType();
             String operator = node.operatorNode.getSymbol();
 
+//            if (left == Type.Unresolved) {
+//                System.out.println("Nodename: " + node.left.getName());
+//
+//                if (symbolTable.lookupSymbol(node.left.getName()) != null) {
+//                    System.out.println("Nodename: " + node.left.getName());
+//                }
+//            }
+//            if (right == Type.Unresolved) {
+//
+//            }
+
 
             if (left == Type.Variable) {
                 if (symbolTable.lookupSymbol(node.left.getName()) != null) {
                     if (symbolTable.lookupSymbol(node.left.getName()).getDataType() == Type.Uninitialized)
                         System.out.println(node.left.getName() + " has not been assigned a VALUE");
-
+                    else if (symbolTable.lookupSymbol(node.left.getName()).getDataType() == Type.Unresolved) {
+                        System.out.println("");
+                    }
                     left = symbolTable.lookupSymbol(node.left.getName()).getDataType();
-                } else {
-                    // TJEK I PAREN cope hvis nuværende er i eller else if eller else
-                    System.out.println(node.left.getName() + " has not been DECLARED");
                 }
+            } else {
+                // TJEK I PAREN cope hvis nuværende er i eller else if eller else
+                System.out.println(node.left.getName() + " has not been DECLARED");
             }
+
 
             if (right == Type.Variable) {
                 if (symbolTable.lookupSymbol(node.right.getName()) != null) {
