@@ -110,8 +110,8 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
 
     public void Visit(RepeatStructNode node) {
         if (node != null) {
-
             String hashedName = HashCodeGenerator.generateHashNameFromObject("repeat", node);
+          
             if (symbolTable.addScope(hashedName)) {
 
                 node.expressionNode.accept(this);
@@ -363,6 +363,4 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
     public void defaultVisit(Object o) {
 
     }
-
-
 }

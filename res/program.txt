@@ -1,4 +1,6 @@
 procedure Test()
+    (3,3).format = "color:red"
+    
     SUM([1, 2])
     AVERAGE([3, 4])
     let h = (1, 1)
