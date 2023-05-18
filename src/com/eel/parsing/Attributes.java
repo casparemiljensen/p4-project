@@ -3,28 +3,33 @@ package com.eel.parsing;
 import com.eel.AST.nodes.Type;
 
 public class Attributes {
-    private String kind;
-    private Enum<Type> variableType;
-    private String scope;
+    private Enum<Type> type;
+    private EelScope scope;
+    private Enum<Type> dataType;
 
-    public Attributes(String kind, Enum<Type> variableType) {
-        this.kind = kind;
-        this.variableType = variableType;
+    public Attributes(Enum<Type> type, EelScope scope) {
+        this.type = type;
+        this.scope = scope;
+    }
+    public Attributes(Enum<Type> type, Enum<Type> dataType, EelScope scope ) {
+        this.type = type;
+        this.dataType = dataType;
+        this.scope = scope;
     }
 
-    public String getKind() {
-        return kind;
+    public Enum<Type> getDataType() {
+        return dataType;
     }
 
-    public Enum<Type> getVariableType() {
-        return variableType;
+    public Enum<Type> getType() {
+        return type;
     }
 
-    public String getScope() {
+    public EelScope getScope() {
         return scope;
     }
 
-    public void setScope(String scope) {
+    public void setScope(EelScope scope) {
         this.scope = scope;
     }
 

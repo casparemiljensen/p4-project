@@ -1,7 +1,6 @@
 package com.eel;
 
-
-import com.eel.AST.ASTPrinter;
+import com.eel.helpers.ASTPrinter;
 import com.eel.AST.BuildASTVisitor;
 import com.eel.AST.nodes.ProgramNode;
 import com.eel.antlr.*;
@@ -9,7 +8,8 @@ import com.eel.errors.Errors;
 import com.eel.errors.Item;
 import com.eel.parsing.SymbolTable;
 import com.eel.parsing.BuildSymbolTableVisitor;
-import com.eel.parsing.TypeCheckVisitor;
+import com.eel.parsing.SemanticVisitor;
+import com.eel.helpers.SymbolTablePrinter;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
@@ -17,7 +17,8 @@ import java.nio.file.*;
 
 class Eel {
 	public static void main(String[] args) throws Exception {
-		Errors errors = new Errors();
+		Errors symbolTableErrors = new Errors();
+		Errors semanticErrors = new Errors();
 		SymbolTable symbolTable = new SymbolTable();
 
 		var inputStream = CharStreams.fromString(readFileAsString("out/production/eel/program.txt"));
@@ -31,44 +32,56 @@ class Eel {
 		ASTPrinter astPrinter = new ASTPrinter();
 		astPrinter.print(ast);
 
-		System.out.println();
-		System.out.println();
-		System.out.println("Look at this pretty OfficeScript code!");
-		System.out.println();
-
-		BuildSymbolTableVisitor buildSymbolTableVisitor = new BuildSymbolTableVisitor(symbolTable);
+		BuildSymbolTableVisitor buildSymbolTableVisitor = new BuildSymbolTableVisitor(symbolTable, symbolTableErrors);
 		buildSymbolTableVisitor.performVisit(ast);
 
-		TypeCheckVisitor typeCheckVisitor =  new TypeCheckVisitor(symbolTable, errors);
-		typeCheckVisitor.performVisit(ast);
+		SymbolTablePrinter symbolTablePrinter = new SymbolTablePrinter();
+		symbolTablePrinter.printSymbolTable(symbolTable);
+
+		if(!symbolTableErrors.containsErrors()) {
 
 
-		if (!errors.containsErrors()) {
-			Generator generator = new Generator();
-			generator.performVisit(ast);
-		} else {
-			System.out.println("Code contains " + errors.errors.stream().count() + " errors:");
-			for (Item error : errors.errors) {
-				System.out.println(error.type.toString()+": "+error.message+" ("+error.type.name()+")" +
-							(error.lineNumber > 0 ? " on line "+error.lineNumber : ""));
+			SemanticVisitor semanticVisitor =  new SemanticVisitor(symbolTable, semanticErrors);
+			semanticVisitor.performVisit(ast);
 
-				//Enters if the error message is on multiple lines
-				if (error.lines.size() > 0) {
-					//Creates spaces, so the lines are aligned
-					String indent = " ".repeat(error.type.toString().length());
-
-					for (String line : error.lines) {
-						//Enters if line contains other characters than just spaces
-						if (line.trim().length() > 0) {
-							System.out.println(indent + "| " + line);
-						}
-					}
-					System.out.println();
-				}
+			if (!semanticErrors.containsErrors()) {
+				Generator generator = new Generator();
+				System.out.println("----------------TS----------------");
+				generator.performVisit(ast);
+			}
+			else {
+				System.out.println("[SymbolTable] Code contains " + symbolTableErrors.errors.stream().count() + " errors:");
+				System.out.println("[TypeCheck] Code contains " + semanticErrors.errors.stream().count() + " errors:");
+				printErrors(symbolTableErrors);
+				printErrors(semanticErrors);
 			}
 		}
+		else {
+			System.out.println("[SymbolTable] Code contains " + symbolTableErrors.errors.stream().count() + " errors:");
+			System.out.println("[TypeCheck] Code contains " + semanticErrors.errors.stream().count() + " errors:");
+			printErrors(symbolTableErrors);
+			printErrors(semanticErrors);
+		}
+	}
 
+	public static void printErrors(Errors errors) {
+		for (Item error : errors.errors) {
+			System.out.println(error.type.toString()+": "+error.message+" ("+error.type.name()+")" + "on line: " + error.lineNumber + ", column " + error.column);
 
+			//Enters if the error message is on multiple lines
+			if (error.lines.size() > 0) {
+				//Creates spaces, so the lines are aligned
+				String indent = " ".repeat(error.type.toString().length());
+
+				for (String line : error.lines) {
+					//Enters if line contains other characters than just spaces
+					if (line.trim().length() > 0) {
+						System.out.println(indent + "| " + line);
+					}
+				}
+				System.out.println();
+			}
+		}
 	}
 
 	public static String readFileAsString(String fileName) throws Exception {

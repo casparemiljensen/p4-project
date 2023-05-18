@@ -5,7 +5,10 @@ import com.eel.AST.nodes.*;
 import kotlin.NotImplementedError;
 import java.io.IOException;
 import java.nio.file.*;
+import java.util.HashMap;
 import java.util.Objects;
+import org.antlr.v4.runtime.tree.TerminalNode;
+import java.io.IOException;
 
 public class Generator extends ReflectiveASTVisitor {
 	public StringBuilder strBlr;
@@ -52,6 +55,7 @@ public class Generator extends ReflectiveASTVisitor {
 		try {
 			Path path = Paths.get(filePath);
 			Files.write(path, content.getBytes());
+			System.out.println("Content written to file: " + filePath);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -72,6 +76,16 @@ public class Generator extends ReflectiveASTVisitor {
 
 			for (StatementNode statementNode : node.StatementNodes) {
 				strBlr.append(getIndentation());
+
+				if(statementNode.cellNode != null && statementNode.assignmentNode != null) {
+					if(statementNode.assignmentNode.expressionNode.valueExprNode.valueNode.STRING != null)
+						cellAccessor.put(statementNode.cellNode.SINGLE_CELL, statementNode.assignmentNode.expressionNode.valueExprNode.valueNode.STRING);
+					if(statementNode.assignmentNode.expressionNode.valueExprNode.valueNode.INUM != null)
+						cellAccessor.put(statementNode.cellNode.SINGLE_CELL, statementNode.assignmentNode.expressionNode.valueExprNode.valueNode.INUM);
+					if(statementNode.assignmentNode.expressionNode.valueExprNode.valueNode.FLOAT != null)
+						cellAccessor.put(statementNode.cellNode.SINGLE_CELL, statementNode.assignmentNode.expressionNode.valueExprNode.valueNode.FLOAT);
+				}
+
 				statementNode.accept(this);
 			}
 			decreaseIndent();
@@ -108,7 +122,7 @@ public class Generator extends ReflectiveASTVisitor {
 				node.assignmentNode.accept(this);
 			} else if (node.cellNode != null) {
 				node.cellNode.accept(this);
-				node.assignmentNode.accept(this);
+				//node.assignmentNode.accept(this);
 			} else if (node.returnNode != null) {
 				node.returnNode.accept(this);
 			}
@@ -408,52 +422,31 @@ public class Generator extends ReflectiveASTVisitor {
 
 	public void Visit(CellNode node) {
 		if (node != null) {
-
-
-			if (node.CELL_METHOD != null) {
-				if (Objects.equals(node.CELL_METHOD.toString(), ".value")) {
-					// Set Value
-					/*
-					strBlr.append("workbook.getActiveWorksheet().getCell")
-							.append(node.SINGLE_CELL)
-							.append(".setValue(\"")
-							.append(value)
-							.append("\")");
-					 */
-
-					// Get Value
-					strBlr.append("workbook.getActiveWorksheet().getCell")
-							.append(node.SINGLE_CELL)
-							.append(".getValue()");
-				}
-				else if (Objects.equals(node.CELL_METHOD.toString(), ".format")) {
-					String valueString = "color:red";
-					String[] parts = valueString.split(":");
-					String key = parts[0];
-					String value = parts[1];
-
-					if (Objects.equals(key, "backgroundColor")) {
-						strBlr.append("workbook.getActiveWorksheet().getCell")
-								.append(node.SINGLE_CELL)
-								.append(".getFormat().getFill().setColor(\"")
-								.append(value)
-								.append("\")");
-					}
-					else if (Objects.equals(key, "textColor")) {
-						strBlr.append("workbook.getActiveWorksheet().getCell")
-								.append(node.SINGLE_CELL)
-								.append(".getFormat().getFont().setColor(\"")
-								.append(value)
-								.append("\")");
-					}
-
-				}
-			}
-			else if (node.SINGLE_CELL != null) {
-				strBlr.append(node.SINGLE_CELL);
+			if (node.SINGLE_CELL != null) {
+				//strBlr.append(node.SINGLE_CELL);
 			}
 			else if (node.RANGE != null) {
 				strBlr.append(node.RANGE);
+			}
+
+			if (node.CELL_METHOD != null) {
+				if (Objects.equals(node.CELL_METHOD.toString(), ".value")) {
+
+					if(cellAccessor.get(node.SINGLE_CELL) != null) {
+						// Set Value
+						strBlr.append("workbook.getActiveWorksheet().getCell");
+						strBlr.append(node.SINGLE_CELL);
+						strBlr.append(".setValue(");
+						strBlr.append(cellAccessor.get(node.SINGLE_CELL));
+						strBlr.append(")\n");
+					} else {
+						// Get Value
+						strBlr.append("workbook.getActiveWorksheet().getCell");
+					}
+				}
+				else if (Objects.equals(node.CELL_METHOD.toString(), ".format")) {
+
+				}
 			}
 		}
 		else
@@ -468,17 +461,13 @@ public class Generator extends ReflectiveASTVisitor {
 			if (Objects.equals(node.FUNCTIONS.toString(), "print")) {
 				strBlr.append("console.log(");
 			} else {
-				strBlr.append(node.FUNCTIONS).append("([");
+				strBlr.append(node.FUNCTIONS).append("(");
 			}
 			if (node.actualParamsNode != null) {
 				node.actualParamsNode.accept(this);
 			}
-			if (Objects.equals(node.FUNCTIONS.toString(), "print")) {
-				strBlr.append(")\n");
-			} else {
-				strBlr.append("])\n");
-			}
-
+      
+			strBlr.append(")\n");
 		}
 		else
 			throw new NullPointerException();
