@@ -8,6 +8,8 @@ import com.eel.helpers.HashCodeGenerator;
 import kotlin.NotImplementedError;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import java.util.Objects;
+
 public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
     SymbolTable symbolTable;
     Errors errors;
@@ -287,11 +289,11 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
                 // Skal vi stadig sætte de her typer???
 
                 if (node.cellNode.CELL_METHOD != null) {
-                    if (node.cellNode.CELL_METHOD.toString() == "value" && node.cellNode.SINGLE_CELL != null)
+                    if (Objects.equals(node.cellNode.CELL_METHOD.toString(), ".value") && node.cellNode.SINGLE_CELL != null)
                         node.setType(Type.Integer);
-                    else if (node.cellNode.CELL_METHOD.toString() == "value" && node.cellNode.RANGE != null)
+                    else if (Objects.equals(node.cellNode.CELL_METHOD.toString(), ".value") && node.cellNode.RANGE != null)
                         node.setType(Type.Array);
-                    else if (node.cellNode.CELL_METHOD.toString() == "format") node.setType(node.getType());
+                    else if (Objects.equals(node.cellNode.CELL_METHOD.toString(), ".format")) node.setType(node.getType());
                     else throw new NotImplementedError();
                 }
             }
