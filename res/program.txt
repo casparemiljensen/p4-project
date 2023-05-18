@@ -1,6 +1,17 @@
 procedure Tertiary()
 
-let x = "4"+13-""
+let x = 4
+
+if(5) then
+let y = x + 5
+endIf
 
 
+endProcedure
+
+procedure Secondy()
+
+
+let x = 5
+let y = x+8
 endProcedure

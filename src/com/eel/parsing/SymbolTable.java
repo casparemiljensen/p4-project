@@ -84,21 +84,34 @@ public class SymbolTable {
         return this.findScope(scopeName, globalScope);
     }
 
-    //Returns the attributes for the symbol that is being looked up
     public Attributes lookupSymbol(String symbol) {
         EelScope scope = currentScope;
+        boolean isNested = false;
 
+        do {
+            // Enters if the symbol is a parameter
+            if (!scope.getParams().isEmpty() && scope.getParams().containsKey(symbol)) {
+                return scope.getParams().get(symbol);
+            }
 
-        //Enters if the symbol is a parameter
-        if (!scope.getParams().isEmpty() && scope.getParams().containsKey(symbol)) {
-            return scope.getParams().get(symbol);
-        }
-        //Enters if the symbol is a regular symbol and it is found in the scope being searched through
-        if (!scope.getSymbols().isEmpty() && scope.getSymbols().containsKey(symbol)) {
-            return scope.getSymbols().get(symbol);
-        }
-        //Goes to the outer scope
-        //Returns null if the symbol was not found in an accessible scope
+            // Enters if the symbol is a regular symbol and it is found in the scope being searched through
+            if (!isNested && !scope.getSymbols().isEmpty() && scope.getSymbols().containsKey(symbol)) {
+                return scope.getSymbols().get(symbol);
+            }
+
+            // Goes to the outer scope
+            scope = scope.getParent();
+
+            // Sets isNested to true if entering a nested scope
+            if (scope != null && scope.getParent() != null) {
+                isNested = true;
+            } else {
+                isNested = false;
+            }
+
+        } while (scope != null);
+
+        // Returns null if the symbol was not found in an accessible scope
         return null;
     }
 

@@ -131,7 +131,7 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
                     left = symbolTable.lookupSymbol(node.left.getName()).getDataType();
                 } else {
                     // TJEK I PAREN cope hvis nuværende er i eller else if eller else
-                    System.out.println(node.left.getName() + " has bot been DECLARED");
+                    System.out.println(node.left.getName() + " has not been DECLARED");
                 }
             }
 
@@ -142,7 +142,7 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
                     right = symbolTable.lookupSymbol(node.right.getName()).getDataType();
                 } else {
                     // TJEK I PAREN cope hvis nuværende er i eller else if eller else
-                    System.out.println(node.right.getName() + " has bot been DECLARED");
+                    System.out.println(node.right.getName() + " has not been DECLARED");
                 }
             }
 
