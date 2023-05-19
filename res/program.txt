@@ -1,9 +1,4 @@
 procedure Second(x)
-    let h = x - 2
-    return h
+    let h = ""
+    let x = "hejsa" == ""
 endProcedure
-
-procedure First()
-    let var = Second("string") - 3
-endProcedure
-

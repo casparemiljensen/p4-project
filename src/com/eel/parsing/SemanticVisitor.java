@@ -234,16 +234,54 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
             String operator = node.operatorNode.getSymbol();
 
 
-            if (left != right) {
+            if (operator.equals("<") || operator.equals(">") || operator.equals("<=") || operator.equals(">=")) {
+                if (
+                    (left == Type.String && right == Type.String) ||
+                    ((left == Type.Integer || left == Type.Float) && (right == Type.Integer || right == Type.Float))
+                ) {
+                    node.setType(Type.Boolean);
+                } else errors.addEntry(ErrorType.CANNOT_EVALUATE_COMPARISON, "'" + left + " " + operator + " " + right + "' cannot be evaluated to a boolean", node.getLineNumber(), node.getColumnNumber());
 
-                if (operator.equals("+") && (left == Type.String || right == Type.String)) node.setType(Type.String);
-                    // Ikke slet!
-//                    else if (!operator.equals("+") && (right != Type.Integer || right != Type.Float)) errors.addEntry(ErrorType.ILLEGAL_TYPE_CONVERSION, "righthand side of expression can only be number", node.getLineNumber(), node.getColumnNumber());
+
+            } else if (operator.equals("!=") || operator.equals("==")) {
+                if (left == Type.String || right == Type.String) {
+                    if (left != right) errors.addEntry(ErrorType.CANNOT_EVALUATE_EQUALITY, "The types " + left + " and " + right + " cannot be compared by equality operator", node.getLineNumber(), node.getColumnNumber());
+                    node.setType(Type.Boolean);
+                }
+                else if (node.left.getName() == null && node.right.getName() == null) errors.addEntry(ErrorType.CANNOT_EVALUATE_EQUALITY, "The types " + left + " and " + right + " cannot be compared by equality operator", node.getLineNumber(), node.getColumnNumber());
+                else if (node.left.getType() != null && node.right.getType() != null) {
+                    if (symbolTable.lookupSymbol(node.left.getName()).getType() != Type.Variable) throw new NullPointerException();
+                    if (symbolTable.lookupSymbol(node.right.getName()).getType() != Type.Variable) throw new NullPointerException();
+                    node.setType(left);
+                }
+                else if (node.left.getName() != null) {
+                    if (symbolTable.lookupSymbol(node.left.getName()).getType() != Type.Variable) throw new NullPointerException();
+                    node.setType(Type.Boolean);
+                } else if (node.right.getName() != null) {
+                    if (symbolTable.lookupSymbol(node.right.getName()).getType() != Type.Variable) throw new NullPointerException();
+                    node.setType(Type.Boolean);
+                } else throw new NullPointerException();
+
+
+            } else if (operator.equals("+")) {
+                if (left == Type.String) node.setType(Type.String);
+                else if (right == Type.String) node.setType(Type.String);
+                else if (left == Type.Integer && right == Type.Integer) node.setType(Type.Integer);
+                else if (left == Type.Float && right == Type.Float) node.setType(Type.Float);
                 else if (left == Type.Integer && right == Type.Float) node.setType(Type.Float);
                 else if (left == Type.Float && right == Type.Integer) node.setType(Type.Float);
-                else
-                    errors.addEntry(ErrorType.ILLEGAL_TYPE_CONVERSION, "Not possible to implicitly convert types in expression. Types: " + left + " and " + right + ".", node.getLineNumber(), node.getColumnNumber());
-            } else node.setType(node.left.getType());
+                else errors.addEntry(ErrorType.ILLEGAL_TYPE_CONVERSION, "Not possible to implicitly convert types in expression. Types: " + left + " and " + right + ".", node.getLineNumber(), node.getColumnNumber());
+            }
+
+            else if (operator.equals("-") || operator.equals("*") || operator.equals("/")) {
+                if (left == Type.Integer && right == Type.Integer) node.setType(Type.Integer);
+                else if (left == Type.Float && right == Type.Float) node.setType(Type.Float);
+                else if (left == Type.Integer && right == Type.Float) node.setType(Type.Float);
+                else if (left == Type.Float && right == Type.Integer) node.setType(Type.Float);
+                else errors.addEntry(ErrorType.ILLEGAL_TYPE_CONVERSION, "Not possible to implicitly convert types in expression. Types: " + left + " and " + right + ".", node.getLineNumber(), node.getColumnNumber());
+
+            }
+            else throw new NullPointerException();
         }
     }
     public void Visit(ValueExprNode node) {
