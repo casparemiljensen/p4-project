@@ -216,12 +216,12 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
     public void Visit(RepeatStructNode node) {
         if (node != null) {
             String hashedName = HashCodeGenerator.generateHashNameFromObject("repeat", node);
-                symbolTable.enterScope(hashedName);
-                node.expressionNode.accept(this);
-                if (node.statementNodes != null) {
-                    node.statementNodes.forEach(s -> s.accept(this));
-                }
-                symbolTable.leaveScope(hashedName);
+            symbolTable.enterScope(hashedName);
+            node.expressionNode.accept(this);
+            if (node.statementNodes != null) {
+                node.statementNodes.forEach(s -> s.accept(this));
+            }
+            symbolTable.leaveScope(hashedName);
         } else {
             throw new NullPointerException();
         }
@@ -231,19 +231,19 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
         if (node != null) {
 
             String hashedName = HashCodeGenerator.generateHashNameFromObject("if", node);
-                symbolTable.enterScope(hashedName);
-                node.ifConditionNode.expressionNode.accept(this);
-                if (node.statementNodes != null) {
-                    node.statementNodes.forEach(s -> s.accept(this));
-                }
+            symbolTable.enterScope(hashedName);
+            node.ifConditionNode.expressionNode.accept(this);
+            if (node.statementNodes != null) {
+                node.statementNodes.forEach(s -> s.accept(this));
+            }
 
-                if (node.elseIfStructNodes != null) {
-                    node.elseIfStructNodes.forEach(s -> s.accept(this));
-                }
-                if (node.elseStructNode != null) {
-                    node.elseStructNode.accept(this);
-                }
-                symbolTable.leaveScope(hashedName);
+            if (node.elseIfStructNodes != null) {
+                node.elseIfStructNodes.forEach(s -> s.accept(this));
+            }
+            if (node.elseStructNode != null) {
+                node.elseStructNode.accept(this);
+            }
+            symbolTable.leaveScope(hashedName);
         } else {
             throw new NullPointerException();
         }
@@ -254,11 +254,11 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
         if (node != null) {
             String hashedName = HashCodeGenerator.generateHashNameFromObject("elseif", node);
             symbolTable.enterScope(hashedName);
-                node.ifConditionNode.expressionNode.accept(this);
-                if (node.statementNodes != null) {
-                    node.statementNodes.forEach(s -> s.accept(this));
-                }
-                symbolTable.leaveScope(hashedName);
+            node.ifConditionNode.expressionNode.accept(this);
+            if (node.statementNodes != null) {
+                node.statementNodes.forEach(s -> s.accept(this));
+            }
+            symbolTable.leaveScope(hashedName);
 
         }
     }
@@ -266,11 +266,11 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
     public void Visit(ElseStructNode node) {
         if (node != null) {
             String hashedName = HashCodeGenerator.generateHashNameFromObject("else", node);
-             symbolTable.enterScope(hashedName);
-                if (node.statementNode != null) {
-                    node.statementNode.forEach(s -> s.accept(this));
-                }
-                symbolTable.leaveScope(hashedName);
+            symbolTable.enterScope(hashedName);
+            if (node.statementNode != null) {
+                node.statementNode.forEach(s -> s.accept(this));
+            }
+            symbolTable.leaveScope(hashedName);
         }
     }
 
@@ -331,31 +331,36 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
 
             if (operator.equals("<") || operator.equals(">") || operator.equals("<=") || operator.equals(">=")) {
                 if (
-                    (left == Type.String && right == Type.String) ||
-                    ((left == Type.Integer || left == Type.Float) && (right == Type.Integer || right == Type.Float))
+                        (left == Type.String && right == Type.String) ||
+                                ((left == Type.Integer || left == Type.Float) && (right == Type.Integer || right == Type.Float))
                 ) {
                     node.setType(Type.Boolean);
-                } else errors.addEntry(ErrorType.CANNOT_EVALUATE_COMPARISON, "'" + left + " " + operator + " " + right + "' cannot be evaluated to a boolean", node.getLineNumber(), node.getColumnNumber());
+                } else
+                    errors.addEntry(ErrorType.CANNOT_EVALUATE_COMPARISON, "'" + left + " " + operator + " " + right + "' cannot be evaluated to a boolean", node.getLineNumber(), node.getColumnNumber());
 
 
-            } else if (operator.equals("!=") || operator.equals("==")) {
-                if (left == Type.String || right == Type.String) {
-                    if (left != right) errors.addEntry(ErrorType.CANNOT_EVALUATE_EQUALITY, "The types " + left + " and " + right + " cannot be compared by equality operator", node.getLineNumber(), node.getColumnNumber());
-                    node.setType(Type.Boolean);
-                }
-                else if (node.left.getName() == null && node.right.getName() == null) errors.addEntry(ErrorType.CANNOT_EVALUATE_EQUALITY, "The types " + left + " and " + right + " cannot be compared by equality operator", node.getLineNumber(), node.getColumnNumber());
-                else if (node.left.getType() != null && node.right.getType() != null) {
-                    if (symbolTable.lookupSymbol(node.left.getName()).getType() != Type.Variable) throw new NullPointerException();
-                    if (symbolTable.lookupSymbol(node.right.getName()).getType() != Type.Variable) throw new NullPointerException();
-                    node.setType(left);
-                }
-                else if (node.left.getName() != null) {
-                    if (symbolTable.lookupSymbol(node.left.getName()).getType() != Type.Variable) throw new NullPointerException();
-                    node.setType(Type.Boolean);
-                } else if (node.right.getName() != null) {
-                    if (symbolTable.lookupSymbol(node.right.getName()).getType() != Type.Variable) throw new NullPointerException();
-                    node.setType(Type.Boolean);
-                } else throw new NullPointerException();
+//            } else if (operator.equals("!=") || operator.equals("==")) {
+//                if (left == Type.String || right == Type.String) {
+//                    if (left != right)
+//                        errors.addEntry(ErrorType.CANNOT_EVALUATE_EQUALITY, "The types " + left + " and " + right + " cannot be compared by equality operator", node.getLineNumber(), node.getColumnNumber());
+//                    node.setType(Type.Boolean);
+//                } else if (node.left.getName() == null && node.right.getName() == null)
+//                    errors.addEntry(ErrorType.CANNOT_EVALUATE_EQUALITY, "The types " + left + " and " + right + " cannot be compared by equality operator", node.getLineNumber(), node.getColumnNumber());
+//                else if (node.left.getType() != null && node.right.getType() != null) {
+//                    if (symbolTable.lookupSymbol(node.left.getName()).getType() != Type.Variable)
+//                        throw new NullPointerException();
+//                    if (symbolTable.lookupSymbol(node.right.getName()).getType() != Type.Variable)
+//                        throw new NullPointerException();
+//                    node.setType(left);
+//                } else if (node.left.getName() != null) {
+//                    if (symbolTable.lookupSymbol(node.left.getName()).getType() != Type.Variable)
+//                        throw new NullPointerException();
+//                    node.setType(Type.Boolean);
+//                } else if (node.right.getName() != null) {
+//                    if (symbolTable.lookupSymbol(node.right.getName()).getType() != Type.Variable)
+//                        throw new NullPointerException();
+//                    node.setType(Type.Boolean);
+//                } else throw new NullPointerException();
 
 
             } else if (operator.equals("+")) {
@@ -365,20 +370,20 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
                 else if (left == Type.Float && right == Type.Float) node.setType(Type.Float);
                 else if (left == Type.Integer && right == Type.Float) node.setType(Type.Float);
                 else if (left == Type.Float && right == Type.Integer) node.setType(Type.Float);
-                else errors.addEntry(ErrorType.ILLEGAL_TYPE_CONVERSION, "Not possible to implicitly convert types in expression. Types: " + left + " and " + right + ".", node.getLineNumber(), node.getColumnNumber());
-            }
-
-            else if (operator.equals("-") || operator.equals("*") || operator.equals("/")) {
+                else
+                    errors.addEntry(ErrorType.ILLEGAL_TYPE_CONVERSION, "Not possible to implicitly convert types in expression. Types: " + left + " and " + right + ".", node.getLineNumber(), node.getColumnNumber());
+            } else if (operator.equals("-") || operator.equals("*") || operator.equals("/")) {
                 if (left == Type.Integer && right == Type.Integer) node.setType(Type.Integer);
                 else if (left == Type.Float && right == Type.Float) node.setType(Type.Float);
                 else if (left == Type.Integer && right == Type.Float) node.setType(Type.Float);
                 else if (left == Type.Float && right == Type.Integer) node.setType(Type.Float);
-                else errors.addEntry(ErrorType.ILLEGAL_TYPE_CONVERSION, "Not possible to implicitly convert types in expression. Types: " + left + " and " + right + ".", node.getLineNumber(), node.getColumnNumber());
+                else
+                    errors.addEntry(ErrorType.ILLEGAL_TYPE_CONVERSION, "Not possible to implicitly convert types in expression. Types: " + left + " and " + right + ".", node.getLineNumber(), node.getColumnNumber());
 
-            }
-            else throw new NullPointerException();
+            } else throw new NullPointerException();
         }
     }
+
     public void Visit(ValueExprNode node) {
         if (node != null) {
             if (node.valueNode != null) {
@@ -389,6 +394,7 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
         } else
             throw new NullPointerException();
     }
+
     public void Visit(ValueNode node) {
         if (node != null) {
 
