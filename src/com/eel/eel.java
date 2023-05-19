@@ -31,7 +31,7 @@ class Eel {
         var ast = (ProgramNode) new BuildASTVisitor().visit(cst);
         ASTPrinter astPrinter = new ASTPrinter();
         astPrinter.print(ast);
-
+        System.out.println("");
         BuildSymbolTableVisitor buildSymbolTableVisitor = new BuildSymbolTableVisitor(symbolTable, symbolTableErrors);
         buildSymbolTableVisitor.performVisit(ast);
 
@@ -71,7 +71,7 @@ class Eel {
 
     public static void printErrors(Errors errors) {
         for (Item error : errors.errors) {
-            System.out.println(error.type.toString() + ": " + error.message + " (" + error.type.name() + ")" + "on line: " + error.lineNumber + ", column " + error.column);
+            System.out.println(error.type.toString() + ": " + error.message + " (" + error.type.name() + ")" + " on line: " + error.lineNumber + ", column " + error.column);
 
             //Enters if the error message is on multiple lines
             if (error.lines.size() > 0) {
