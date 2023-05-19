@@ -1,9 +1,12 @@
-procedure Second(x)
-    let h = x - 2
-    return h
+procedure Main()
+let y = 5
+let x = 6
+Secondary(5, 6)
 endProcedure
 
-procedure First()
-    let var = Second("string") - 3
+procedure Secondary(h,g)
+let u = h-g
 endProcedure
+
+
 

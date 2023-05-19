@@ -90,6 +90,10 @@ public class SymbolTable {
 
         do {
             // Enters if the symbol is a parameter
+
+
+            // Missing boolean check here??
+
             if (!scope.getParams().isEmpty() && scope.getParams().containsKey(symbol)) {
                 return scope.getParams().get(symbol);
             }

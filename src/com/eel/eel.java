@@ -35,6 +35,8 @@ class Eel {
         BuildSymbolTableVisitor buildSymbolTableVisitor = new BuildSymbolTableVisitor(symbolTable, symbolTableErrors);
         buildSymbolTableVisitor.performVisit(ast);
 
+        System.out.println();
+        System.out.println("       --- BEFORE --- ");
         SymbolTablePrinter symbolTablePrinter = new SymbolTablePrinter();
         symbolTablePrinter.printSymbolTable(symbolTable);
 
@@ -44,13 +46,14 @@ class Eel {
             SemanticVisitor semanticVisitor = new SemanticVisitor(symbolTable, semanticErrors);
             semanticVisitor.performVisit(ast);
 
-
+            System.out.println();
+            System.out.println("       --- AFTER  --- ");
             symbolTablePrinter = new SymbolTablePrinter();
             symbolTablePrinter.printSymbolTable(symbolTable);
 
             if (!semanticErrors.containsErrors()) {
-                Generator generator = new Generator();
-                System.out.println("----------------TS----------------");
+//                Generator generator = new Generator();
+//                System.out.println("----------------TS----------------");
 //                generator.performVisit(ast);
             } else {
                 System.out.println("[SymbolTable] Code contains " + symbolTableErrors.errors.stream().count() + " errors:");
