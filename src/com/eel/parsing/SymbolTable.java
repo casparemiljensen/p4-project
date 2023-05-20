@@ -86,32 +86,21 @@ public class SymbolTable {
 
     public Attributes lookupSymbol(String symbol) {
         EelScope scope = currentScope;
-        boolean isNested = false;
 
         do {
             // Enters if the symbol is a parameter
-
-
-            // Missing boolean check here??
 
             if (!scope.getParams().isEmpty() && scope.getParams().containsKey(symbol)) {
                 return scope.getParams().get(symbol);
             }
 
             // Enters if the symbol is a regular symbol and it is found in the scope being searched through
-            if (!isNested && !scope.getSymbols().isEmpty() && scope.getSymbols().containsKey(symbol)) {
+            if (!scope.getSymbols().isEmpty() && scope.getSymbols().containsKey(symbol)) {
                 return scope.getSymbols().get(symbol);
             }
 
             // Goes to the outer scope
             scope = scope.getParent();
-
-            // Sets isNested to true if entering a nested scope
-            if (scope != null && scope.getParent() != null) {
-                isNested = true;
-            } else {
-                isNested = false;
-            }
 
         } while (scope != null);
 
@@ -119,7 +108,18 @@ public class SymbolTable {
         return null;
     }
 
+    public boolean CanBeAdded(String symbol) {
+        // A symbol can be added if it is not in the current scope... It is allowed to be in a parent scope.
+        boolean canBeAdded = true;
+        EelScope scope = currentScope;
+        if (!scope.getParams().isEmpty() && scope.getParams().containsKey(symbol) || !scope.getSymbols().isEmpty() && scope.getSymbols().containsKey(symbol)) {
+            return false;
+        }
+        return true;
+    }
+
     public void insertSymbol(String symbol, Attributes attributes) {
+        attributes.setScope(getCurrentScope());
         currentScope.getSymbols().put(symbol, attributes);
     }
 

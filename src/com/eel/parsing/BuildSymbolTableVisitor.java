@@ -34,13 +34,16 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
             symbolTable.insertSymbol(node.procedureDeclarationNode.procedureToken.toString(), attributes);
 
             if (symbolTable.addScope(node.procedureDeclarationNode.procedureToken.toString())) {
-                for (StatementNode statementNode : node.StatementNodes) {
-                    statementNode.accept(this);
-                }
 
                 if (node.procedureDeclarationNode.formalParametersNode != null) {
                     node.procedureDeclarationNode.formalParametersNode.accept(this);
                 }
+
+
+                for (StatementNode statementNode : node.StatementNodes) {
+                    statementNode.accept(this);
+                }
+
 
                 symbolTable.leaveScope(node.procedureDeclarationNode.procedureToken.toString());
             } else {
@@ -81,7 +84,7 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
 
     public void Visit(DeclarationNode node) {
         if (node != null) {
-            if (symbolTable.lookupSymbol(node.IdToken.toString()) == null) {
+            if (symbolTable.CanBeAdded(node.IdToken.toString())) {
                 var type = Type.Uninitialized;
                 if (node.assignmentNode != null) {
                     type = Type.Initialized;
@@ -107,12 +110,6 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
         } else
             throw new NullPointerException();
     }
-
-
-
-
-
-
 
     public void Visit(RepeatStructNode node) {
         if (node != null) {
@@ -328,10 +325,12 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
         if (node != null) {
 
             for (TerminalNode t : node.IDs) {
-                if (symbolTable.lookupSymbol(t.toString()) == null) {
+                if (symbolTable.CanBeAdded(t.toString())) {
                     node.setType(Type.FormalParam);
                     Attributes attributes = new Attributes(node.getType(), Type.Unresolved);
                     symbolTable.insertParam(t.toString(), attributes);
+                } else {
+                    errors.addEntry(ErrorType.DUPLICATE_VARIABLE, " cannot add the formal parameter: " + t.toString() + " it is already declared elsewhere", node.getLineNumber(), node.getColumnNumber());
                 }
             }
 
@@ -339,7 +338,7 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
             throw new NullPointerException();
     }
 
-//    public void Visit(CellNode node) {
+    //    public void Visit(CellNode node) {
 //        if (node != null) {
 //
 //            if (node.SINGLE_CELL != null) {
@@ -368,14 +367,14 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
 //    }
     public void Visit(ReturnNode node) {
         if (node != null) {
-            if (symbolTable.lookupSymbol("Return") == null) {
+            if (symbolTable.CanBeAdded("Return")) {
                 node.setType(Type.Return);
                 Attributes attributes = new Attributes(Type.Return, Type.Unresolved);
                 symbolTable.insertSymbol("Return", attributes);
-            }
-            else errors.addEntry(ErrorType.DUPLICATE_RETURN, "procedure " + symbolTable.currentScope.getScopeName().toString() + " already has a return statement", node.getLineNumber(), node.getColumnNumber());
+            } else
+                errors.addEntry(ErrorType.DUPLICATE_RETURN, "procedure " + symbolTable.currentScope.getScopeName().toString() + " already has a return statement", node.getLineNumber(), node.getColumnNumber());
         } else throw new NullPointerException();
-}
+    }
 
 
     @Override

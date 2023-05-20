@@ -7,20 +7,18 @@ import com.eel.errors.Errors;
 import com.eel.helpers.HashCodeGenerator;
 import kotlin.NotImplementedError;
 
-import javax.sound.midi.SysexMessage;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class SemanticVisitor extends ReflectiveASTVisitor {
+public class TypeCheckVisitor extends ReflectiveASTVisitor {
 
     SymbolTable symbolTable;
     Errors errors;
     private ProgramNode ast;
 
-    public SemanticVisitor(SymbolTable symbolTable, Errors errors) {
+    public TypeCheckVisitor(SymbolTable symbolTable, Errors errors) {
         this.symbolTable = symbolTable;
         this.errors = errors;
     }
@@ -68,8 +66,10 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
             if (symbolTable.lookupSymbol(node.terminal.toString()) != null) {
                 node.assignmentNode.accept(this);
                 Attributes attributes = symbolTable.lookupSymbol(node.terminal.toString());
+                symbolTable.enterScope(attributes.getScope().getScopeName());
                 attributes.setDataType(node.assignmentNode.getType());
                 symbolTable.insertSymbol(node.terminal.toString(), attributes);
+                symbolTable.leaveScope(attributes.getScope().getScopeName());
                 node.setType(node.assignmentNode.getType());
             }
         } else if (node.cellNode != null) {
@@ -87,8 +87,10 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
             if (node.assignmentNode != null) {
                 node.assignmentNode.accept(this);
                 Attributes attributes = symbolTable.lookupSymbol(node.IdToken.toString());
+                symbolTable.enterScope(attributes.getScope().getScopeName());
                 attributes.setDataType(node.assignmentNode.getType());
                 node.setType(node.assignmentNode.getType());
+                symbolTable.leaveScope(attributes.getScope().getScopeName());
                 symbolTable.insertSymbol(node.IdToken.toString(), attributes);
             }
         } else
@@ -114,64 +116,65 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
                 symbolTable.enterScope(node.PROCEDURE.toString());
                 if (node.actualParamsNode != null) {
                     // Making sure that amount of formalParams == actualParams
-                    if (symbolTable.currentScope.getParams().size() != node.actualParamsNode.valuesNodes.size()) {
-                        System.out.println("size: " + symbolTable.currentScope.getParams().size());
-                        errors.addEntry(ErrorType.PARAMETERS_COUNT_MISMATCH, symbolTable.currentScope.getParams().size() + " parameters expected, " + node.actualParamsNode.valuesNodes.size() + " provided", node.getLineNumber(), node.getColumnNumber());
-                    } else {
-                        // Only visiting if there is some actualParams
-                        if (node.actualParamsNode != null) {
-                            node.actualParamsNode.accept(this);
+//                    if (symbolTable.currentScope.getParams().size() != node.actualParamsNode.valuesNodes.size()) {
+//                        errors.addEntry(ErrorType.PARAMETERS_COUNT_MISMATCH, symbolTable.currentScope.getParams().size() + " parameters expected, " + node.actualParamsNode.valuesNodes.size() + " provided", node.getLineNumber(), node.getColumnNumber());
+//                    }
+//                    else {
+                    // Only visiting if there is some actualParams
+                    if (node.actualParamsNode != null) {
+                        node.actualParamsNode.accept(this);
 
-                            List<ValueNode> vars = node.actualParamsNode.valuesNodes.stream().filter(v -> v.getType() == Type.Variable).collect(Collectors.toList());
-                            if (vars != null) {
-                                for (ValueNode v : vars) {
-
-                                    if (symbolTable.lookupSymbol(v.VARIABLE.toString()) == null) {
-                                        errors.addEntry(ErrorType.UNDECLARED_VARIABLE, "A variable with the name: " + v.VARIABLE.toString() + " has not been declared ", v.getLineNumber(), v.getColumnNumber());
-                                    } else if (symbolTable.lookupSymbol(v.VARIABLE.toString()) != null) {
-                                        // THIS IS NOT BEING HIT... It is maybe because our lookup symbol function has been added a boolean for nest checks...
-                                        Attributes attr = symbolTable.lookupSymbol(v.VARIABLE.toString());
-                                        if (attr.getDataType() == Type.Uninitialized) {
-                                            errors.addEntry(ErrorType.UNINITIALIZED_VARIABLE, "A variable with the name: " + v.VARIABLE.toString() + " has not been initialized, and will infer null type ", v.getLineNumber(), v.getColumnNumber());
-                                        }
+                        List<ValueNode> vars = node.actualParamsNode.valuesNodes.stream().filter(v -> v.getType() == Type.Variable).collect(Collectors.toList());
+                        if (vars != null) {
+                            for (ValueNode v : vars) {
+                                if (symbolTable.lookupSymbol(v.VARIABLE.toString()) == null) {
+                                    errors.addEntry(ErrorType.UNDECLARED_VARIABLE, "A variable with the name: " + v.VARIABLE.toString() + " has not been declared ", v.getLineNumber(), v.getColumnNumber());
+                                } else if (symbolTable.lookupSymbol(v.VARIABLE.toString()) != null) {
+                                    // THIS IS NOT BEING HIT... It is maybe because our lookup symbol function has been added a boolean for nest checks...
+                                    Attributes attr = symbolTable.lookupSymbol(v.VARIABLE.toString());
+                                    if (attr.getDataType() == Type.Uninitialized) {
+                                        errors.addEntry(ErrorType.UNINITIALIZED_VARIABLE, "A variable with the name: " + v.VARIABLE.toString() + " has not been initialized, and will infer null type ", v.getLineNumber(), v.getColumnNumber());
                                     }
                                 }
                             }
-
-                            // Get the HashMap object from the symbol table
-                            Map<String, Attributes> obj = symbolTable.currentScope.getParams();
-
-                            // Get the list of actual parameters
-                            List<ValueNode> actualParams = node.actualParamsNode.valuesNodes;
-
-                            // Get an iterator over the entry set of the HashMap
-                            Iterator<Map.Entry<String, Attributes>> iterator = obj.entrySet().iterator();
-
-                            // Iterate over the actualParams list and update the values in the HashMap
-                            for (ValueNode paramValue : actualParams) {
-                                if (iterator.hasNext()) {
-                                    // Get the next entry from the HashMap
-                                    Map.Entry<String, Attributes> entry = iterator.next();
-
-                                    // Update the value in the entry with the corresponding actual parameter value
-                                    Attributes attr = entry.getValue();
-                                    attr.setDataType(paramValue.getType());
-
-                                    entry.setValue(attr);
-                                } else {
-                                    // Handle the case where there are more actual parameters than formal parameters
-                                    System.out.println("Error: More actual parameters than formal parameters");
-                                    break;
-                                }
-                            }
-                            findProcedure(node.PROCEDURE.toString()).accept(this);
-
                         }
-                    }
-                    // Perform additional type checking or validation for the procedure call if needed
-                }
 
-//                Visit(node.PROCEDURE.toString());
+                        // Get the HashMap object from the symbol table
+                        Map<String, Attributes> obj = symbolTable.currentScope.getParams();
+
+                        // Get the list of actual parameters
+                        List<ValueNode> actualParams = node.actualParamsNode.valuesNodes;
+
+                        // Get an iterator over the entry set of the HashMap
+                        Iterator<Map.Entry<String, Attributes>> iterator = obj.entrySet().iterator();
+
+                        // Iterate over the actualParams list and update the values in the HashMap
+                        for (ValueNode paramValue : actualParams) {
+                            if (iterator.hasNext()) {
+                                // Get the next entry from the HashMap
+                                Map.Entry<String, Attributes> entry = iterator.next();
+
+                                // Update the value in the entry with the corresponding actual parameter value
+                                Attributes attr = entry.getValue();
+                                attr.setDataType(paramValue.getType());
+
+                                entry.setValue(attr);
+                            } else {
+                                // Handle the case where there are more actual parameters than formal parameters
+                                System.out.println("Error: More actual parameters than formal parameters");
+                                break;
+                            }
+                        }
+
+                    }
+                }
+//                }
+                else {
+//                    if (symbolTable.currentScope.getParams().size() > 0) {
+//                        errors.addEntry(ErrorType.PARAMETERS_COUNT_MISMATCH, symbolTable.currentScope.getParams().size() + " parameter(s) expected, 0 provided", node.getLineNumber(), node.getColumnNumber());
+//                    }
+                }
+                findProcedure(node.PROCEDURE.toString()).accept(this);
 
 
                 symbolTable.leaveScope(node.PROCEDURE.toString());
@@ -405,11 +408,16 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
             } else if (node.FLOAT != null) {
                 node.setType(Type.Float);
             } else if (node.VARIABLE != null) {
-                if (symbolTable.lookupSymbol(node.VARIABLE.toString()).getDataType() == Type.Uninitialized)
-                    errors.addEntry(ErrorType.VARIABLE_NOT_INITIALED, "'" + node.VARIABLE.toString() + "' has not been initialized", node.getLineNumber(), node.getColumnNumber());
+                if (symbolTable.lookupSymbol(node.VARIABLE.toString()) != null) {
+                    if (symbolTable.lookupSymbol(node.VARIABLE.toString()).getDataType() == Type.Uninitialized)
+                        errors.addEntry(ErrorType.VARIABLE_NOT_INITIALED, "'" + node.VARIABLE.toString() + "' has not been initialized", node.getLineNumber(), node.getColumnNumber());
 
-                node.setType(symbolTable.lookupSymbol(node.VARIABLE.toString()).getDataType());
-                node.setName(node.VARIABLE.toString());
+                    node.setType(symbolTable.lookupSymbol(node.VARIABLE.toString()).getDataType());
+                    node.setName(node.VARIABLE.toString());
+                } else {
+                    errors.addEntry(ErrorType.UNDECLARED_VARIABLE, "The variable: " + node.VARIABLE.toString() + " has not been declared", node.getLineNumber(), node.getColumnNumber());
+                }
+
 
             } else if (node.BOOLEAN != null) {
                 node.setType(Type.Boolean);
@@ -457,7 +465,9 @@ public class SemanticVisitor extends ReflectiveASTVisitor {
             node.setType(node.expressionNode.getType());
 
             Attributes attributes = symbolTable.lookupSymbol("Return");
+            symbolTable.enterScope(attributes.getScope().getScopeName());
             attributes.setDataType(node.expressionNode.getType());
+            symbolTable.leaveScope(attributes.getScope().getScopeName());
             node.setType(node.expressionNode.getType());
 
             symbolTable.insertSymbol("Return", attributes);

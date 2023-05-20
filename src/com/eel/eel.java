@@ -8,8 +8,9 @@ import com.eel.errors.Errors;
 import com.eel.errors.Item;
 import com.eel.parsing.SymbolTable;
 import com.eel.parsing.BuildSymbolTableVisitor;
-import com.eel.parsing.SemanticVisitor;
+import com.eel.parsing.TypeCheckVisitor;
 import com.eel.helpers.SymbolTablePrinter;
+import com.eel.parsing.VariableDeclarationVisitor;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
@@ -18,7 +19,8 @@ import java.nio.file.*;
 class Eel {
     public static void main(String[] args) throws Exception {
         Errors symbolTableErrors = new Errors();
-        Errors semanticErrors = new Errors();
+        Errors typeCheckErrors = new Errors();
+        Errors varDclErrors = new Errors();
         SymbolTable symbolTable = new SymbolTable();
 
         var inputStream = CharStreams.fromString(readFileAsString("out/production/eel/program.txt"));
@@ -35,37 +37,43 @@ class Eel {
         BuildSymbolTableVisitor buildSymbolTableVisitor = new BuildSymbolTableVisitor(symbolTable, symbolTableErrors);
         buildSymbolTableVisitor.performVisit(ast);
 
-        System.out.println();
-        System.out.println("       --- BEFORE --- ");
-        SymbolTablePrinter symbolTablePrinter = new SymbolTablePrinter();
-        symbolTablePrinter.printSymbolTable(symbolTable);
+//        System.out.println();
+//        System.out.println("       --- BEFORE --- ");
+//        SymbolTablePrinter symbolTablePrinter = new SymbolTablePrinter();
+//        symbolTablePrinter.printSymbolTable(symbolTable);
 
         if (!symbolTableErrors.containsErrors()) {
 
+            VariableDeclarationVisitor varDclVisitor = new VariableDeclarationVisitor(symbolTable, varDclErrors);
+            varDclVisitor.performVisit(ast);
 
-            SemanticVisitor semanticVisitor = new SemanticVisitor(symbolTable, semanticErrors);
-            semanticVisitor.performVisit(ast);
+            if (!varDclErrors.containsErrors()) {
+                TypeCheckVisitor typeCheckVisitor = new TypeCheckVisitor(symbolTable, typeCheckErrors);
+                typeCheckVisitor.performVisit(ast);
 
-            System.out.println();
-            System.out.println("       --- AFTER  --- ");
-            symbolTablePrinter = new SymbolTablePrinter();
-            symbolTablePrinter.printSymbolTable(symbolTable);
+                System.out.println();
+                System.out.println("       [--- Symbol Table - After TypeCheck --- ]");
+                SymbolTablePrinter symbolTablePrinter = new SymbolTablePrinter();
+                symbolTablePrinter.printSymbolTable(symbolTable);
 
-            if (!semanticErrors.containsErrors()) {
-//                Generator generator = new Generator();
-//                System.out.println("----------------TS----------------");
-//                generator.performVisit(ast);
+                if (!typeCheckErrors.containsErrors()) {
+                    Generator generator = new Generator();
+                    System.out.println("----------------TS----------------");
+//                    generator.performVisit(ast);
+                } else {
+                    System.out.println("[ -- ERRORS -- ]");
+                    System.out.println("[TypeCheck] Code contains " + typeCheckErrors.errors.stream().count() + " errors:");
+                    printErrors(typeCheckErrors);
+                }
             } else {
-                System.out.println("[SymbolTable] Code contains " + symbolTableErrors.errors.stream().count() + " errors:");
-                System.out.println("[TypeCheck] Code contains " + semanticErrors.errors.stream().count() + " errors:");
-                printErrors(symbolTableErrors);
-                printErrors(semanticErrors);
+                System.out.println("[ -- ERRORS -- ]");
+                System.out.println("[VarDcl] Code contains " + varDclErrors.errors.stream().count() + " errors:");
+                printErrors(varDclErrors);
             }
         } else {
+            System.out.println("[ -- ERRORS -- ]");
             System.out.println("[SymbolTable] Code contains " + symbolTableErrors.errors.stream().count() + " errors:");
-            System.out.println("[TypeCheck] Code contains " + semanticErrors.errors.stream().count() + " errors:");
             printErrors(symbolTableErrors);
-            printErrors(semanticErrors);
         }
     }
 
