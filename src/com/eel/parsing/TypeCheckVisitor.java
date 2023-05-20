@@ -113,7 +113,6 @@ public class TypeCheckVisitor extends ReflectiveASTVisitor {
             if (symbolTable.lookupSymbol(node.PROCEDURE.toString()) != null) {
                 // Retrieve procedure information from the symbol table
                 // Check count for both
-                symbolTable.enterScope(node.PROCEDURE.toString());
                 if (node.actualParamsNode != null) {
                     // Making sure that amount of formalParams == actualParams
 //                    if (symbolTable.currentScope.getParams().size() != node.actualParamsNode.valuesNodes.size()) {
@@ -121,52 +120,52 @@ public class TypeCheckVisitor extends ReflectiveASTVisitor {
 //                    }
 //                    else {
                     // Only visiting if there is some actualParams
-                    if (node.actualParamsNode != null) {
-                        node.actualParamsNode.accept(this);
+                    node.actualParamsNode.accept(this);
+                    symbolTable.enterScope(node.PROCEDURE.toString());
 
-                        List<ValueNode> vars = node.actualParamsNode.valuesNodes.stream().filter(v -> v.getType() == Type.Variable).collect(Collectors.toList());
-                        if (vars != null) {
-                            for (ValueNode v : vars) {
-                                if (symbolTable.lookupSymbol(v.VARIABLE.toString()) == null) {
-                                    errors.addEntry(ErrorType.UNDECLARED_VARIABLE, "A variable with the name: " + v.VARIABLE.toString() + " has not been declared ", v.getLineNumber(), v.getColumnNumber());
-                                } else if (symbolTable.lookupSymbol(v.VARIABLE.toString()) != null) {
-                                    // THIS IS NOT BEING HIT... It is maybe because our lookup symbol function has been added a boolean for nest checks...
-                                    Attributes attr = symbolTable.lookupSymbol(v.VARIABLE.toString());
-                                    if (attr.getDataType() == Type.Uninitialized) {
-                                        errors.addEntry(ErrorType.UNINITIALIZED_VARIABLE, "A variable with the name: " + v.VARIABLE.toString() + " has not been initialized, and will infer null type ", v.getLineNumber(), v.getColumnNumber());
-                                    }
+                    List<ValueNode> vars = node.actualParamsNode.valuesNodes.stream().filter(v -> v.getType() == Type.Variable).collect(Collectors.toList());
+                    if (vars.size() > 0) {
+                        for (ValueNode v : vars) {
+                            if (symbolTable.lookupSymbol(v.VARIABLE.toString()) == null) {
+                                errors.addEntry(ErrorType.UNDECLARED_VARIABLE, "A variable with the name: " + v.VARIABLE.toString() + " has not been declared ", v.getLineNumber(), v.getColumnNumber());
+                            } else if (symbolTable.lookupSymbol(v.VARIABLE.toString()) != null) {
+                                // THIS IS NOT BEING HIT... It is maybe because our lookup symbol function has been added a boolean for nest checks...
+                                Attributes attr = symbolTable.lookupSymbol(v.VARIABLE.toString());
+                                if (attr.getDataType() == Type.Uninitialized) {
+                                    errors.addEntry(ErrorType.UNINITIALIZED_VARIABLE, "A variable with the name: " + v.VARIABLE.toString() + " has not been initialized, and will infer null type ", v.getLineNumber(), v.getColumnNumber());
                                 }
                             }
                         }
-
-                        // Get the HashMap object from the symbol table
-                        Map<String, Attributes> obj = symbolTable.currentScope.getParams();
-
-                        // Get the list of actual parameters
-                        List<ValueNode> actualParams = node.actualParamsNode.valuesNodes;
-
-                        // Get an iterator over the entry set of the HashMap
-                        Iterator<Map.Entry<String, Attributes>> iterator = obj.entrySet().iterator();
-
-                        // Iterate over the actualParams list and update the values in the HashMap
-                        for (ValueNode paramValue : actualParams) {
-                            if (iterator.hasNext()) {
-                                // Get the next entry from the HashMap
-                                Map.Entry<String, Attributes> entry = iterator.next();
-
-                                // Update the value in the entry with the corresponding actual parameter value
-                                Attributes attr = entry.getValue();
-                                attr.setDataType(paramValue.getType());
-
-                                entry.setValue(attr);
-                            } else {
-                                // Handle the case where there are more actual parameters than formal parameters
-                                System.out.println("Error: More actual parameters than formal parameters");
-                                break;
-                            }
-                        }
-
                     }
+
+                    // Get the HashMap object from the symbol table
+                    Map<String, Attributes> obj = symbolTable.currentScope.getParams();
+
+                    // Get the list of actual parameters
+                    List<ValueNode> actualParams = node.actualParamsNode.valuesNodes;
+
+                    // Get an iterator over the entry set of the HashMap
+                    Iterator<Map.Entry<String, Attributes>> iterator = obj.entrySet().iterator();
+
+                    // Iterate over the actualParams list and update the values in the HashMap
+                    for (ValueNode paramValue : actualParams) {
+                        if (iterator.hasNext()) {
+                            // Get the next entry from the HashMap
+                            Map.Entry<String, Attributes> entry = iterator.next();
+
+                            // Update the value in the entry with the corresponding actual parameter value
+                            Attributes attr = entry.getValue();
+                            attr.setDataType(paramValue.getType());
+
+                            entry.setValue(attr);
+                        } else {
+                            // Handle the case where there are more actual parameters than formal parameters
+                            System.out.println("Error: More actual parameters than formal parameters");
+                            break;
+                        }
+                    }
+
+
                 }
 //                }
                 else {
@@ -174,10 +173,8 @@ public class TypeCheckVisitor extends ReflectiveASTVisitor {
 //                        errors.addEntry(ErrorType.PARAMETERS_COUNT_MISMATCH, symbolTable.currentScope.getParams().size() + " parameter(s) expected, 0 provided", node.getLineNumber(), node.getColumnNumber());
 //                    }
                 }
-                findProcedure(node.PROCEDURE.toString()).accept(this);
-
-
                 symbolTable.leaveScope(node.PROCEDURE.toString());
+                findProcedure(node.PROCEDURE.toString()).accept(this);
             } else {
                 errors.addEntry(ErrorType.UNDECLARED_FUNCTION_WARNING, " A procedure with the name: '" + node.PROCEDURE.toString() + "' does not exist", node.getLineNumber(), node.getColumnNumber());
             }
@@ -239,7 +236,7 @@ public class TypeCheckVisitor extends ReflectiveASTVisitor {
             if (node.statementNodes != null) {
                 node.statementNodes.forEach(s -> s.accept(this));
             }
-
+            node.ifConditionNode.setType(node.ifConditionNode.expressionNode.getType());
             if (node.elseIfStructNodes != null) {
                 node.elseIfStructNodes.forEach(s -> s.accept(this));
             }
@@ -251,6 +248,15 @@ public class TypeCheckVisitor extends ReflectiveASTVisitor {
             throw new NullPointerException();
         }
     }
+
+//    public void Visit(IfConditionNode node) {
+//        if (node != null) {
+//            if (node.expressionNode != null) {
+//                node.expressionNode.accept(this);
+//            }
+//            node.setType(node.expressionNode.getType());
+//        }
+//    }
 
 
     public void Visit(ElseIfStructNode node) {
@@ -400,7 +406,6 @@ public class TypeCheckVisitor extends ReflectiveASTVisitor {
 
     public void Visit(ValueNode node) {
         if (node != null) {
-
             if (node.STRING != null) {
                 node.setType(Type.String);
             } else if (node.INUM != null) {
@@ -417,8 +422,6 @@ public class TypeCheckVisitor extends ReflectiveASTVisitor {
                 } else {
                     errors.addEntry(ErrorType.UNDECLARED_VARIABLE, "The variable: " + node.VARIABLE.toString() + " has not been declared", node.getLineNumber(), node.getColumnNumber());
                 }
-
-
             } else if (node.BOOLEAN != null) {
                 node.setType(Type.Boolean);
             } else if (node.cellNode != null) {

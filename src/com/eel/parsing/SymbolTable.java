@@ -124,6 +124,7 @@ public class SymbolTable {
     }
 
     public void insertParam(String id, Attributes attributes) {
+        attributes.setScope(getCurrentScope());
         currentScope.getParams().put(id, attributes);
     }
 

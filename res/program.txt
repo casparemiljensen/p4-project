@@ -1,12 +1,11 @@
 procedure Main()
-let y = 5
-let x = 6
-Secondary(5, 6)
+let i
+Secondary(i)
+let h = 4
 endProcedure
 
-procedure Secondary(h,g)
-let u = h-g
+procedure Secondary(e)
+let f = e+1
 endProcedure
-
 
 

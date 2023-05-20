@@ -7,11 +7,6 @@ import com.eel.errors.Errors;
 import com.eel.helpers.HashCodeGenerator;
 import kotlin.NotImplementedError;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 public class VariableDeclarationVisitor extends ReflectiveASTVisitor {
 
     SymbolTable symbolTable;
