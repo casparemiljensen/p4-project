@@ -1,11 +1,9 @@
 procedure Main()
-let i
-Secondary(i)
-let h = 4
-endProcedure
-
-procedure Secondary(e)
-let f = e+1
+let i = Sec()+3
 endProcedure
 
 
+procedure Sec()
+let i = ""
+return i
+endProcedure

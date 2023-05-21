@@ -29,17 +29,11 @@ public class TypeCheckVisitor extends ReflectiveASTVisitor {
             List<ProcedureNode> procs = node.procedureNodes.stream().filter(p -> p.procedureDeclarationNode.procedureToken.toString().equals("Main")).collect(Collectors.toList());
             if (procs.size() > 0) {
                 procs.get(0).accept(this);
-                var obj = procs.get(0);
-                System.out.println(obj);
             } else {
                 errors.addEntry(ErrorType.MAIN_PROCEDURE_MISSING, " no Main procedure declared");
             }
         }
-//            for (ProcedureNode procedureNode : node.procedureNodes) {
-//                symbolTable.enterScope(procedureNode.procedureDeclarationNode.procedureToken.toString());
-//                procedureNode.accept(this);
-//                symbolTable.leaveScope();
-//            }
+
     }
 
     public void Visit(ProcedureNode node) {
@@ -48,6 +42,17 @@ public class TypeCheckVisitor extends ReflectiveASTVisitor {
             symbolTable.enterScope(node.procedureDeclarationNode.procedureToken.toString());
             for (StatementNode statementNode : node.StatementNodes) {
                 statementNode.accept(this);
+            }
+
+//             Getting all returnStmtNodes from current scope
+            List<StatementNode> returnNodes = node.StatementNodes.stream().filter(s -> s.returnNode != null).collect(Collectors.toList());
+            if (returnNodes.size() > 0) {
+                Attributes rtrAttr = symbolTable.lookupSymbol(returnNodes.get(0).returnNode.returnToken.toString());
+
+                // Update the datatype of a procedure if it contains a return stmt
+                Attributes procAttr = symbolTable.lookupSymbol(node.procedureDeclarationNode.procedureToken.toString());
+                procAttr.setDataType(rtrAttr.getDataType());
+                node.setType(rtrAttr.getDataType());
             }
             symbolTable.leaveScope();
         }
@@ -77,6 +82,7 @@ public class TypeCheckVisitor extends ReflectiveASTVisitor {
             node.assignmentNode.accept(this);
         } else if (node.returnNode != null) {
             node.returnNode.accept(this);
+            node.setType(node.returnNode.getType());
         } else
             throw new NotImplementedError();
     }
@@ -164,8 +170,7 @@ public class TypeCheckVisitor extends ReflectiveASTVisitor {
                             break;
                         }
                     }
-
-
+                    symbolTable.leaveScope(node.PROCEDURE.toString());
                 }
 //                }
                 else {
@@ -173,8 +178,11 @@ public class TypeCheckVisitor extends ReflectiveASTVisitor {
 //                        errors.addEntry(ErrorType.PARAMETERS_COUNT_MISMATCH, symbolTable.currentScope.getParams().size() + " parameter(s) expected, 0 provided", node.getLineNumber(), node.getColumnNumber());
 //                    }
                 }
-                symbolTable.leaveScope(node.PROCEDURE.toString());
                 findProcedure(node.PROCEDURE.toString()).accept(this);
+
+                Attributes attributes = symbolTable.lookupSymbol(node.PROCEDURE.toString());
+                node.setType(attributes.getDataType());
+
             } else {
                 errors.addEntry(ErrorType.UNDECLARED_FUNCTION_WARNING, " A procedure with the name: '" + node.PROCEDURE.toString() + "' does not exist", node.getLineNumber(), node.getColumnNumber());
             }
@@ -248,17 +256,7 @@ public class TypeCheckVisitor extends ReflectiveASTVisitor {
             throw new NullPointerException();
         }
     }
-
-//    public void Visit(IfConditionNode node) {
-//        if (node != null) {
-//            if (node.expressionNode != null) {
-//                node.expressionNode.accept(this);
-//            }
-//            node.setType(node.expressionNode.getType());
-//        }
-//    }
-
-
+    
     public void Visit(ElseIfStructNode node) {
         if (node != null) {
             String hashedName = HashCodeGenerator.generateHashNameFromObject("elseif", node);
@@ -440,7 +438,14 @@ public class TypeCheckVisitor extends ReflectiveASTVisitor {
                     else if (node.cellNode.CELL_METHOD.toString().equals(".format")) node.setType(node.getType());
                     else throw new NotImplementedError();
                 }
+            } else if (node.functionCallNode != null) {
+                node.functionCallNode.accept(this);
+                node.setType(node.functionCallNode.getType());
+            } else if (node.procedureCallNode != null) {
+                node.procedureCallNode.accept(this);
+                node.setType(node.procedureCallNode.getType());
             }
+
             if (node.methodNode != null) {
                 node.methodNode.accept(this);
             }
@@ -463,17 +468,14 @@ public class TypeCheckVisitor extends ReflectiveASTVisitor {
 
     public void Visit(ReturnNode node) {
         if (node != null) {
-            if (symbolTable.lookupSymbol("Return") == null) throw new NullPointerException();
+            if (symbolTable.lookupSymbol(node.returnToken.toString()) == null) throw new NullPointerException();
             node.expressionNode.accept(this);
             node.setType(node.expressionNode.getType());
-
-            Attributes attributes = symbolTable.lookupSymbol("Return");
+            Attributes attributes = symbolTable.lookupSymbol(node.returnToken.toString());
             symbolTable.enterScope(attributes.getScope().getScopeName());
             attributes.setDataType(node.expressionNode.getType());
             symbolTable.leaveScope(attributes.getScope().getScopeName());
-            node.setType(node.expressionNode.getType());
-
-            symbolTable.insertSymbol("Return", attributes);
+            symbolTable.insertSymbol(node.returnToken.toString(), attributes);
         } else throw new NullPointerException();
     }
 

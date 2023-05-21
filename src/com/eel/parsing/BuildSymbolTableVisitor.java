@@ -370,7 +370,7 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
             if (symbolTable.CanBeAdded("Return")) {
                 node.setType(Type.Return);
                 Attributes attributes = new Attributes(Type.Return, Type.Unresolved);
-                symbolTable.insertSymbol("Return", attributes);
+                symbolTable.insertSymbol(node.returnToken.toString(), attributes);
             } else
                 errors.addEntry(ErrorType.DUPLICATE_RETURN, "procedure " + symbolTable.currentScope.getScopeName().toString() + " already has a return statement", node.getLineNumber(), node.getColumnNumber());
         } else throw new NullPointerException();

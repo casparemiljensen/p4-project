@@ -49,6 +49,12 @@ public class VariableDeclarationVisitor extends ReflectiveASTVisitor {
             node.cellNode.accept(this);
             node.assignmentNode.accept(this);
         } else if (node.returnNode != null) {
+
+            if (node.returnNode.expressionNode.valueExprNode.valueNode.VARIABLE != null) {
+                if (symbolTable.lookupSymbol(node.returnNode.expressionNode.valueExprNode.valueNode.VARIABLE.toString()) == null) {
+                    errors.addEntry(ErrorType.UNDECLARED_VARIABLE, "The variable " + node.returnNode.expressionNode.valueExprNode.valueNode.VARIABLE.toString() + " has not been declared", node.getLineNumber(), node.getColumnNumber());
+                }
+            }
             node.returnNode.accept(this);
         } else
             throw new NotImplementedError();
@@ -173,6 +179,21 @@ public class VariableDeclarationVisitor extends ReflectiveASTVisitor {
             symbolTable.leaveScope(hashedName);
         }
     }
+
+//    public void Visit(ReturnNode node) {
+//        if (node != null) {
+//            if (symbolTable.lookupSymbol(node.returnToken.toString()) != null) {
+//
+//                if (node.expressionNode != null) {
+//                    node.expressionNode.accept(this);
+//                    System.out.println(node.expressionNode.getType());
+//                }
+//
+//            } else {
+//                System.out.println("Error");
+//            }
+//        }
+//    }
 
     @Override
     public void defaultVisit(Object o) {
