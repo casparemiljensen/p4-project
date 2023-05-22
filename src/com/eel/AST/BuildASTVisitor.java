@@ -196,7 +196,6 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
         return new BinaryOperatorNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), (ctx.PLUSORMINUS() != null) ? ctx.PLUSORMINUS() : ctx.MULTORDIV());
     }
 
-
     @Override
     public ValueNode visitValue(eelParser.ValueContext ctx) {
         AbstractNode node = null;
@@ -231,8 +230,7 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
                 ctx.start.getLine(),
                 ctx.start.getCharPositionInLine(), node, terminal, terminalType, (ctx.method() != null) ? visitMethod(ctx.method()) : null);
     }
-
-
+  
     @Override
     public MethodNode visitMethod(eelParser.MethodContext ctx) {
         return new MethodNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.METHODS(),
@@ -242,7 +240,6 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
 
     @Override
     public ActualParamsNode visitActualParams(eelParser.ActualParamsContext ctx) {
-
         List<ValueNode> valueNodes = new ArrayList<>();
         for (eelParser.ValueContext child : ctx.value()) {
             valueNodes.add(visitValue(child));
@@ -264,7 +261,7 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
         List<ElseIfStructNode> ElseIfStructNodes = CreateList(input1, ElseIfStructNode.class);
         return new IfStructNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), visitIfCondition(ctx.ifCondition()), "then", statements, ElseIfStructNodes, (ctx.elseStruct() != null) ? visitElseStruct(ctx.elseStruct()) : null);
     }
-
+  
     @Override
     public IfConditionNode visitIfCondition(eelParser.IfConditionContext ctx) {
         return new IfConditionNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "if",
@@ -305,7 +302,7 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
 
         return new CellNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), (ctx.SINGLE_CELL() != null ? ctx.SINGLE_CELL() : null), (ctx.RANGE() != null ? ctx.RANGE() : null), (ctx.CELL_METHOD() != null ? ctx.CELL_METHOD() : null));
     }
-
+  
     private static <T> Collection<T> nullSafe(Collection<T> c) {
         return (c == null) ? Collections.<T>emptyList() : c;
     }

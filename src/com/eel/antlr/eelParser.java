@@ -1,4 +1,4 @@
-// Generated from C:/Users/runeb/Desktop/hubben/p4-project/res\eel.g4 by ANTLR 4.12.0
+// Generated from C:/Users/08mik/IdeaProjects/p4-project/res\eel.g4 by ANTLR 4.12.0
 package com.eel.antlr;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;

@@ -39,7 +39,6 @@ public class SymbolTableUnitTests {
     }
     @Test
     public void ProcedureMustImplementOneStatement() {
-        //Token token = new CommonToken(0, "main");
         TerminalNode terminalNode = new TerminalNodeImpl(new TestToken("test", 0));
 
         NotImplementedError exception = assertThrows(NotImplementedError.class, ()->{

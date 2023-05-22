@@ -23,13 +23,12 @@ public abstract class AbstractNode implements ReflectiveVisitable {
         this.type = type;
     }
 
-    public int getLineNumber() {
-        return lineNumber;
-    }
+    public int getLineNumber() { return lineNumber; }
 
     public int getColumnNumber() {
         return colNumber;
     }
+    
 
     public AbstractNode() {}
     public AbstractNode(int lineNumber, int colNumber) {

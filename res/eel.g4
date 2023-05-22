@@ -61,11 +61,11 @@ MULTORDIV: '*'|'/';
 ASSIGNMENT: '=';
 
 //types
-BOOLEAN: 'true'|'false';
 VARIABLE: [a-z][a-zA-Z0-9]*;
 INUM: [0-9]+;
 FLOAT: INUM'.'INUM;
 STRING: '"' ~[\r\n"]* '"';
+BOOLEAN: 'true'|'false';
 CELL: (([A-Z]+[1-9][0-9]*)|([1-9][0-9]*','[1-9][0-9]*));
 SINGLE_CELL: '('CELL')';
 RANGE: '{'(CELL(':'CELL)?(';'CELL(':'CELL)?)*)'}';
