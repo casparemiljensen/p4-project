@@ -616,5 +616,4 @@ public class Generator extends ReflectiveASTVisitor {
     private String getIndentation() {
         return " ".repeat(indentLevel * SPACES_PER_INDENT);
     }
-
 }
