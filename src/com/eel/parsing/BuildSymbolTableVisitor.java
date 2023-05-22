@@ -324,7 +324,7 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
     public void Visit(FormalParametersNode node) {
         if (node != null) {
 
-            for (TerminalNode t : node.IDs) {
+            for (TerminalNode t : node.variables) {
                 if (symbolTable.CanBeAdded(t.toString())) {
                     node.setType(Type.FormalParam);
                     Attributes attributes = new Attributes(node.getType(), Type.Unresolved);

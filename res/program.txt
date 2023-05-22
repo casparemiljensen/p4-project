@@ -1,9 +1,4 @@
 procedure Main()
-let i = Sec()+3
-endProcedure
-
-
-procedure Sec()
-let i = ""
-return i
+    let h = AVERAGE(3, 4)
+    print(h)
 endProcedure

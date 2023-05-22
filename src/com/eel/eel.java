@@ -59,7 +59,7 @@ class Eel {
                 if (!typeCheckErrors.containsErrors()) {
                     Generator generator = new Generator();
                     System.out.println("----------------TS----------------");
-//                    generator.performVisit(ast);
+                    generator.performVisit(ast);
                 } else {
                     System.out.println("[ -- ERRORS -- ]");
                     System.out.println("[TypeCheck] Code contains " + typeCheckErrors.errors.stream().count() + " errors:");
