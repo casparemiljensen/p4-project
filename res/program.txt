@@ -1,8 +1,4 @@
 procedure Main()
-    (5,3).value = "hejsa"
-    (B3).value = "hejsa"
-
-    (5,3).format = "backgroundColor:red"
-    (B3).format = "textColor:blue"
-
+    let h = AVERAGE(3, 4)
+    print(h)
 endProcedure

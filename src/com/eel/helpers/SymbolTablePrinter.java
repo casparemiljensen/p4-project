@@ -21,12 +21,17 @@ public class SymbolTablePrinter {
             Attributes attributes = entry.getValue();
             System.out.println("---   Symbol   ---");
             System.out.println("  Name: " + symbol);
-            System.out.println("  Attributes:");
-            System.out.println("  Type: " + attributes.getType());
-            if (attributes.getScope() != null) {
-                System.out.println("  Scope: " + attributes.getScope().getScopeName());
+            if (attributes != null) {
+                if (attributes.getType() != null) {
+                    System.out.println("  Attributes:");
+                    System.out.println("  Type: " + attributes.getType());
+                }
+                if (attributes.getScope() != null) {
+                    System.out.println("  Scope: " + attributes.getScope().getScopeName());
+                }
+                System.out.println("  DataType: " + attributes.getDataType());
+
             }
-            System.out.println("  DataType: " + attributes.getDataType());
             System.out.println();
         }
         for (Map.Entry<String, Attributes> entry : scope.getParams().entrySet()) {

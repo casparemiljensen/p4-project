@@ -8,8 +8,6 @@ import com.eel.helpers.HashCodeGenerator;
 import kotlin.NotImplementedError;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import java.util.Objects;
-
 public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
     SymbolTable symbolTable;
     Errors errors;
@@ -32,17 +30,20 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
     public void Visit(ProcedureNode node) {
         if (symbolTable.lookupSymbol(node.procedureDeclarationNode.procedureToken.toString()) == null) {
             node.setType(Type.Procedure);
-            Attributes attributes = new Attributes(Type.Procedure, Type.Void, symbolTable.currentScope);
+            Attributes attributes = new Attributes(Type.Procedure, Type.Void);
             symbolTable.insertSymbol(node.procedureDeclarationNode.procedureToken.toString(), attributes);
 
             if (symbolTable.addScope(node.procedureDeclarationNode.procedureToken.toString())) {
-                for (StatementNode statementNode : node.StatementNodes) {
-                    statementNode.accept(this);
-                }
 
                 if (node.procedureDeclarationNode.formalParametersNode != null) {
                     node.procedureDeclarationNode.formalParametersNode.accept(this);
                 }
+
+
+                for (StatementNode statementNode : node.StatementNodes) {
+                    statementNode.accept(this);
+                }
+
 
                 symbolTable.leaveScope(node.procedureDeclarationNode.procedureToken.toString());
             } else {
@@ -83,13 +84,13 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
 
     public void Visit(DeclarationNode node) {
         if (node != null) {
-            if (symbolTable.lookupSymbol(node.IdToken.toString()) == null) {
+            if (symbolTable.CanBeAdded(node.IdToken.toString())) {
                 var type = Type.Uninitialized;
                 if (node.assignmentNode != null) {
                     type = Type.Initialized;
                     node.assignmentNode.accept(this);
                 }
-                Attributes attributes = new Attributes(Type.Variable, type, symbolTable.currentScope);
+                Attributes attributes = new Attributes(Type.Variable, type);
                 symbolTable.insertSymbol(node.IdToken.toString(), attributes);
             } else {
                 errors.addEntry(ErrorType.DUPLICATE_VARIABLE, "Variable " + node.IdToken + "' already exists", node.getLineNumber(), node.getColumnNumber());
@@ -112,8 +113,8 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
 
     public void Visit(RepeatStructNode node) {
         if (node != null) {
+
             String hashedName = HashCodeGenerator.generateHashNameFromObject("repeat", node);
-          
             if (symbolTable.addScope(hashedName)) {
 
                 node.expressionNode.accept(this);
@@ -204,127 +205,132 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
             throw new NullPointerException();
     }
 
-    public void Visit(ExpressionNode node) {
-        if (node != null) {
-            if (node.parenExprNode != null) {
-                node.parenExprNode.accept(this);
-                node.setType(node.parenExprNode.getType());
-            } else if (node.unaryExprNode != null) {
-                node.unaryExprNode.accept(this);
-                node.setType(node.unaryExprNode.getType());
-            } else if (node.infixExprNode != null) {
-                node.infixExprNode.accept(this);
-                node.setType(node.infixExprNode.getType());
-            } else if (node.valueExprNode != null) {
-                node.valueExprNode.accept(this);
-                node.setType(node.valueExprNode.getType());
-            } else
-                throw new NotImplementedError();
-        } else
-            throw new NullPointerException();
-    }
+//    public void Visit(ExpressionNode node) {
+//        if (node != null) {
+//            if (node.parenExprNode != null) {
+//                node.parenExprNode.accept(this);
+//                node.setType(node.parenExprNode.getType());
+//            } else if (node.unaryExprNode != null) {
+//                node.unaryExprNode.accept(this);
+//                node.setType(node.unaryExprNode.getType());
+//            } else if (node.infixExprNode != null) {
+//                node.infixExprNode.accept(this);
+//                node.setType(node.infixExprNode.getType());
+//            } else if (node.valueExprNode != null) {
+//                node.valueExprNode.accept(this);
+//                node.setType(node.valueExprNode.getType());
+//                node.setName(node.valueExprNode.getName());
+//            } else
+//                throw new NotImplementedError();
+//        } else
+//            throw new NullPointerException();
+//    }
+//
+//    public void Visit(ParenExprNode node) {
+//        // Hackish char null check
+//        if (node != null) {
+//            if (node.leftPar != '\u0000' && node.expressionNode != null && node.rightPar != '\u0000') {
+//                node.expressionNode.accept(this);
+//                node.setType(node.expressionNode.getType());
+//            }
+//        } else
+//            throw new NullPointerException();
+//    }
 
-    public void Visit(ParenExprNode node) {
-        // Hackish char null check
-        if (node != null) {
-            if (node.leftPar != '\u0000' && node.expressionNode != null && node.rightPar != '\u0000') {
-                node.expressionNode.accept(this);
-                node.setType(node.expressionNode.getType());
-            }
-        } else
-            throw new NullPointerException();
-    }
+//    public void Visit(UnaryExprNode node) {
+//        if (node != null) {
+//            if (node.right != null && node.operator != null) {
+//                node.right.accept(this);
+//                node.setType(node.right.getType());
+//            }
+//        } else
+//            throw new NullPointerException();
+//    }
 
-    public void Visit(UnaryExprNode node) {
-        if (node != null) {
-            if (node.right != null && node.operator != null) {
-                node.right.accept(this);
-                node.setType(node.right.getType());
-            }
-        } else
-            throw new NullPointerException();
-    }
+//    public void Visit(InfixExprNode node) {
+//        if (node != null) {
+//            if (node.left != null && node.operatorNode != null && node.right != null) {
+//                node.left.accept(this);
+//                node.operatorNode.accept(this);
+//                node.right.accept(this);
+//            }
+//
+//        } else
+//            throw new NullPointerException();
+//    }
 
-    public void Visit(InfixExprNode node) {
-        if (node != null) {
-            if (node.left != null && node.operatorNode != null && node.right != null) {
-                node.left.accept(this);
-                node.operatorNode.accept(this);
-                node.right.accept(this);
-            }
+//    public void Visit(ValueExprNode node) {
+//        if (node != null) {
+//            if (node.valueNode != null) {
+//                node.valueNode.accept(this);
+//                node.setType(node.valueNode.getType());
+//                node.setName(node.valueNode.getName());
+//            }
+//        } else
+//            throw new NullPointerException();
+//    }
 
-        } else
-            throw new NullPointerException();
-    }
+//    public void Visit(ValueNode node) {
+//        if (node != null) {
+//            if (node.STRING != null) {
+//                node.setType(Type.String);
+//            } else if (node.INUM != null) {
+//                node.setType(Type.Integer);
+//            } else if (node.FLOAT != null) {
+//                node.setType(Type.Float);
+//            } else if (node.VARIABLE != null) {
+//                node.setType(Type.Variable);
+//                node.setName(node.VARIABLE.toString());
+//            } else if (node.BOOLEAN != null) {
+//                node.setType(Type.Boolean);
+//            } else if (node.cellNode != null) {
+//                if (node.cellNode.SINGLE_CELL != null)
+//                    node.setType(Type.SingleCell);
+//                else if (node.cellNode.RANGE != null)
+//                    node.setType(Type.Range);
+//                else throw new NotImplementedError();
+//
+//                // Skal vi stadig sætte de her typer???
+//
+//                if (node.cellNode.CELL_METHOD != null) {
+//                    if (node.cellNode.CELL_METHOD.toString() == "value" && node.cellNode.SINGLE_CELL != null)
+//                        node.setType(Type.Integer);
+//                    else if (node.cellNode.CELL_METHOD.toString() == "value" && node.cellNode.RANGE != null)
+//                        node.setType(Type.Array);
+//                    else if (node.cellNode.CELL_METHOD.toString() == "format") node.setType(node.getType());
+//                    else throw new NotImplementedError();
+//                }
+//            }
+//            if (node.methodNode != null) {
+//                node.methodNode.accept(this);
+//            }
+//        } else
+//            throw new NullPointerException();
+//    }
 
-    public void Visit(ValueExprNode node) {
-        if (node != null) {
-            if (node.valueNode != null) {
-                node.valueNode.accept(this);
-                node.setType(node.valueNode.getType());
-            }
-        } else
-            throw new NullPointerException();
-    }
-
-    public void Visit(ValueNode node) {
-        if (node != null) {
-            if (node.STRING != null) {
-                node.setType(Type.String);
-            } else if (node.INUM != null) {
-                node.setType(Type.Integer);
-            } else if (node.FLOAT != null) {
-                node.setType(Type.Float);
-            } else if (node.VARIABLE != null) {
-                node.setType(Type.Variable);
-            } else if (node.BOOLEAN != null) {
-                node.setType(Type.Boolean);
-            } else if (node.cellNode != null) {
-                if (node.cellNode.SINGLE_CELL != null)
-                    node.setType(Type.SingleCell);
-                else if (node.cellNode.RANGE != null)
-                    node.setType(Type.Range);
-                else throw new NotImplementedError();
-
-                // Skal vi stadig sætte de her typer???
-
-                if (node.cellNode.CELL_METHOD != null) {
-                    if (Objects.equals(node.cellNode.CELL_METHOD.toString(), ".value") && node.cellNode.SINGLE_CELL != null)
-                        node.setType(Type.Integer);
-                    else if (Objects.equals(node.cellNode.CELL_METHOD.toString(), ".value") && node.cellNode.RANGE != null)
-                        node.setType(Type.Array);
-                    else if (Objects.equals(node.cellNode.CELL_METHOD.toString(), ".format")) node.setType(node.getType());
-                    else throw new NotImplementedError();
-                }
-            }
-            if (node.methodNode != null) {
-                node.methodNode.accept(this);
-            }
-        } else
-            throw new NullPointerException();
-    }
-
-    public void Visit(OperatorNode node) {
-        if (node != null) {
-            if (node.binaryOperatorNode != null) {
-                node.setSymbol(node.binaryOperatorNode.binaryOperator.toString());
-            } else if (node.booleanOperatorNode != null) {
-                node.setSymbol(node.booleanOperatorNode.booleanOperator.toString());
-            } else if (node.assignment != null) {
-                node.setSymbol("=");
-            } else throw new NotImplementedError();
-        } else
-            throw new NullPointerException();
-    }
+//    public void Visit(OperatorNode node) {
+//        if (node != null) {
+//            if (node.binaryOperatorNode != null) {
+//                node.setSymbol(node.binaryOperatorNode.binaryOperator.toString());
+//            } else if (node.booleanOperatorNode != null) {
+//                node.setSymbol(node.booleanOperatorNode.booleanOperator.toString());
+//            } else if (node.assignment != null) {
+//                node.setSymbol("=");
+//            } else throw new NotImplementedError();
+//        } else
+//            throw new NullPointerException();
+//    }
 
     public void Visit(FormalParametersNode node) {
         if (node != null) {
 
             for (TerminalNode t : node.variables) {
-                if (symbolTable.lookupSymbol(t.toString()) == null) {
+                if (symbolTable.CanBeAdded(t.toString())) {
                     node.setType(Type.FormalParam);
-                    Attributes attributes = new Attributes(node.getType(), Type.Unresolved, symbolTable.currentScope);
+                    Attributes attributes = new Attributes(node.getType(), Type.Unresolved);
                     symbolTable.insertParam(t.toString(), attributes);
+                } else {
+                    errors.addEntry(ErrorType.DUPLICATE_VARIABLE, " cannot add the formal parameter: " + t.toString() + " it is already declared elsewhere", node.getLineNumber(), node.getColumnNumber());
                 }
             }
 
@@ -332,7 +338,7 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
             throw new NullPointerException();
     }
 
-//    public void Visit(CellNode node) {
+    //    public void Visit(CellNode node) {
 //        if (node != null) {
 //
 //            if (node.SINGLE_CELL != null) {
@@ -359,6 +365,16 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
 //        } else
 //            throw new NullPointerException();
 //    }
+    public void Visit(ReturnNode node) {
+        if (node != null) {
+            if (symbolTable.CanBeAdded("Return")) {
+                node.setType(Type.Return);
+                Attributes attributes = new Attributes(Type.Return, Type.Unresolved);
+                symbolTable.insertSymbol(node.returnToken.toString(), attributes);
+            } else
+                errors.addEntry(ErrorType.DUPLICATE_RETURN, "procedure " + symbolTable.currentScope.getScopeName().toString() + " already has a return statement", node.getLineNumber(), node.getColumnNumber());
+        } else throw new NullPointerException();
+    }
 
 
     @Override

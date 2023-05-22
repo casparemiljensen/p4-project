@@ -24,8 +24,7 @@ public class SymbolTable {
             scopeStack.push(currentScope);
             currentScope = scope;
             return true;
-        }
-        else return false;
+        } else return false;
     }
 
     public void leaveScope() {
@@ -81,35 +80,51 @@ public class SymbolTable {
     }
 
     //Returns the scope or null if the scope was not found
-    public EelScope lookupScope(String scopeName){
+    public EelScope lookupScope(String scopeName) {
         return this.findScope(scopeName, globalScope);
     }
 
-    //Returns the attributes for the symbol that is being looked up
     public Attributes lookupSymbol(String symbol) {
         EelScope scope = currentScope;
 
         do {
-            //Enters if the symbol is a parameter
+            // Enters if the symbol is a parameter
+
             if (!scope.getParams().isEmpty() && scope.getParams().containsKey(symbol)) {
                 return scope.getParams().get(symbol);
             }
-            //Enters if the symbol is a regular symbol and it is found in the scope being searched through
+
+            // Enters if the symbol is a regular symbol and it is found in the scope being searched through
             if (!scope.getSymbols().isEmpty() && scope.getSymbols().containsKey(symbol)) {
                 return scope.getSymbols().get(symbol);
             }
-            //Goes to the outer scope
-        } while((scope = scope.getParent()) != null);
 
-        //Returns null if the symbol was not found in an accessible scope
+            // Goes to the outer scope
+            scope = scope.getParent();
+
+        } while (scope != null);
+
+        // Returns null if the symbol was not found in an accessible scope
         return null;
     }
 
+    public boolean CanBeAdded(String symbol) {
+        // A symbol can be added if it is not in the current scope... It is allowed to be in a parent scope.
+        boolean canBeAdded = true;
+        EelScope scope = currentScope;
+        if (!scope.getParams().isEmpty() && scope.getParams().containsKey(symbol) || !scope.getSymbols().isEmpty() && scope.getSymbols().containsKey(symbol)) {
+            return false;
+        }
+        return true;
+    }
+
     public void insertSymbol(String symbol, Attributes attributes) {
+        attributes.setScope(getCurrentScope());
         currentScope.getSymbols().put(symbol, attributes);
     }
 
-    public void insertParam(String id, Attributes attributes){
+    public void insertParam(String id, Attributes attributes) {
+        attributes.setScope(getCurrentScope());
         currentScope.getParams().put(id, attributes);
     }
 
