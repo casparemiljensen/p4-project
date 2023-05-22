@@ -15,5 +15,6 @@
     <orderEntry type="library" exported="" name="antlr.antlr4" level="project" />
     <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
     <orderEntry type="library" exported="" name="junit" level="project" />
+    <orderEntry type="library" name="netbeans.external.apache.commons.io" level="project" />
   </component>
 </module>
