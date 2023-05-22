@@ -33,7 +33,6 @@ public class TypeCheckVisitor extends ReflectiveASTVisitor {
                 errors.addEntry(ErrorType.MAIN_PROCEDURE_MISSING, " no Main procedure declared");
             }
         }
-
     }
 
     public void Visit(ProcedureNode node) {
@@ -115,76 +114,62 @@ public class TypeCheckVisitor extends ReflectiveASTVisitor {
     public void Visit(ProcedureCallNode node) {
         if (node != null) {
             // Updating the types of the formalParams to that of the actualParams...
-            if (symbolTable.lookupSymbol(node.PROCEDURE.toString()) != null) {
-                // Retrieve procedure information from the symbol table
-                // Check count for both
-                if (node.actualParamsNode != null) {
-                    // Making sure that amount of formalParams == actualParams
-//                    if (symbolTable.currentScope.getParams().size() != node.actualParamsNode.valuesNodes.size()) {
-//                        errors.addEntry(ErrorType.PARAMETERS_COUNT_MISMATCH, symbolTable.currentScope.getParams().size() + " parameters expected, " + node.actualParamsNode.valuesNodes.size() + " provided", node.getLineNumber(), node.getColumnNumber());
-//                    }
-//                    else {
-                    // Only visiting if there is some actualParams
-                    node.actualParamsNode.accept(this);
-                    symbolTable.enterScope(node.PROCEDURE.toString());
+            if (symbolTable.lookupSymbol(node.PROCEDURE.toString()) == null) errors.addEntry(ErrorType.UNDECLARED_FUNCTION_WARNING, " A procedure with the name: '" + node.PROCEDURE.toString() + "' does not exist", node.getLineNumber(), node.getColumnNumber());
 
-                    List<ValueNode> vars = node.actualParamsNode.valuesNodes.stream().filter(v -> v.getType() == Type.Variable).collect(Collectors.toList());
-                    if (vars.size() > 0) {
-                        for (ValueNode v : vars) {
-                            if (symbolTable.lookupSymbol(v.VARIABLE.toString()) == null) {
-                                errors.addEntry(ErrorType.UNDECLARED_VARIABLE, "A variable with the name: " + v.VARIABLE.toString() + " has not been declared ", v.getLineNumber(), v.getColumnNumber());
-                            } else if (symbolTable.lookupSymbol(v.VARIABLE.toString()) != null) {
-                                // THIS IS NOT BEING HIT... It is maybe because our lookup symbol function has been added a boolean for nest checks...
-                                Attributes attr = symbolTable.lookupSymbol(v.VARIABLE.toString());
-                                if (attr.getDataType() == Type.Uninitialized) {
-                                    errors.addEntry(ErrorType.UNINITIALIZED_VARIABLE, "A variable with the name: " + v.VARIABLE.toString() + " has not been initialized, and will infer null type ", v.getLineNumber(), v.getColumnNumber());
-                                }
+            // Retrieve procedure information from the symbol table
+            // Check count for both
+            if (node.actualParamsNode != null) {
+
+                // Only visiting if there are some actualParams
+                node.actualParamsNode.accept(this);
+                symbolTable.enterScope(node.PROCEDURE.toString());
+
+                List<ValueNode> vars = node.actualParamsNode.valuesNodes.stream().filter(v -> v.getType() == Type.Variable).collect(Collectors.toList());
+                if (vars.size() > 0) {
+                    for (ValueNode v : vars) {
+                        if (symbolTable.lookupSymbol(v.VARIABLE.toString()) == null) {
+                            errors.addEntry(ErrorType.UNDECLARED_VARIABLE, "A variable with the name: " + v.VARIABLE.toString() + " has not been declared ", v.getLineNumber(), v.getColumnNumber());
+                        } else if (symbolTable.lookupSymbol(v.VARIABLE.toString()) != null) {
+                            Attributes attr = symbolTable.lookupSymbol(v.VARIABLE.toString());
+                            if (attr.getDataType() == Type.Uninitialized) {
+                                errors.addEntry(ErrorType.UNINITIALIZED_VARIABLE, "A variable with the name: " + v.VARIABLE.toString() + " has not been initialized, and will infer null type ", v.getLineNumber(), v.getColumnNumber());
                             }
                         }
                     }
+                }
 
-                    // Get the HashMap object from the symbol table
-                    Map<String, Attributes> obj = symbolTable.currentScope.getParams();
+                // Get the HashMap object from the symbol table
+                Map<String, Attributes> obj = symbolTable.currentScope.getParams();
 
-                    // Get the list of actual parameters
-                    List<ValueNode> actualParams = node.actualParamsNode.valuesNodes;
+                // Get the list of actual parameters
+                List<ValueNode> actualParams = node.actualParamsNode.valuesNodes;
 
-                    // Get an iterator over the entry set of the HashMap
-                    Iterator<Map.Entry<String, Attributes>> iterator = obj.entrySet().iterator();
+                // Get an iterator over the entry set of the HashMap
+                Iterator<Map.Entry<String, Attributes>> iterator = obj.entrySet().iterator();
 
-                    // Iterate over the actualParams list and update the values in the HashMap
-                    for (ValueNode paramValue : actualParams) {
-                        if (iterator.hasNext()) {
-                            // Get the next entry from the HashMap
-                            Map.Entry<String, Attributes> entry = iterator.next();
+                // Iterate over the actualParams list and update the values in the HashMap
+                for (ValueNode paramValue : actualParams) {
+                    if (iterator.hasNext()) {
+                        // Get the next entry from the HashMap
+                        Map.Entry<String, Attributes> entry = iterator.next();
 
-                            // Update the value in the entry with the corresponding actual parameter value
-                            Attributes attr = entry.getValue();
-                            attr.setDataType(paramValue.getType());
+                        // Update the value in the entry with the corresponding actual parameter value
+                        Attributes attr = entry.getValue();
+                        attr.setDataType(paramValue.getType());
 
-                            entry.setValue(attr);
-                        } else {
-                            // Handle the case where there are more actual parameters than formal parameters
-                            System.out.println("Error: More actual parameters than formal parameters");
-                            break;
-                        }
+                        entry.setValue(attr);
+                    } else {
+                        // Handle the case where there are more actual parameters than formal parameters
+                        System.out.println("Error: More actual parameters than formal parameters");
+                        break;
                     }
-                    symbolTable.leaveScope(node.PROCEDURE.toString());
                 }
-//                }
-                else {
-//                    if (symbolTable.currentScope.getParams().size() > 0) {
-//                        errors.addEntry(ErrorType.PARAMETERS_COUNT_MISMATCH, symbolTable.currentScope.getParams().size() + " parameter(s) expected, 0 provided", node.getLineNumber(), node.getColumnNumber());
-//                    }
-                }
-                findProcedure(node.PROCEDURE.toString()).accept(this);
-
-                Attributes attributes = symbolTable.lookupSymbol(node.PROCEDURE.toString());
-                node.setType(attributes.getDataType());
-
-            } else {
-                errors.addEntry(ErrorType.UNDECLARED_FUNCTION_WARNING, " A procedure with the name: '" + node.PROCEDURE.toString() + "' does not exist", node.getLineNumber(), node.getColumnNumber());
+                symbolTable.leaveScope(node.PROCEDURE.toString());
             }
+            findProcedure(node.PROCEDURE.toString()).accept(this);
+
+            Attributes attributes = symbolTable.lookupSymbol(node.PROCEDURE.toString());
+            node.setType(attributes.getDataType());
         }
     }
 

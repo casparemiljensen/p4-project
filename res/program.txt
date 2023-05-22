@@ -1,9 +1,9 @@
 procedure Main()
-    let h = Test()+3
-    print(h)
+    let h = {A1:A3}
 endProcedure
 
-procedure Test()
-    let i = 3.5
-    return i
+procedure Example(x)
+
 endProcedure
+
+
