@@ -33,17 +33,11 @@ class Eel {
         var ast = (ProgramNode) new BuildASTVisitor().visit(cst);
         ASTPrinter astPrinter = new ASTPrinter();
         astPrinter.print(ast);
-        System.out.println("");
+        System.out.println();
         BuildSymbolTableVisitor buildSymbolTableVisitor = new BuildSymbolTableVisitor(symbolTable, symbolTableErrors);
         buildSymbolTableVisitor.performVisit(ast);
 
-//        System.out.println();
-//        System.out.println("       --- BEFORE --- ");
-//        SymbolTablePrinter symbolTablePrinter = new SymbolTablePrinter();
-//        symbolTablePrinter.printSymbolTable(symbolTable);
-
         if (!symbolTableErrors.containsErrors()) {
-
             VariableDeclarationVisitor varDclVisitor = new VariableDeclarationVisitor(symbolTable, varDclErrors);
             varDclVisitor.performVisit(ast);
 
@@ -57,8 +51,8 @@ class Eel {
                 symbolTablePrinter.printSymbolTable(symbolTable);
 
                 if (!typeCheckErrors.containsErrors()) {
-                    Generator generator = new Generator();
                     System.out.println("----------------TS----------------");
+                    Generator generator = new Generator();
                     generator.performVisit(ast);
                 } else {
                     System.out.println("[ -- ERRORS -- ]");
@@ -92,6 +86,7 @@ class Eel {
                         System.out.println(indent + "| " + line);
                     }
                 }
+
                 System.out.println();
             }
         }

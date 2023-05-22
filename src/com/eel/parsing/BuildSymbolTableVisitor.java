@@ -34,16 +34,13 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
             symbolTable.insertSymbol(node.procedureDeclarationNode.procedureToken.toString(), attributes);
 
             if (symbolTable.addScope(node.procedureDeclarationNode.procedureToken.toString())) {
-
                 if (node.procedureDeclarationNode.formalParametersNode != null) {
                     node.procedureDeclarationNode.formalParametersNode.accept(this);
                 }
 
-
                 for (StatementNode statementNode : node.StatementNodes) {
                     statementNode.accept(this);
                 }
-
 
                 symbolTable.leaveScope(node.procedureDeclarationNode.procedureToken.toString());
             } else {
@@ -74,8 +71,6 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
             } else if (node.returnNode != null) {
                 node.returnNode.accept(this);
             }
-
-            // And what about the terminalNode?
             else
                 throw new NotImplementedError();
         } else
@@ -116,7 +111,6 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
             String hashedName = HashCodeGenerator.generateHashNameFromObject("repeat", node);
           
             if (symbolTable.addScope(hashedName)) {
-
                 node.expressionNode.accept(this);
 
                 if (node.statementNodes != null) {
@@ -134,10 +128,8 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
 
     public void Visit(IfStructNode node) {
         if (node != null) {
-
             String hashedName = HashCodeGenerator.generateHashNameFromObject("if", node);
             if (symbolTable.addScope(hashedName)) {
-
                 node.ifConditionNode.expressionNode.accept(this);
 
                 if (node.statementNodes != null) {
@@ -165,8 +157,8 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
         if (node != null) {
             String hashedName = HashCodeGenerator.generateHashNameFromObject("elseif", node);
             if (symbolTable.addScope(hashedName)) {
-
                 node.ifConditionNode.expressionNode.accept(this);
+
                 if (node.statementNodes != null) {
                     node.statementNodes.forEach(s -> s.accept(this));
                 }
@@ -183,7 +175,6 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
             String hashedName = HashCodeGenerator.generateHashNameFromObject("else", node);
 
             if (symbolTable.addScope(hashedName)) {
-
                 if (node.statementNode != null) {
                     node.statementNode.forEach(s -> s.accept(this));
                 }
@@ -323,7 +314,6 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
 
     public void Visit(FormalParametersNode node) {
         if (node != null) {
-
             for (TerminalNode t : node.variables) {
                 if (symbolTable.CanBeAdded(t.toString())) {
                     node.setType(Type.FormalParam);
@@ -333,7 +323,6 @@ public class BuildSymbolTableVisitor extends ReflectiveASTVisitor {
                     errors.addEntry(ErrorType.DUPLICATE_VARIABLE, " cannot add the formal parameter: " + t.toString() + " it is already declared elsewhere", node.getLineNumber(), node.getColumnNumber());
                 }
             }
-
         } else
             throw new NullPointerException();
     }

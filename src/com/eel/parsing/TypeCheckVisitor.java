@@ -38,13 +38,12 @@ public class TypeCheckVisitor extends ReflectiveASTVisitor {
 
     public void Visit(ProcedureNode node) {
         if (node.StatementNodes != null) {
-
             symbolTable.enterScope(node.procedureDeclarationNode.procedureToken.toString());
             for (StatementNode statementNode : node.StatementNodes) {
                 statementNode.accept(this);
             }
 
-//             Getting all returnStmtNodes from current scope
+            // Getting all returnStmtNodes from current scope
             List<StatementNode> returnNodes = node.StatementNodes.stream().filter(s -> s.returnNode != null).collect(Collectors.toList());
             if (returnNodes.size() > 0) {
                 Attributes rtrAttr = symbolTable.lookupSymbol(returnNodes.get(0).returnNode.returnToken.toString());
@@ -237,17 +236,19 @@ public class TypeCheckVisitor extends ReflectiveASTVisitor {
 
     public void Visit(IfStructNode node) {
         if (node != null) {
-
             String hashedName = HashCodeGenerator.generateHashNameFromObject("if", node);
             symbolTable.enterScope(hashedName);
             node.ifConditionNode.expressionNode.accept(this);
+
             if (node.statementNodes != null) {
                 node.statementNodes.forEach(s -> s.accept(this));
             }
             node.ifConditionNode.setType(node.ifConditionNode.expressionNode.getType());
+
             if (node.elseIfStructNodes != null) {
                 node.elseIfStructNodes.forEach(s -> s.accept(this));
             }
+
             if (node.elseStructNode != null) {
                 node.elseStructNode.accept(this);
             }

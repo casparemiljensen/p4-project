@@ -26,9 +26,11 @@ public class Generator extends ReflectiveASTVisitor {
         if (node != null) {
             strBlr.append(getIndentation()).append("function main (workbook: ExcelScript.Workbook) {\n");
             increaseIndent();
+
             for (ProcedureNode procedureNode : node.procedureNodes) {
                 procedureNode.accept(this);
             }
+
             // Always run main()
             strBlr.append("\n").append(getIndentation()).append("main()\n");
             decreaseIndent();
@@ -68,10 +70,10 @@ public class Generator extends ReflectiveASTVisitor {
 
     public void Visit(ProcedureNode node) {
         if (node != null) {
-
             // The line below it necessary because EEL addes () after proc calls but this is not used in the same way if OfficeScripts.
             String inputProcName = node.procedureDeclarationNode.procedureToken.toString();
             String outputProcName = inputProcName.replace("(", "").replace(")", "");
+
             if (outputProcName.equals("Main")) {
                 strBlr.append(getIndentation()).append("function " + outputProcName.toLowerCase() + "(");
             } else {
@@ -81,6 +83,7 @@ public class Generator extends ReflectiveASTVisitor {
             if (node.procedureDeclarationNode.formalParametersNode != null) {
                 node.procedureDeclarationNode.formalParametersNode.accept(this);
             }
+
             strBlr.append(") {\n");
             increaseIndent();
 
@@ -133,8 +136,6 @@ public class Generator extends ReflectiveASTVisitor {
             } else if (node.returnNode != null) {
                 node.returnNode.accept(this);
             }
-
-            // And what about the terminalNode?
             else
                 throw new NotImplementedError();
         } else
@@ -172,7 +173,6 @@ public class Generator extends ReflectiveASTVisitor {
     public void Visit(RepeatStructNode node) {
         if (node != null) {
             if (node.expressionNode != null) {
-                //strBlr.append(getIndentation()).append("while (");
                 strBlr.append("while (");
                 node.expressionNode.accept(this);
                 strBlr.append(") {\n");
@@ -391,7 +391,6 @@ public class Generator extends ReflectiveASTVisitor {
                 throw new NotImplementedError();
 
             if (node.methodNode != null) {
-                //strBlr.append(node.methodNode);
                 node.methodNode.accept(this);
             }
         } else
@@ -400,8 +399,6 @@ public class Generator extends ReflectiveASTVisitor {
 
     public void Visit(CellNode node) {
         if (node != null) {
-
-
             if (node.CELL_METHOD != null) {
                 if (Objects.equals(node.CELL_METHOD.toString(), ".value")) {
                     if (cellAccessor.get(node.SINGLE_CELL) != null) {
@@ -443,7 +440,6 @@ public class Generator extends ReflectiveASTVisitor {
             } else if (node.RANGE != null) {
                 strBlr.append(node.RANGE);
             }
-
         } else
             throw new NullPointerException();
     }
