@@ -384,7 +384,7 @@ public class Generator extends ReflectiveASTVisitor {
                 //strBlr.append(node.cellNode);
                 node.cellNode.accept(this);
             } else if (node.functionCallNode != null) {
-                strBlr.append(node.functionCallNode);
+                node.functionCallNode.accept(this);
             } else if (node.procedureCallNode != null) {
                 strBlr.append(node.procedureCallNode.PROCEDURE.toString() + "()");
             } else
