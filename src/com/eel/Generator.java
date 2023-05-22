@@ -401,11 +401,6 @@ public class Generator extends ReflectiveASTVisitor {
     public void Visit(CellNode node) {
         if (node != null) {
 
-            if (node.SINGLE_CELL != null) {
-                // strBlr.append(EelCelltoExcelCell(node.SINGLE_CELL));
-            } else if (node.RANGE != null) {
-                strBlr.append(node.RANGE);
-            }
 
             if (node.CELL_METHOD != null) {
                 if (Objects.equals(node.CELL_METHOD.toString(), ".value")) {
@@ -443,7 +438,12 @@ public class Generator extends ReflectiveASTVisitor {
                         }
                     }
                 }
+            } else if (node.SINGLE_CELL != null) {
+                strBlr.append(EelCelltoExcelCell(node.SINGLE_CELL));
+            } else if (node.RANGE != null) {
+                strBlr.append(node.RANGE);
             }
+
         } else
             throw new NullPointerException();
     }

@@ -1,11 +1,9 @@
 procedure Main()
-    let h = AVERAGE(3, 4)
+    let h = Test()+3
     print(h)
+endProcedure
 
 procedure Test()
-    (3,3).format = "color:red"
-    
-    SUM([1, 2])
-    AVERAGE([3, 4])
-    let h = (1, 1)
+    let i = 3.5
+    return i
 endProcedure
