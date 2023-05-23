@@ -60,6 +60,9 @@ public class CodeGenerationTest {
         Generator generator = new Generator();
         generator.performVisit(programNode);
 
-        assertEquals("Files are not identical", FileUtils.readFileToString(new File("tests/test.ts")), FileUtils.readFileToString(new File("out/production/eel/com/eel/OutputCode.ts")));
+        assertEquals("Files are not identical",
+            FileUtils.readFileToString(new File("tests/test.ts"), "utf-8"),
+            FileUtils.readFileToString(new File("out/production/eel/com/eel/OutputCode.ts"), "utf-8")
+        );
     }
 }
