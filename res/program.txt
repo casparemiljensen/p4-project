@@ -1,9 +1,0 @@
-procedure Main()
-    let h = Test()+3
-    print(h)
-endProcedure
-
-procedure Test()
-    let i = 3.5
-    return i
-endProcedure
