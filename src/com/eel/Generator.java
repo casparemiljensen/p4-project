@@ -13,7 +13,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.io.IOException;
 
-public class Generator extends ReflectiveASTVisitor {
+public class  Generator extends ReflectiveASTVisitor {
     public StringBuilder strBlr;
 
     public Generator() {
@@ -403,11 +403,11 @@ public class Generator extends ReflectiveASTVisitor {
                 if (Objects.equals(node.CELL_METHOD.toString(), ".value")) {
                     if (cellAccessor.get(node.SINGLE_CELL) != null) {
                         // Set Value
-                        strBlr.append("workbook.getActiveWorksheet().getCell");
-                        strBlr.append(EelCelltoExcelCell(node.SINGLE_CELL));
-                        strBlr.append(".setValue(");
-                        strBlr.append(cellAccessor.get(node.SINGLE_CELL));
-                        strBlr.append(")\n");
+                        strBlr.append("workbook.getActiveWorksheet().getCell")
+                                .append(EelCelltoExcelCell(node.SINGLE_CELL))
+                                .append(".setValue(")
+                                .append(cellAccessor.get(node.SINGLE_CELL))
+                                .append(")\n");
                     } else {
                         // Get Value
                         strBlr.append("workbook.getActiveWorksheet().getCell")
@@ -421,17 +421,17 @@ public class Generator extends ReflectiveASTVisitor {
                         String value = parts[1];
 
                         if (Objects.equals(key, "backgroundColor")) {
-                            strBlr.append("workbook.getActiveWorksheet().getCell");
-                            strBlr.append(EelCelltoExcelCell(node.SINGLE_CELL));
-                            strBlr.append(".getFormat().getFill().setColor(\"");
-                            strBlr.append(value);
-                            strBlr.append("\")\n");
+                            strBlr.append("workbook.getActiveWorksheet().getCell")
+                                    .append(EelCelltoExcelCell(node.SINGLE_CELL))
+                                    .append(".getFormat().getFill().setColor(\"")
+                                    .append(value)
+                                    .append("\")\n");
                         } else if (Objects.equals(key, "textColor")) {
-                            strBlr.append("workbook.getActiveWorksheet().getCell");
-                            strBlr.append(EelCelltoExcelCell(node.SINGLE_CELL));
-                            strBlr.append(".getFormat().getFont().setColor(\"");
-                            strBlr.append(value);
-                            strBlr.append("\")\n");
+                            strBlr.append("workbook.getActiveWorksheet().getCell")
+                                    .append(EelCelltoExcelCell(node.SINGLE_CELL))
+                                    .append(".getFormat().getFont().setColor(\"")
+                                    .append(value)
+                                    .append("\")\n");
                         }
                     }
                 }

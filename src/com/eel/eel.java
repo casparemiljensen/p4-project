@@ -23,7 +23,7 @@ class Eel {
         Errors varDclErrors = new Errors();
         SymbolTable symbolTable = new SymbolTable();
 
-        var inputStream = CharStreams.fromString(readFileAsString("out/production/eel/program.txt"));
+        var inputStream = CharStreams.fromString(readFileAsString("out/production/eel/program.eel"));
 
         eelLexer lexer = new eelLexer(inputStream);
         var tokens = new CommonTokenStream(lexer);
