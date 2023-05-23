@@ -113,56 +113,31 @@ public class TypeCheckVisitor extends ReflectiveASTVisitor {
 
     public void Visit(ProcedureCallNode node) {
         if (node != null) {
-            // Updating the types of the formalParams to that of the actualParams...
             if (symbolTable.lookupSymbol(node.PROCEDURE.toString()) == null) errors.addEntry(ErrorType.UNDECLARED_FUNCTION_WARNING, " A procedure with the name: '" + node.PROCEDURE.toString() + "' does not exist", node.getLineNumber(), node.getColumnNumber());
 
-            // Retrieve procedure information from the symbol table
-            // Check count for both
             if (node.actualParamsNode != null) {
-
-                // Only visiting if there are some actualParams
                 node.actualParamsNode.accept(this);
                 symbolTable.enterScope(node.PROCEDURE.toString());
 
-                List<ValueNode> vars = node.actualParamsNode.valuesNodes.stream().filter(v -> v.getType() == Type.Variable).collect(Collectors.toList());
-                if (vars.size() > 0) {
-                    for (ValueNode v : vars) {
-                        if (symbolTable.lookupSymbol(v.VARIABLE.toString()) == null) {
-                            errors.addEntry(ErrorType.UNDECLARED_VARIABLE, "A variable with the name: " + v.VARIABLE.toString() + " has not been declared ", v.getLineNumber(), v.getColumnNumber());
-                        } else if (symbolTable.lookupSymbol(v.VARIABLE.toString()) != null) {
-                            Attributes attr = symbolTable.lookupSymbol(v.VARIABLE.toString());
-                            if (attr.getDataType() == Type.Uninitialized) {
-                                errors.addEntry(ErrorType.UNINITIALIZED_VARIABLE, "A variable with the name: " + v.VARIABLE.toString() + " has not been initialized, and will infer null type ", v.getLineNumber(), v.getColumnNumber());
-                            }
-                        }
-                    }
-                }
-
                 // Get the HashMap object from the symbol table
-                Map<String, Attributes> obj = symbolTable.currentScope.getParams();
+                Map<String, Attributes> formalParams = symbolTable.currentScope.getParams();
 
                 // Get the list of actual parameters
                 List<ValueNode> actualParams = node.actualParamsNode.valuesNodes;
 
                 // Get an iterator over the entry set of the HashMap
-                Iterator<Map.Entry<String, Attributes>> iterator = obj.entrySet().iterator();
+                Iterator<Map.Entry<String, Attributes>> iterator = formalParams.entrySet().iterator();
 
                 // Iterate over the actualParams list and update the values in the HashMap
-                for (ValueNode paramValue : actualParams) {
-                    if (iterator.hasNext()) {
-                        // Get the next entry from the HashMap
-                        Map.Entry<String, Attributes> entry = iterator.next();
+                for (ValueNode actualParamValue : actualParams) {
+                    // Get the next entry from the HashMap
+                    Map.Entry<String, Attributes> entry = iterator.next();
 
-                        // Update the value in the entry with the corresponding actual parameter value
-                        Attributes attr = entry.getValue();
-                        attr.setDataType(paramValue.getType());
+                    // Update the value in the entry with the corresponding actual parameter value
+                    Attributes attr = entry.getValue();
+                    attr.setDataType(actualParamValue.getType());
 
-                        entry.setValue(attr);
-                    } else {
-                        // Handle the case where there are more actual parameters than formal parameters
-                        System.out.println("Error: More actual parameters than formal parameters");
-                        break;
-                    }
+                    entry.setValue(attr);
                 }
                 symbolTable.leaveScope(node.PROCEDURE.toString());
             }
@@ -397,15 +372,11 @@ public class TypeCheckVisitor extends ReflectiveASTVisitor {
             } else if (node.FLOAT != null) {
                 node.setType(Type.Float);
             } else if (node.VARIABLE != null) {
-                if (symbolTable.lookupSymbol(node.VARIABLE.toString()) != null) {
-                    if (symbolTable.lookupSymbol(node.VARIABLE.toString()).getDataType() == Type.Uninitialized)
-                        errors.addEntry(ErrorType.VARIABLE_NOT_INITIALED, "'" + node.VARIABLE.toString() + "' has not been initialized", node.getLineNumber(), node.getColumnNumber());
+                if (symbolTable.lookupSymbol(node.VARIABLE.toString()).getDataType() == Type.Uninitialized)
+                    errors.addEntry(ErrorType.VARIABLE_NOT_INITIALED, "'" + node.VARIABLE.toString() + "' has not been initialized", node.getLineNumber(), node.getColumnNumber());
 
-                    node.setType(symbolTable.lookupSymbol(node.VARIABLE.toString()).getDataType());
-                    node.setName(node.VARIABLE.toString());
-                } else {
-                    errors.addEntry(ErrorType.UNDECLARED_VARIABLE, "The variable: " + node.VARIABLE.toString() + " has not been declared", node.getLineNumber(), node.getColumnNumber());
-                }
+                node.setType(symbolTable.lookupSymbol(node.VARIABLE.toString()).getDataType());
+                node.setName(node.VARIABLE.toString());
             } else if (node.BOOLEAN != null) {
                 node.setType(Type.Boolean);
             } else if (node.cellNode != null) {
