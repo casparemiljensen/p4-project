@@ -24,10 +24,10 @@ public class CodeGenerationTest {
     @Test
     public void CodeIsGenerated() throws IOException {
         TerminalNode terminalNode = new TerminalNodeImpl(new TestToken("Main", 0));
-        FormalParametersNode formalParametersNode = new FormalParametersNode(0,0, new ArrayList<>());
-        ProcedureDeclarationNode procedureDeclarationNode = new ProcedureDeclarationNode(0,0, terminalNode, formalParametersNode);
+        FormalParametersNode formalParametersNode = new FormalParametersNode(0, 0, new ArrayList<>());
+        ProcedureDeclarationNode procedureDeclarationNode = new ProcedureDeclarationNode(0, 0, terminalNode, formalParametersNode);
 
-        ProcedureNode procedureNode = new ProcedureNode(0,0, procedureDeclarationNode, new ArrayList<>());
+        ProcedureNode procedureNode = new ProcedureNode(0, 0, procedureDeclarationNode, new ArrayList<>());
 
         ArrayList<ProcedureNode> procedureNodes = new ArrayList<>();
         procedureNodes.add(procedureNode);
@@ -40,29 +40,29 @@ public class CodeGenerationTest {
         BuildSymbolTableVisitor buildSymbolTableVisitor = new BuildSymbolTableVisitor(symbolTable, symbolTableErrors);
         buildSymbolTableVisitor.performVisit(programNode);
 
-        assert(!symbolTableErrors.containsErrors());
+        assert (!symbolTableErrors.containsErrors());
 
         // Test variable declarations
         Errors varDclErrors = new Errors();
         VariableDeclarationVisitor varDclVisitor = new VariableDeclarationVisitor(symbolTable, varDclErrors);
         varDclVisitor.performVisit(programNode);
 
-        assert(!varDclErrors.containsErrors());
+        assert (!varDclErrors.containsErrors());
 
         // Test type check
         Errors typeCheckErrors = new Errors();
         TypeCheckVisitor typeCheckVisitor = new TypeCheckVisitor(symbolTable, typeCheckErrors);
         typeCheckVisitor.performVisit(programNode);
 
-        assert(!typeCheckErrors.containsErrors());
+        assert (!typeCheckErrors.containsErrors());
 
         // Test code generation
         Generator generator = new Generator();
         generator.performVisit(programNode);
 
         assertEquals("Files are not identical",
-            FileUtils.readFileToString(new File("tests/test.ts"), "utf-8"),
-            FileUtils.readFileToString(new File("out/production/eel/com/eel/OutputCode.ts"), "utf-8")
+                FileUtils.readFileToString(new File("tests/test.ts"), "utf-8").indent(0),
+                FileUtils.readFileToString(new File("out/production/eel/com/eel/OutputCode.ts"), "utf-8").indent(0)
         );
     }
 }
