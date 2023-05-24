@@ -26,7 +26,6 @@ expression          : '(' expression ')'                            #parenExpr
 
 operator            : binaryOperator
                     | booleanOperator
-                    | ASSIGNMENT
                     ;
 binaryOperator: PLUSORMINUS | MULTORDIV;
 booleanOperator: BOOLEANOP;

@@ -180,8 +180,6 @@ public class BuildASTVisitor extends eelBaseVisitor<AbstractNode> implements eel
             node = visitBinaryOperator(ctx.binaryOperator());
         } else if (ctx.booleanOperator() != null) {
             node = visitBooleanOperator(ctx.booleanOperator());
-        } else if (ctx.ASSIGNMENT() != null) {
-            return new OperatorNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.ASSIGNMENT());
         }
         return new OperatorNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), node);
     }

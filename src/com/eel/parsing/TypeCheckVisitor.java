@@ -416,9 +416,7 @@ public class TypeCheckVisitor extends ReflectiveASTVisitor {
                 node.setSymbol(node.binaryOperatorNode.binaryOperator.toString());
             } else if (node.booleanOperatorNode != null) {
                 node.setSymbol(node.booleanOperatorNode.booleanOperator.toString());
-            } else if (node.assignment != null) {
-                node.setSymbol("=");
-            } else throw new NotImplementedError();
+            }
         } else
             throw new NullPointerException();
     }
