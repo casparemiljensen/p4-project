@@ -7,11 +7,10 @@ import kotlin.NotImplementedError;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Objects;
 
 import org.antlr.v4.runtime.tree.TerminalNode;
-
-import java.io.IOException;
 
 public class  Generator extends ReflectiveASTVisitor {
     public StringBuilder strBlr;
@@ -111,12 +110,17 @@ public class  Generator extends ReflectiveASTVisitor {
     public void Visit(FormalParametersNode node) {
         if (node != null) {
             if (node.variables.size() > 0) {
-                node.variables.forEach(param -> {
-                    strBlr.append(", " + param + ": unknown");
-                });
+                Iterator<TerminalNode> iterator = node.variables.iterator();
+                if (iterator.hasNext()) {
+                    strBlr.append(iterator.next() + ": unknown");
+                    while (iterator.hasNext()) {
+                        strBlr.append(", " + iterator.next() + ": unknown");
+                    }
+                }
             }
-        } else
+        } else {
             throw new NullPointerException();
+        }
     }
 
     public void Visit(StatementNode node) {
@@ -130,7 +134,9 @@ public class  Generator extends ReflectiveASTVisitor {
             } else if (node.procedureCallNode != null) {
                 node.procedureCallNode.accept(this);
             } else if (node.terminal != null) {
+                strBlr.append(node.terminal + " = ");
                 node.assignmentNode.accept(this);
+                strBlr.append("\n");
             } else if (node.cellNode != null) {
                 node.cellNode.accept(this);
             } else if (node.returnNode != null) {

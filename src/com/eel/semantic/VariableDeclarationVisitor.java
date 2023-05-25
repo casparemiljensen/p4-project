@@ -1,4 +1,4 @@
-package com.eel.parsing;
+package com.eel.semantic;
 
 import com.eel.AST.ReflectiveASTVisitor;
 import com.eel.AST.nodes.*;
@@ -179,21 +179,6 @@ public class VariableDeclarationVisitor extends ReflectiveASTVisitor {
             symbolTable.leaveScope(hashedName);
         }
     }
-
-//    public void Visit(ReturnNode node) {
-//        if (node != null) {
-//            if (symbolTable.lookupSymbol(node.returnToken.toString()) != null) {
-//
-//                if (node.expressionNode != null) {
-//                    node.expressionNode.accept(this);
-//                    System.out.println(node.expressionNode.getType());
-//                }
-//
-//            } else {
-//                System.out.println("Error");
-//            }
-//        }
-//    }
 
     @Override
     public void defaultVisit(Object o) {

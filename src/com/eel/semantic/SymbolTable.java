@@ -1,13 +1,11 @@
-package com.eel.parsing;
+package com.eel.semantic;
 
-import java.util.ArrayList;
 import java.util.Stack;
 
 public class SymbolTable {
     public EelScope currentScope;
     public final EelScope globalScope;
     final private Stack<EelScope> scopeStack = new Stack<>();
-    public ArrayList<String> declaredFunctions = new ArrayList<>();
 
     public SymbolTable() {
         globalScope = new EelScope("global");

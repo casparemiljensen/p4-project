@@ -1,8 +1,8 @@
 package com.eel.helpers;
 
-import com.eel.parsing.Attributes;
-import com.eel.parsing.EelScope;
-import com.eel.parsing.SymbolTable;
+import com.eel.semantic.Attributes;
+import com.eel.semantic.EelScope;
+import com.eel.semantic.SymbolTable;
 
 import java.util.Map;
 

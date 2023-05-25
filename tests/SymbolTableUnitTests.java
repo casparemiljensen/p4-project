@@ -1,7 +1,7 @@
 import com.eel.AST.nodes.*;
 import com.eel.errors.Errors;
-import com.eel.parsing.SymbolTable;
-import com.eel.parsing.BuildSymbolTableVisitor;
+import com.eel.semantic.SymbolTable;
+import com.eel.semantic.BuildSymbolTableVisitor;
 import kotlin.NotImplementedError;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.antlr.v4.runtime.tree.TerminalNodeImpl;

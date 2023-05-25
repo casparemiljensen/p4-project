@@ -6,11 +6,11 @@ import com.eel.AST.nodes.ProgramNode;
 import com.eel.antlr.*;
 import com.eel.errors.Errors;
 import com.eel.errors.Item;
-import com.eel.parsing.SymbolTable;
-import com.eel.parsing.BuildSymbolTableVisitor;
-import com.eel.parsing.TypeCheckVisitor;
+import com.eel.semantic.SymbolTable;
+import com.eel.semantic.BuildSymbolTableVisitor;
+import com.eel.semantic.TypeCheckVisitor;
 import com.eel.helpers.SymbolTablePrinter;
-import com.eel.parsing.VariableDeclarationVisitor;
+import com.eel.semantic.VariableDeclarationVisitor;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 

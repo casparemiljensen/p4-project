@@ -1,9 +1,24 @@
 procedure Main()
-    let h = {A1:A3}
+    let x = 5
+    let y = 10
+    Secondary(x,y)
 endProcedure
 
-procedure Example(x)
+procedure Secondary(x,y)
+    let h = 0
+    if(x<y) then
+        h = 1
+    else if(x>y) then
+        h = 2
+    else then
+        h=3
+    endIf
 
+    Third(h)
 endProcedure
 
-
+procedure Third(h)
+    repeat while(h<10)
+        h = h+1
+    endRepeat
+endProcedure

@@ -1,4 +1,4 @@
-package com.eel.parsing;
+package com.eel.semantic;
 
 import com.eel.AST.ReflectiveASTVisitor;
 import com.eel.AST.nodes.*;
@@ -372,11 +372,16 @@ public class TypeCheckVisitor extends ReflectiveASTVisitor {
             } else if (node.FLOAT != null) {
                 node.setType(Type.Float);
             } else if (node.VARIABLE != null) {
-                if (symbolTable.lookupSymbol(node.VARIABLE.toString()).getDataType() == Type.Uninitialized)
+                if(symbolTable.lookupSymbol(node.VARIABLE.toString()) == null)
+                    errors.addEntry(ErrorType.UNDECLARED_VARIABLE, "The variable " + node.VARIABLE.toString() + " has not been declared", node.getLineNumber(), node.getColumnNumber());
+                else if (symbolTable.lookupSymbol(node.VARIABLE.toString()).getDataType() == Type.Uninitialized) {
                     errors.addEntry(ErrorType.VARIABLE_NOT_INITIALED, "'" + node.VARIABLE.toString() + "' has not been initialized", node.getLineNumber(), node.getColumnNumber());
+                }
+                else {
+                    node.setType(symbolTable.lookupSymbol(node.VARIABLE.toString()).getDataType());
+                    node.setName(node.VARIABLE.toString());
+                }
 
-                node.setType(symbolTable.lookupSymbol(node.VARIABLE.toString()).getDataType());
-                node.setName(node.VARIABLE.toString());
             } else if (node.BOOLEAN != null) {
                 node.setType(Type.Boolean);
             } else if (node.cellNode != null) {
