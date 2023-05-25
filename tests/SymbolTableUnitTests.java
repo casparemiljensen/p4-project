@@ -15,7 +15,7 @@ import static org.junit.Assert.assertTrue;
 public class SymbolTableUnitTests {
     @Test
     public void GeneratesErrorForDuplicateFunctionNames() {
-        TerminalNode terminalNode = new TerminalNodeImpl(new TestToken("main", 0));
+        TerminalNode terminalNode = new TerminalNodeImpl(new TestToken("Main", 0));
 
         FormalParametersNode formalParametersNode = new FormalParametersNode(0,0, new ArrayList<>());
         ProcedureDeclarationNode procedureDeclarationNode = new ProcedureDeclarationNode(0,0, terminalNode, formalParametersNode);
