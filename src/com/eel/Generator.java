@@ -3,16 +3,18 @@ package com.eel;
 import com.eel.AST.ReflectiveASTVisitor;
 import com.eel.AST.nodes.*;
 import kotlin.NotImplementedError;
-
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Objects;
-
 import org.antlr.v4.runtime.tree.TerminalNode;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class  Generator extends ReflectiveASTVisitor {
+public class Generator extends ReflectiveASTVisitor {
     public StringBuilder strBlr;
 
     public Generator() {
@@ -22,14 +24,12 @@ public class  Generator extends ReflectiveASTVisitor {
     private HashMap<TerminalNode, TerminalNode> cellAccessor = new HashMap<>();
 
     public void Visit(ProgramNode node) {
-        if (node != null) {
+        if(node != null) {
             strBlr.append(getIndentation()).append("function main (workbook: ExcelScript.Workbook) {\n");
             increaseIndent();
-
             for (ProcedureNode procedureNode : node.procedureNodes) {
                 procedureNode.accept(this);
             }
-
             // Always run main()
             strBlr.append("\n").append(getIndentation()).append("main()\n");
             decreaseIndent();
@@ -42,7 +42,8 @@ public class  Generator extends ReflectiveASTVisitor {
 
             System.out.println(strBlr.toString());
             writeToFile(strBlr.toString());
-        } else
+        }
+        else
             throw new NullPointerException();
     }
 
@@ -68,33 +69,27 @@ public class  Generator extends ReflectiveASTVisitor {
     }
 
     public void Visit(ProcedureNode node) {
-        if (node != null) {
+        if(node != null) {
+
             // The line below it necessary because EEL addes () after proc calls but this is not used in the same way if OfficeScripts.
             String inputProcName = node.procedureDeclarationNode.procedureToken.toString();
             String outputProcName = inputProcName.replace("(", "").replace(")", "");
-
-            if (outputProcName.equals("Main")) {
-                strBlr.append(getIndentation()).append("function " + outputProcName.toLowerCase() + "(");
-            } else {
-                strBlr.append(getIndentation()).append("function " + outputProcName + "(");
-            }
-
+            strBlr.append(getIndentation()).append("function " + outputProcName.toLowerCase() + "(");
             if (node.procedureDeclarationNode.formalParametersNode != null) {
                 node.procedureDeclarationNode.formalParametersNode.accept(this);
             }
-
             strBlr.append(") {\n");
             increaseIndent();
 
             for (StatementNode statementNode : node.StatementNodes) {
                 strBlr.append(getIndentation());
 
-                if (statementNode.cellNode != null && statementNode.assignmentNode != null) {
-                    if (statementNode.assignmentNode.expressionNode.valueExprNode.valueNode.STRING != null)
+                if(statementNode.cellNode != null && statementNode.assignmentNode != null) {
+                    if(statementNode.assignmentNode.expressionNode.valueExprNode.valueNode.STRING != null)
                         cellAccessor.put(statementNode.cellNode.SINGLE_CELL, statementNode.assignmentNode.expressionNode.valueExprNode.valueNode.STRING);
-                    if (statementNode.assignmentNode.expressionNode.valueExprNode.valueNode.INUM != null)
+                    if(statementNode.assignmentNode.expressionNode.valueExprNode.valueNode.INUM != null)
                         cellAccessor.put(statementNode.cellNode.SINGLE_CELL, statementNode.assignmentNode.expressionNode.valueExprNode.valueNode.INUM);
-                    if (statementNode.assignmentNode.expressionNode.valueExprNode.valueNode.FLOAT != null)
+                    if(statementNode.assignmentNode.expressionNode.valueExprNode.valueNode.FLOAT != null)
                         cellAccessor.put(statementNode.cellNode.SINGLE_CELL, statementNode.assignmentNode.expressionNode.valueExprNode.valueNode.FLOAT);
                 }
 
@@ -103,28 +98,29 @@ public class  Generator extends ReflectiveASTVisitor {
             decreaseIndent();
             strBlr.append(getIndentation()).append("}\n");
 
-        } else
+        }
+        else
             throw new NullPointerException();
     }
 
     public void Visit(FormalParametersNode node) {
         if (node != null) {
             if (node.variables.size() > 0) {
-                Iterator<TerminalNode> iterator = node.variables.iterator();
-                if (iterator.hasNext()) {
-                    strBlr.append(iterator.next() + ": unknown");
-                    while (iterator.hasNext()) {
-                        strBlr.append(", " + iterator.next() + ": unknown");
-                    }
-                }
+                node.variables.forEach(param -> {
+                    if (param == node.variables.get(0))
+                        strBlr.append(param + ": unknown");
+                    else
+                        strBlr.append(", " + param + ": unknown");
+                });
+
             }
-        } else {
-            throw new NullPointerException();
         }
+        else
+            throw new NullPointerException();
     }
 
     public void Visit(StatementNode node) {
-        if (node != null) {
+        if(node != null) {
             if (node.declarationNode != null) {
                 node.declarationNode.accept(this);
             } else if (node.controlStructNode != null) {
@@ -134,51 +130,57 @@ public class  Generator extends ReflectiveASTVisitor {
             } else if (node.procedureCallNode != null) {
                 node.procedureCallNode.accept(this);
             } else if (node.terminal != null) {
-                strBlr.append(node.terminal + " = ");
                 node.assignmentNode.accept(this);
-                strBlr.append("\n");
             } else if (node.cellNode != null) {
                 node.cellNode.accept(this);
             } else if (node.returnNode != null) {
                 node.returnNode.accept(this);
             }
+
+            // And what about the terminalNode?
             else
                 throw new NotImplementedError();
-        } else
+        }
+        else
             throw new NullPointerException();
     }
 
     public void Visit(DeclarationNode node) {
-        if (node != null) {
+        if(node != null) {
             strBlr.append("let ").append(node.IdToken);
-            if (node.assignmentNode != null) {
+            if(node.assignmentNode != null) {
                 strBlr.append(" = ");
                 node.assignmentNode.accept(this);
             }
             strBlr.append("\n");
-        } else
+        }
+        else
             throw new NullPointerException();
     }
 
     public void Visit(ControlStructNode node) {
-        if (node != null) {
+        if(node != null) {
             if (node.iterativeStructNode != null) {
-                if (node.iterativeStructNode.repeatStructNode != null) {
+                if(node.iterativeStructNode.repeatStructNode != null){
                     node.iterativeStructNode.repeatStructNode.accept(this);
                 }
-            } else if (node.selectiveStructNode != null) {
-                if (node.selectiveStructNode.ifStructNode != null) {
+            }
+            else if (node.selectiveStructNode != null) {
+                if(node.selectiveStructNode.ifStructNode != null) {
                     node.selectiveStructNode.ifStructNode.accept(this);
                 }
-            } else
+            }
+            else
                 throw new NotImplementedError();
-        } else
+        }
+        else
             throw new NullPointerException();
     }
 
     public void Visit(RepeatStructNode node) {
         if (node != null) {
             if (node.expressionNode != null) {
+                //strBlr.append(getIndentation()).append("while (");
                 strBlr.append("while (");
                 node.expressionNode.accept(this);
                 strBlr.append(") {\n");
@@ -203,7 +205,7 @@ public class  Generator extends ReflectiveASTVisitor {
     }
 
     public void Visit(IfStructNode node) {
-        if (node != null) {
+        if(node != null) {
             if (node.ifConditionNode != null) {
                 node.ifConditionNode.accept(this);
             }
@@ -234,18 +236,20 @@ public class  Generator extends ReflectiveASTVisitor {
                 strBlr.append(getIndentation());
                 node.elseStructNode.accept(this);
             }
-        } else
+        }
+        else
             throw new NullPointerException();
     }
 
     public void Visit(IfConditionNode node) {
-        if (node != null) {
+        if (node!= null) {
             if (node.expressionNode != null) {
                 strBlr.append("if (");
                 node.expressionNode.accept(this);
                 strBlr.append(") {\n");
             }
-        } else
+        }
+        else
             throw new NullPointerException();
     }
 
@@ -269,7 +273,8 @@ public class  Generator extends ReflectiveASTVisitor {
             }
             decreaseIndent();
             strBlr.append(getIndentation()).append("}\n");
-        } else throw new NullPointerException();
+        }
+        else throw new NullPointerException();
     }
 
     public void Visit(ElseStructNode node) {
@@ -292,114 +297,136 @@ public class  Generator extends ReflectiveASTVisitor {
             decreaseIndent();
 
             strBlr.append(getIndentation()).append("}\n");
-        } else
+        }
+        else
             throw new NullPointerException();
     }
 
     public void Visit(ReturnNode node) {
-        if (node != null) {
+        if(node != null) {
             strBlr.append("return ");
             if (node.expressionNode != null) {
                 node.expressionNode.accept(this);
             }
             strBlr.append("\n");
-        } else
+        }
+        else
             throw new NullPointerException();
     }
 
     public void Visit(AssignmentNode node) {
-        if (node != null) {
-            if (node.expressionNode != null) {
+        if(node != null) {
+            if(node.expressionNode != null) {
                 node.expressionNode.accept(this);
             }
-        } else
+        }
+        else
             throw new NullPointerException();
     }
 
     public void Visit(ExpressionNode node) {
-        if (node != null) {
+        if(node != null) {
             if (node.parenExprNode != null) {
                 node.parenExprNode.accept(this);
-            } else if (node.unaryExprNode != null) {
+            }
+            else if (node.unaryExprNode != null) {
                 node.unaryExprNode.accept(this);
-            } else if (node.infixExprNode != null) {
+            }
+            else if (node.infixExprNode != null) {
                 node.infixExprNode.accept(this);
-            } else if (node.valueExprNode != null) {
+            }
+            else if (node.valueExprNode != null) {
                 node.valueExprNode.accept(this);
-            } else
+            }
+            else
                 throw new NotImplementedError();
-        } else
+        }
+        else
             throw new NullPointerException();
     }
 
     public void Visit(ParenExprNode node) {
         // Hackish char null check
-        if (node != null) {
+        if(node != null) {
             if (node.leftPar != '\u0000' && node.expressionNode != null && node.rightPar != '\u0000') {
                 strBlr.append(node.leftPar);
                 node.expressionNode.accept(this);
                 strBlr.append(node.rightPar);
             }
-        } else
+        }
+        else
             throw new NullPointerException();
     }
 
     public void Visit(UnaryExprNode node) {
-        if (node != null) {
+        if(node != null) {
             if (node.right != null && node.operator != null) {
                 strBlr.append(node.operator);
                 node.right.accept(this);
             }
-        } else
+        }
+        else
             throw new NullPointerException();
     }
 
     public void Visit(InfixExprNode node) {
-        if (node != null) {
+        if(node != null) {
             if (node.left != null && node.operatorNode != null && node.right != null) {
                 node.left.accept(this);
                 node.operatorNode.accept(this);
                 node.right.accept(this);
             }
-        } else
+        }
+        else
             throw new NullPointerException();
     }
 
     public void Visit(ValueExprNode node) {
-        if (node != null) {
+        if(node != null) {
             if (node.valueNode != null) {
                 node.valueNode.accept(this);
             }
-        } else
+        }
+        else
             throw new NullPointerException();
     }
 
     public void Visit(ValueNode node) {
-        if (node != null) {
+        if(node != null) {
             if (node.INUM != null) {
                 strBlr.append(node.INUM);
-            } else if (node.FLOAT != null) {
+            }
+            else if(node.FLOAT != null) {
                 strBlr.append(node.FLOAT);
-            } else if (node.STRING != null) {
+            }
+            else if (node.STRING != null) {
                 strBlr.append(node.STRING);
-            } else if (node.VARIABLE != null) {
+            }
+            else if(node.VARIABLE != null) {
                 strBlr.append(node.VARIABLE);
-            } else if (node.BOOLEAN != null) {
+            }
+            else if(node.BOOLEAN != null) {
                 strBlr.append(node.BOOLEAN);
-            } else if (node.cellNode != null) {
+            }
+            else if (node.cellNode != null) {
                 //strBlr.append(node.cellNode);
                 node.cellNode.accept(this);
-            } else if (node.functionCallNode != null) {
-                node.functionCallNode.accept(this);
-            } else if (node.procedureCallNode != null) {
-                strBlr.append(node.procedureCallNode.PROCEDURE.toString() + "()");
-            } else
+            }
+            else if(node.functionCallNode != null) {
+                strBlr.append(node.functionCallNode);
+            }
+            else if(node.procedureCallNode != null) {
+                strBlr.append(node.procedureCallNode);
+            }
+            else
                 throw new NotImplementedError();
 
-            if (node.methodNode != null) {
+            if(node.methodNode != null) {
+                //strBlr.append(node.methodNode);
                 node.methodNode.accept(this);
             }
-        } else
+        }
+        else
             throw new NullPointerException();
     }
 
@@ -407,57 +434,157 @@ public class  Generator extends ReflectiveASTVisitor {
         if (node != null) {
             if (node.CELL_METHOD != null) {
                 if (Objects.equals(node.CELL_METHOD.toString(), ".value")) {
-                    if (cellAccessor.get(node.SINGLE_CELL) != null) {
-                        // Set Value
-                        strBlr.append("workbook.getActiveWorksheet().getCell")
-                                .append(EelCelltoExcelCell(node.SINGLE_CELL))
-                                .append(".setValue(")
-                                .append(cellAccessor.get(node.SINGLE_CELL))
-                                .append(")\n");
-                    } else {
-                        // Get Value
-                        strBlr.append("workbook.getActiveWorksheet().getCell")
-                                .append(EelCelltoExcelCell(node.SINGLE_CELL))
-                                .append(".getValue()\n");
+                    if (node.SINGLE_CELL != null)
+                    {
+                        if(cellAccessor.get(node.SINGLE_CELL) != null) {
+                            // Set Value
+                            strBlr.append("workbook.getActiveWorksheet().getCell")
+                                    .append(EelCelltoExcelCell(node.SINGLE_CELL))
+                                    .append(".setValue(")
+                                    .append(cellAccessor.get(node.SINGLE_CELL))
+                                    .append(")\n");
+                        } else {
+                            // Get Value
+                            strBlr.append("workbook.getActiveWorksheet().getCell")
+                                    .append(EelCelltoExcelCell(node.SINGLE_CELL))
+                                    .append(".getValue()\n");
+                        }
                     }
-                } else if (Objects.equals(node.CELL_METHOD.toString(), ".format")) {
-                    if (cellAccessor.get(node.SINGLE_CELL) != null) {
-                        String[] parts = cellAccessor.get(node.SINGLE_CELL).toString().replace("\"", "").split(":");
-                        String key = parts[0];
-                        String value = parts[1];
+                    if (node.RANGE != null) {
+                        String[] cells = ExcelRangeToCells(node.RANGE.toString());
+                        for (String cell : cells) {
+                            System.out.println(cell);
+                            if (cellAccessor.get(node.RANGE) != null) {
+                                // Set Value
+                                strBlr.append("workbook.getActiveWorksheet().getCell")
+                                        .append(EelStringtoExcelCell(cell))
+                                        .append(".setValue(")
+                                        .append(cellAccessor.get(node.RANGE))
+                                        .append(")\n");
+                            } else {
+                                // Get Value
+                                strBlr.append("workbook.getActiveWorksheet().getCell")
+                                        .append(EelStringtoExcelCell(cell))
+                                        .append(".getValue()\n");
+                            }
+                        }
+                    }
 
-                        if (Objects.equals(key, "backgroundColor")) {
-                            strBlr.append("workbook.getActiveWorksheet().getCell")
-                                    .append(EelCelltoExcelCell(node.SINGLE_CELL))
-                                    .append(".getFormat().getFill().setColor(\"")
-                                    .append(value)
-                                    .append("\")\n");
-                        } else if (Objects.equals(key, "textColor")) {
-                            strBlr.append("workbook.getActiveWorksheet().getCell")
-                                    .append(EelCelltoExcelCell(node.SINGLE_CELL))
-                                    .append(".getFormat().getFont().setColor(\"")
-                                    .append(value)
-                                    .append("\")\n");
+                }
+                else if (Objects.equals(node.CELL_METHOD.toString(), ".format")) {
+                    if (node.SINGLE_CELL != null) {
+                        if(cellAccessor.get(node.SINGLE_CELL) != null) {
+                            String[] parts = cellAccessor.get(node.SINGLE_CELL).toString().replace("\"", "").split(":");
+                            String key = parts[0];
+                            String value = parts[1];
+
+                            if (Objects.equals(key, "backgroundColor")) {
+                                strBlr.append("workbook.getActiveWorksheet().getCell");
+                                strBlr.append(EelCelltoExcelCell(node.SINGLE_CELL));
+                                strBlr.append(".getFormat().getFill().setColor(\"");
+                                strBlr.append(value);
+                                strBlr.append("\")\n");
+                            }
+                            else if (Objects.equals(key, "textColor")) {
+                                strBlr.append("workbook.getActiveWorksheet().getCell");
+                                strBlr.append(EelCelltoExcelCell(node.SINGLE_CELL));
+                                strBlr.append(".getFormat().getFont().setColor(\"");
+                                strBlr.append(value);
+                                strBlr.append("\")\n");
+                            }
+                        }
+                    }
+                    if (node.RANGE != null) {
+                        String[] cells = ExcelRangeToCells(node.RANGE.toString());
+                        for (String cell : cells) {
+                            System.out.println(cellAccessor.get(node.RANGE));
+                            if (cellAccessor.get(cell) != null) {
+                                String[] parts = cellAccessor.get(cell).toString().replace("\"", "").split(":");
+                                String key = parts[0];
+                                String value = parts[1];
+                                // Set Value
+                                if (Objects.equals(key, "backgroundColor")) {
+                                    strBlr.append("workbook.getActiveWorksheet().getCell")
+                                            .append(EelStringtoExcelCell(cell))
+                                            .append(".getFormat().getFill().setColor(\"")
+                                            .append(value)
+                                            .append("\")\n");
+                                } else if (Objects.equals(key, "textColor")) {
+                                    strBlr.append("workbook.getActiveWorksheet().getCell")
+                                            .append(EelStringtoExcelCell(cell))
+                                            .append(".getFormat().getFont().setColor(\"")
+                                            .append(value)
+                                            .append("\")\n");
+                                }
+                            }
                         }
                     }
                 }
-            } else if (node.SINGLE_CELL != null) {
-                strBlr.append(EelCelltoExcelCell(node.SINGLE_CELL));
-            } else if (node.RANGE != null) {
-                strBlr.append(node.RANGE);
             }
-        } else
+        }
+        else
             throw new NullPointerException();
     }
 
+    public static String[] ExcelRangeToCells(String input) {
+        List<String> cells = new ArrayList<>();
+
+        Pattern pattern = Pattern.compile("([A-Z])(\\d+):([A-Z])(\\d+)");
+        Matcher matcher = pattern.matcher(input);
+
+        while (matcher.find()) {
+            String startColumn = matcher.group(1);
+            int startRow = Integer.parseInt(matcher.group(2));
+            String endColumn = matcher.group(3);
+            int endRow = Integer.parseInt(matcher.group(4));
+
+            for (char c = startColumn.charAt(0); c <= endColumn.charAt(0); c++) {
+                for (int row = startRow; row <= endRow; row++) {
+                    cells.add(c + Integer.toString(row));
+                }
+            }
+        }
+
+        return cells.toArray(new String[0]);
+    }
 
     public String EelCelltoExcelCell(TerminalNode n) {
         int x = 0, y = 0;
-        int row = -1;
-        int column = -1;
 
         if (n.toString().matches(".*[a-zA-Z].*")) {
             String cellRefWithoutParentheses = n.toString().replaceAll("[()]", "");
+            StringBuilder columnLetters = new StringBuilder();
+            StringBuilder rowNumbers = new StringBuilder();
+
+            for (char ch : cellRefWithoutParentheses.toCharArray()) {
+                if (Character.isLetter(ch)) {
+                    columnLetters.append(ch);
+                } else if (Character.isDigit(ch)) {
+                    rowNumbers.append(ch);
+                }
+            }
+
+            y = getColumnIndex(columnLetters.toString());
+            x = Integer.parseInt(rowNumbers.toString()) - 1;
+        }
+        else {
+            try {
+                String[] parts = n.toString().substring(1, n.toString().length() - 1).split(",");
+                x = Integer.parseInt(parts[0].trim()) - 1;
+                y = Integer.parseInt(parts[1].trim()) - 1;
+            } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                System.out.println("Invalid input format");
+            }
+        }
+
+        return "(" + x + ", " + y + ")";
+    }
+
+    public String EelStringtoExcelCell(String cell) {
+        int x = 0, y = 0;
+
+        if (cell.matches(".*[a-zA-Z].*")) {
+            String cellRefWithoutParentheses = cell.replaceAll("[()]", "");
             StringBuilder columnLetters = new StringBuilder();
             StringBuilder rowNumbers = new StringBuilder();
 
@@ -473,9 +600,9 @@ public class  Generator extends ReflectiveASTVisitor {
             y = Integer.parseInt(rowNumbers.toString()) - 1;
         } else {
             try {
-                String[] parts = n.toString().substring(1, n.toString().length() - 1).split(",");
-                x = Integer.parseInt(parts[0].trim()) - 1;
-                y = Integer.parseInt(parts[1].trim()) - 1;
+                String[] parts = cell.substring(1, cell.length() - 1).split(",");
+                y = Integer.parseInt(parts[0].trim()) - 1;
+                x = Integer.parseInt(parts[1].trim()) - 1;
             } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                 System.out.println("Invalid input format");
             }
@@ -483,6 +610,7 @@ public class  Generator extends ReflectiveASTVisitor {
 
         return "(" + x + ", " + y + ")";
     }
+
 
     private static int getColumnIndex(String letters) {
         int index = 0;
@@ -498,35 +626,35 @@ public class  Generator extends ReflectiveASTVisitor {
     }
 
 
-    public void Visit(FunctionCallNode node) {
+    public void Visit(FunctionCallNode node){
         if (node != null) {
             // Check for "print" and rewrite to "console.log"
             if (Objects.equals(node.FUNCTIONS.toString(), "print")) {
                 strBlr.append("console.log(");
             } else {
-                strBlr.append(node.FUNCTIONS).append("([");
+                strBlr.append(node.FUNCTIONS).append("(");
             }
             if (node.actualParamsNode != null) {
                 node.actualParamsNode.accept(this);
             }
-            if (Objects.equals(node.FUNCTIONS.toString(), "print")) {
-                strBlr.append(")\n");
-            } else {
-                strBlr.append("])\n");
-            }
-        } else
+
+            strBlr.append(")\n");
+        }
+        else
             throw new NullPointerException();
     }
 
 
+
     public void Visit(ProcedureCallNode node) {
         if (node != null) {
-            strBlr.append(node.PROCEDURE + "(");
+            strBlr.append(node.PROCEDURE.toString().toLowerCase() + "(");
             if (node.actualParamsNode != null) {
                 node.actualParamsNode.accept(this);
             }
             strBlr.append(")\n");
-        } else
+        }
+        else
             throw new NullPointerException();
     }
 
@@ -542,13 +670,15 @@ public class  Generator extends ReflectiveASTVisitor {
             if (node.methodNode != null) {
                 node.methodNode.accept(this);
             }
-        } else
+        }
+
+        else
             throw new NullPointerException();
     }
 
 
     public void Visit(ActualParamsNode node) {
-        if (node != null) {
+        if (node != null){
             if (node.valuesNodes.size() > 0) {
                 boolean isFirstValue = true;
                 for (ValueNode value : node.valuesNodes) {
@@ -561,29 +691,34 @@ public class  Generator extends ReflectiveASTVisitor {
                     }
                 }
             }
-        } else
+        }
+        else
             throw new NullPointerException();
     }
 
 
     public void Visit(OperatorNode node) {
-        if (node != null) {
+        if(node != null) {
             if (node.binaryOperatorNode != null) {
                 node.binaryOperatorNode.accept(this);
-            } else if (node.booleanOperatorNode != null) {
+            }
+            else if (node.booleanOperatorNode != null) {
                 node.booleanOperatorNode.accept(this);
-            } else
+            }
+            else
                 throw new NotImplementedError();
-        } else
+        }
+        else
             throw new NullPointerException();
     }
 
     public void Visit(BinaryOperatorNode node) {
-        if (node != null) {
+        if(node != null) {
             if (node.binaryOperator != null) {
                 strBlr.append(node.binaryOperator);
             }
-        } else
+        }
+        else
             throw new NullPointerException();
     }
 
@@ -592,7 +727,8 @@ public class  Generator extends ReflectiveASTVisitor {
             if (node.booleanOperator != null) {
                 strBlr.append(node.booleanOperator);
             }
-        } else
+        }
+        else
             throw new NullPointerException();
     }
 
@@ -618,4 +754,5 @@ public class  Generator extends ReflectiveASTVisitor {
     private String getIndentation() {
         return " ".repeat(indentLevel * SPACES_PER_INDENT);
     }
+
 }
